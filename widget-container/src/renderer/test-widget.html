@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'">
+  <title>Test Widget</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    }
+
+    .widget-container {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      color: rgba(255, 255, 255, 0.9);
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 10px;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    p {
+      font-size: 1rem;
+      color: rgba(255, 255, 255, 0.7);
+      margin-bottom: 20px;
+    }
+
+    .time {
+      font-size: 3rem;
+      font-weight: 700;
+      margin: 20px 0;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+    }
+
+    .info {
+      font-size: 0.875rem;
+      color: rgba(255, 255, 255, 0.6);
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="widget-container">
+    <h1>🧪 Test Widget</h1>
+    <p>Glass Effect & Dragging Demo</p>
+    <div class="time" id="time">00:00:00</div>
+    <div class="info">Drag anywhere to move</div>
+  </div>
+
+  <script>
+    // Update time every second
+    function updateTime() {
+      const now = new Date();
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      const seconds = String(now.getSeconds()).padStart(2, '0');
+      document.getElementById('time').textContent = `${hours}:${minutes}:${seconds}`;
+    }
+
+    updateTime();
+    setInterval(updateTime, 1000);
+
+    // Test IPC communication
+    async function testIPCCommunication() {
+      if (!window.widgetAPI) {
+        console.log('Widget API not available (running in browser)');
+        return;
+      }
+
+      console.log('✓ Widget API available');
+      console.log('Testing IPC communication...');
+
+      try {
+        // Test 1: Storage API
+        console.log('\n--- Test 1: Storage API ---');
+        await window.widgetAPI.storage.set('test-key', 'Hello from widget!');
+        console.log('✓ Storage set successful');
+        
+        const value = await window.widgetAPI.storage.get('test-key');
+        console.log('✓ Storage get successful:', value);
+
+        // Test 2: Settings API
+        console.log('\n--- Test 2: Settings API ---');
+        const settings = await window.widgetAPI.settings.getAll();
+        console.log('✓ Settings getAll successful:', settings);
+
+        // Test 3: UI API - Get bounds
+        console.log('\n--- Test 3: UI API ---');
+        const bounds = await window.widgetAPI.getCurrentBounds();
+        console.log('✓ Get bounds successful:', bounds);
+
+        // Test 4: Check if position was restored from storage
+        console.log('\n--- Test 4: Position Persistence ---');
+        const savedPosition = await window.widgetAPI.storage.get('position');
+        if (savedPosition) {
+          console.log('✓ Widget position restored from storage:', savedPosition);
+        } else {
+          console.log('ℹ No saved position found (first run)');
+        }
+
+        // Test 5: System API (should fail with not implemented message)
+        console.log('\n--- Test 5: System API (expected to fail) ---');
+        try {
+          await window.widgetAPI.system.getCPU();
+        } catch (error) {
+          console.log('✓ System API correctly returns not implemented:', error.message);
+        }
+
+        console.log('\n✅ All IPC communication tests passed!');
+        console.log('\n💡 Try dragging this widget to a new position.');
+        console.log('   Close and reopen it (Ctrl+Shift+T) to see position persistence!');
+        
+      } catch (error) {
+        console.error('❌ IPC test failed:', error);
+      }
+    }
+
+    // Run tests after a short delay to ensure everything is loaded
+    setTimeout(testIPCCommunication, 1000);
+  </script>
+</body>
+</html>

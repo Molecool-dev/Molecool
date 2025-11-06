@@ -1,0 +1,59 @@
+{
+  "name": "molecule-widget-container",
+  "version": "1.0.0",
+  "description": "Molecule Desktop Widget Platform - Widget Container",
+  "main": "dist/main/main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "npm run build && electron .",
+    "build": "tsc && npm run copy-renderer",
+    "copy-renderer": "xcopy /E /I /Y src\\renderer dist\\renderer",
+    "build:win": "electron-builder --win",
+    "build:mac": "electron-builder --mac",
+    "clean": "rimraf dist"
+  },
+  "keywords": [
+    "electron",
+    "widget",
+    "desktop"
+  ],
+  "author": "Molecule Team",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "electron": "^28.0.0",
+    "electron-builder": "^24.9.1",
+    "rimraf": "^5.0.5",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "@types/uuid": "^10.0.0",
+    "electron-store": "^8.1.0",
+    "uuid": "^13.0.0"
+  },
+  "build": {
+    "appId": "com.molecule.widget-platform",
+    "productName": "Molecule",
+    "directories": {
+      "output": "dist-build"
+    },
+    "files": [
+      "dist/**/*",
+      "node_modules/**/*",
+      "package.json"
+    ],
+    "win": {
+      "target": [
+        "nsis"
+      ],
+      "icon": "assets/icon.ico"
+    },
+    "mac": {
+      "target": [
+        "dmg"
+      ],
+      "icon": "assets/icon.icns",
+      "category": "public.app-category.utilities"
+    }
+  }
+}

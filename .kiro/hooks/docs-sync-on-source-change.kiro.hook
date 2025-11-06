@@ -1,0 +1,21 @@
+{
+  "enabled": true,
+  "name": "Documentation Sync",
+  "description": "Watches TypeScript source files, package.json, and tsconfig.json for changes and triggers documentation updates in README.md or docs folder",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "widget-container/src/**/*.ts",
+      "widget-container/package.json",
+      "widget-container/tsconfig.json",
+      "**/*.js",
+      "**/*.ts",
+      "**/*.tsx"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "Source code or configuration files have been modified. Please review the changes and update the documentation accordingly. If a /docs folder exists, update the relevant documentation there. Otherwise, update the README.md file to reflect any new features, API changes, configuration updates, or usage instructions that result from these code changes."
+  }
+}

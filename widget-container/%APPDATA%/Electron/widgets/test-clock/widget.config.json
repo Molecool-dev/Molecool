@@ -1,0 +1,27 @@
+{
+  "id": "test-clock",
+  "name": "test-clock",
+  "displayName": "Test Clock Widget",
+  "version": "1.0.0",
+  "description": "A simple test clock widget",
+  "author": {
+    "name": "Test Author",
+    "email": "test@example.com"
+  },
+  "permissions": {
+    "systemInfo": {
+      "cpu": false,
+      "memory": false
+    },
+    "network": {
+      "enabled": false
+    }
+  },
+  "sizes": {
+    "default": {
+      "width": 250,
+      "height": 150
+    }
+  },
+  "entryPoint": "index.html"
+}

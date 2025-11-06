@@ -1,0 +1,51 @@
+/**
+ * Link Styles
+ */
+
+.link {
+  color: rgba(59, 130, 246, 0.9);
+  text-decoration: none;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  position: relative;
+}
+
+.link::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: currentColor;
+  transition: width 0.2s ease;
+}
+
+.link:hover {
+  color: rgba(96, 165, 250, 1);
+}
+
+.link:hover::after {
+  width: 100%;
+}
+
+.link:active {
+  color: rgba(37, 99, 235, 1);
+}
+
+/* Subtle variant */
+.link-subtle {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.link-subtle:hover {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.link-subtle::after {
+  background: rgba(255, 255, 255, 0.5);
+}
