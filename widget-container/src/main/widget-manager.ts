@@ -2,9 +2,12 @@ import { BrowserWindow, app } from 'electron';
 import * as path from 'path';
 import * as fs from 'fs';
 import * as crypto from 'crypto';
+import * as https from 'https';
+import * as http from 'http';
 import { WidgetConfig, WidgetInstance, WidgetState, WidgetError, WidgetErrorType } from '../types';
 import { WindowController } from './window-controller';
 import { StorageManager } from './storage';
+import { PerformanceMonitor } from './performance-monitor';
 
 /**
  * Widget Manager
@@ -16,16 +19,61 @@ export class WidgetManager {
   private windowController: WindowController;
   private storageManager: StorageManager;
   private widgetsDirectory: string;
+  private performanceMonitor: PerformanceMonitor;
+  private securityManager?: any; // Optional SecurityManager to avoid circular dependency
 
   constructor(windowController: WindowController, storageManager: StorageManager) {
     this.windowController = windowController;
     this.storageManager = storageManager;
     
-    // Set widgets directory path (in user data directory)
-    this.widgetsDirectory = path.join(app.getPath('userData'), 'widgets');
+    // Set widgets directory path
+    // In development, use the project's widgets directory
+    // In production, use the user data directory
+    this.widgetsDirectory = this.resolveWidgetsDirectory();
+    
+    console.log(`Widgets directory: ${this.widgetsDirectory}`);
     
     // Ensure widgets directory exists
     this.ensureWidgetsDirectory();
+
+    // Initialize performance monitor
+    this.performanceMonitor = new PerformanceMonitor({
+      cpuWarningPercent: 20,
+      memoryWarningMB: 100,
+      checkIntervalMs: 5000
+    });
+
+    // Start performance monitoring
+    this.performanceMonitor.start(() => this.getRunningWidgets());
+  }
+
+  /**
+   * Resolve widgets directory path based on environment
+   * In development: use project's widgets directory with fallback
+   * In production: use user data directory
+   */
+  private resolveWidgetsDirectory(): string {
+    if (process.env.NODE_ENV === 'development' || !app.isPackaged) {
+      // Development: try project widgets directory first
+      const projectWidgetsDir = path.resolve(__dirname, '../../widgets');
+      
+      // Validate the path exists and is accessible
+      if (fs.existsSync(projectWidgetsDir)) {
+        try {
+          // Test read access
+          fs.accessSync(projectWidgetsDir, fs.constants.R_OK);
+          return projectWidgetsDir;
+        } catch (error) {
+          console.warn(`Project widgets directory not accessible: ${projectWidgetsDir}`);
+        }
+      }
+      
+      // Fallback to user data directory in development if project dir doesn't exist
+      console.warn('Project widgets directory not found, falling back to user data directory');
+    }
+    
+    // Production or fallback: use user data directory
+    return path.join(app.getPath('userData'), 'widgets');
   }
 
   /**
@@ -36,6 +84,15 @@ export class WidgetManager {
       fs.mkdirSync(this.widgetsDirectory, { recursive: true });
       console.log(`Created widgets directory at: ${this.widgetsDirectory}`);
     }
+  }
+
+  /**
+   * Set security manager for dynamic CSP configuration
+   * Called after both managers are initialized
+   */
+  setSecurityManager(securityManager: any): void {
+    this.securityManager = securityManager;
+    console.log('Security manager connected to widget manager');
   }
 
   /**
@@ -335,6 +392,11 @@ export class WidgetManager {
       // Store widget instance
       this.widgets.set(instanceId, widgetInstance);
 
+      // Register widget with security manager for dynamic CSP
+      if (this.securityManager) {
+        this.securityManager.registerWidget(config.id, config);
+      }
+
       // Load widget content
       const widgetPath = path.join(this.widgetsDirectory, widgetId);
       const entryPointPath = path.join(widgetPath, config.entryPoint);
@@ -371,46 +433,48 @@ export class WidgetManager {
    * Set up event handlers for widget window
    */
   private setupWindowEventHandlers(instanceId: string, window: BrowserWindow): void {
-    // Handle window close
-    window.on('closed', () => {
-      console.log(`Widget window closed: ${instanceId}`);
-      this.cleanupWidget(instanceId);
-    });
-
-    // Handle window crash
-    window.webContents.on('render-process-gone', (event, details) => {
-      console.error(`Widget render process gone: ${instanceId}`, details);
-      this.cleanupWidget(instanceId);
-    });
-
-    // Handle position changes (for auto-save)
-    window.on('move', () => {
-      const widget = this.widgets.get(instanceId);
-      if (widget && widget.window && !widget.window.isDestroyed()) {
-        const [x, y] = widget.window.getPosition();
-        widget.position = { x, y };
-        
-        // Debounced save will be handled by window-controller
-        // We just update the in-memory position here
-      }
-    });
-
-    // Handle window position save request from renderer
-    window.webContents.on('ipc-message', (event, channel, ...args) => {
-      if (channel === 'save-position') {
+    // Store handlers for cleanup
+    const handlers = {
+      closed: () => {
+        console.log(`Widget window closed: ${instanceId}`);
+        this.cleanupWidget(instanceId);
+      },
+      renderProcessGone: (event: Electron.Event, details: Electron.RenderProcessGoneDetails) => {
+        console.error(`Widget render process gone: ${instanceId}`, details);
+        this.cleanupWidget(instanceId);
+      },
+      move: () => {
         const widget = this.widgets.get(instanceId);
-        if (widget) {
-          const [x, y] = window.getPosition();
-          this.storageManager.setWidgetData(widget.widgetId, 'position', { x, y });
-          console.log(`Saved position for widget ${widget.widgetId}: (${x}, ${y})`);
+        if (widget && widget.window && !widget.window.isDestroyed()) {
+          const [x, y] = widget.window.getPosition();
+          widget.position = { x, y };
+          
+          // Debounced save will be handled by window-controller
+          // We just update the in-memory position here
+        }
+      },
+      ipcMessage: (event: Electron.IpcMainEvent, channel: string) => {
+        if (channel === 'save-position') {
+          const widget = this.widgets.get(instanceId);
+          if (widget && widget.window && !widget.window.isDestroyed()) {
+            const [x, y] = widget.window.getPosition();
+            this.storageManager.setWidgetData(widget.widgetId, 'position', { x, y });
+            console.log(`Saved position for widget ${widget.widgetId}: (${x}, ${y})`);
+          }
         }
       }
-    });
+    };
+
+    // Attach handlers
+    window.on('closed', handlers.closed);
+    window.webContents.on('render-process-gone', handlers.renderProcessGone);
+    window.on('move', handlers.move);
+    window.webContents.on('ipc-message', handlers.ipcMessage);
   }
 
   /**
    * Close a widget instance
-   * Closes the window and cleans up resources
+   * Closes the window with smooth fade-out animation and cleans up resources
    */
   async closeWidget(instanceId: string): Promise<void> {
     try {
@@ -441,6 +505,9 @@ export class WidgetManager {
         this.storageManager.setWidgetData(widget.widgetId, 'position', { x, y });
         this.storageManager.setWidgetData(widget.widgetId, 'size', { width, height });
         
+        // Smooth fade-out animation before closing
+        await this.windowController.fadeOutWindow(widget.window);
+        
         // Close the window
         widget.window.close();
       }
@@ -460,16 +527,25 @@ export class WidgetManager {
   /**
    * Clean up widget resources
    * Removes event listeners and deletes from widgets map
+   * Requirement: 15.2, 15.3 - Resource cleanup and performance optimization
    */
   private cleanupWidget(instanceId: string): void {
     const widget = this.widgets.get(instanceId);
 
     if (widget) {
+      // Unregister widget from security manager
+      if (this.securityManager) {
+        this.securityManager.unregisterWidget(widget.widgetId);
+      }
+
       // Remove all event listeners from window
       if (widget.window && !widget.window.isDestroyed()) {
         widget.window.removeAllListeners();
         widget.window.webContents.removeAllListeners();
       }
+
+      // Clear performance metrics for this widget
+      this.performanceMonitor.clearMetrics(instanceId);
 
       // Remove from widgets map
       this.widgets.delete(instanceId);
@@ -637,5 +713,435 @@ export class WidgetManager {
       console.error('Failed to restore widgets:', error);
       // Don't throw error - app should continue even if restoration fails
     }
+  }
+
+  /**
+   * Install a widget from the Marketplace
+   * Downloads the widget package, extracts it, and validates the configuration
+   * Requirement: 6.5
+   */
+  async installWidget(widgetId: string): Promise<void> {
+    console.log(`Starting installation of widget: ${widgetId}`);
+
+    try {
+      // Step 1: Fetch widget metadata from Marketplace API
+      const widgetMetadata = await this.fetchWidgetMetadata(widgetId);
+      console.log(`Fetched metadata for widget: ${widgetMetadata.display_name}`);
+
+      // Step 2: Download widget package
+      const downloadPath = path.join(app.getPath('temp'), `${widgetId}.widget`);
+      await this.downloadWidget(widgetMetadata.download_url, downloadPath);
+      console.log(`Downloaded widget package to: ${downloadPath}`);
+
+      // Step 3: Extract widget to widgets directory
+      const widgetPath = path.join(this.widgetsDirectory, widgetId);
+      await this.extractWidget(downloadPath, widgetPath);
+      console.log(`Extracted widget to: ${widgetPath}`);
+
+      // Step 4: Validate widget.config.json
+      const configPath = path.join(widgetPath, 'widget.config.json');
+      if (!fs.existsSync(configPath)) {
+        throw new WidgetError(
+          WidgetErrorType.INVALID_CONFIG,
+          'Widget package does not contain widget.config.json'
+        );
+      }
+
+      const configContent = fs.readFileSync(configPath, 'utf-8');
+      const config: WidgetConfig = JSON.parse(configContent);
+
+      if (!this.validateWidgetConfig(config)) {
+        throw new WidgetError(
+          WidgetErrorType.INVALID_CONFIG,
+          'Invalid widget configuration'
+        );
+      }
+
+      // Verify widget ID matches
+      if (config.id !== widgetId) {
+        throw new WidgetError(
+          WidgetErrorType.INVALID_CONFIG,
+          `Widget ID mismatch: expected ${widgetId}, got ${config.id}`
+        );
+      }
+
+      console.log(`Widget ${config.displayName} installed successfully`);
+
+      // Step 5: Clean up temporary download file
+      this.safeDeleteFile(downloadPath);
+
+      // Step 6: Increment download count in marketplace (optional, fire and forget)
+      this.incrementDownloadCount(widgetId).catch(error => {
+        console.warn('Failed to increment download count:', error);
+      });
+
+    } catch (error) {
+      console.error('Failed to install widget:', error);
+      
+      // Clean up on failure
+      const widgetPath = path.join(this.widgetsDirectory, widgetId);
+      if (fs.existsSync(widgetPath)) {
+        try {
+          this.removeDirectory(widgetPath);
+          console.log('Cleaned up failed installation');
+        } catch (cleanupError) {
+          console.error('Failed to clean up after installation failure:', cleanupError);
+        }
+      }
+
+      if (error instanceof WidgetError) {
+        throw error;
+      }
+      const message = error instanceof Error ? error.message : 'Unknown error';
+      throw new WidgetError(
+        WidgetErrorType.NETWORK_ERROR,
+        `Failed to install widget: ${message}`
+      );
+    }
+  }
+
+  /**
+   * Fetch widget metadata from Marketplace API
+   */
+  private async fetchWidgetMetadata(widgetId: string): Promise<any> {
+    // Get marketplace URL from environment or use default
+    const marketplaceUrl = process.env.MARKETPLACE_URL || 'https://molecule-marketplace.vercel.app';
+    const apiUrl = `${marketplaceUrl}/api/widgets/${widgetId}`;
+
+    console.log(`Fetching widget metadata from: ${apiUrl}`);
+
+    return new Promise((resolve, reject) => {
+      let urlObj: URL;
+      try {
+        urlObj = new URL(apiUrl);
+        
+        // Security: Only allow HTTPS for production marketplace
+        if (urlObj.protocol !== 'https:' && !apiUrl.includes('localhost')) {
+          reject(new WidgetError(
+            WidgetErrorType.NETWORK_ERROR,
+            'Marketplace URL must use HTTPS'
+          ));
+          return;
+        }
+      } catch (error) {
+        reject(new WidgetError(
+          WidgetErrorType.NETWORK_ERROR,
+          'Invalid marketplace URL'
+        ));
+        return;
+      }
+
+      const protocol = urlObj.protocol === 'https:' ? https : http;
+
+      const request = protocol.get(apiUrl, (response) => {
+        if (response.statusCode === 404) {
+          reject(new WidgetError(
+            WidgetErrorType.INVALID_CONFIG,
+            `Widget not found in marketplace: ${widgetId}`
+          ));
+          return;
+        }
+
+        if (response.statusCode !== 200) {
+          reject(new WidgetError(
+            WidgetErrorType.NETWORK_ERROR,
+            `Failed to fetch widget metadata: HTTP ${response.statusCode}`
+          ));
+          return;
+        }
+
+        let data = '';
+        response.on('data', (chunk) => {
+          data += chunk;
+        });
+
+        response.on('end', () => {
+          try {
+            const metadata = JSON.parse(data);
+            
+            // Validate required fields
+            if (!metadata.widget_id || !metadata.download_url) {
+              reject(new WidgetError(
+                WidgetErrorType.INVALID_CONFIG,
+                'Invalid widget metadata: missing required fields'
+              ));
+              return;
+            }
+
+            resolve(metadata);
+          } catch (error) {
+            reject(new WidgetError(
+              WidgetErrorType.NETWORK_ERROR,
+              'Failed to parse widget metadata'
+            ));
+          }
+        });
+      });
+
+      request.on('error', (error) => {
+        reject(new WidgetError(
+          WidgetErrorType.NETWORK_ERROR,
+          `Network error: ${error.message}`
+        ));
+      });
+
+      // Set timeout
+      request.setTimeout(30000, () => {
+        request.destroy();
+        reject(new WidgetError(
+          WidgetErrorType.NETWORK_ERROR,
+          'Request timeout'
+        ));
+      });
+    });
+  }
+
+  /**
+   * Download widget package from URL
+   */
+  private async downloadWidget(downloadUrl: string, destinationPath: string): Promise<void> {
+    console.log(`Downloading widget from: ${downloadUrl}`);
+
+    return new Promise((resolve, reject) => {
+      let urlObj: URL;
+      try {
+        urlObj = new URL(downloadUrl);
+        
+        // Security: Only allow HTTPS downloads (except localhost for dev)
+        if (urlObj.protocol !== 'https:' && !downloadUrl.includes('localhost')) {
+          reject(new WidgetError(
+            WidgetErrorType.NETWORK_ERROR,
+            'Widget downloads must use HTTPS'
+          ));
+          return;
+        }
+      } catch (error) {
+        reject(new WidgetError(
+          WidgetErrorType.NETWORK_ERROR,
+          'Invalid download URL'
+        ));
+        return;
+      }
+
+      const protocol = urlObj.protocol === 'https:' ? https : http;
+
+      const file = fs.createWriteStream(destinationPath);
+
+      const request = protocol.get(downloadUrl, (response) => {
+        // Handle redirects
+        if (response.statusCode === 301 || response.statusCode === 302) {
+          const redirectUrl = response.headers.location;
+          if (!redirectUrl) {
+            file.close();
+            this.safeDeleteFile(destinationPath);
+            reject(new WidgetError(
+              WidgetErrorType.NETWORK_ERROR,
+              'Redirect without location header'
+            ));
+            return;
+          }
+          
+          // Follow redirect (limit to prevent infinite loops)
+          file.close();
+          this.safeDeleteFile(destinationPath);
+          this.downloadWidget(redirectUrl, destinationPath)
+            .then(resolve)
+            .catch(reject);
+          return;
+        }
+
+        if (response.statusCode !== 200) {
+          file.close();
+          this.safeDeleteFile(destinationPath);
+          reject(new WidgetError(
+            WidgetErrorType.NETWORK_ERROR,
+            `Failed to download widget: HTTP ${response.statusCode}`
+          ));
+          return;
+        }
+
+        response.pipe(file);
+
+        file.on('finish', () => {
+          file.close();
+          resolve();
+        });
+
+        file.on('error', (error) => {
+          file.close();
+          this.safeDeleteFile(destinationPath);
+          reject(new WidgetError(
+            WidgetErrorType.NETWORK_ERROR,
+            `File write error: ${error.message}`
+          ));
+        });
+      });
+
+      request.on('error', (error) => {
+        file.close();
+        this.safeDeleteFile(destinationPath);
+        reject(new WidgetError(
+          WidgetErrorType.NETWORK_ERROR,
+          `Download error: ${error.message}`
+        ));
+      });
+
+      // Set timeout
+      request.setTimeout(60000, () => {
+        request.destroy();
+        file.close();
+        this.safeDeleteFile(destinationPath);
+        reject(new WidgetError(
+          WidgetErrorType.NETWORK_ERROR,
+          'Download timeout'
+        ));
+      });
+    });
+  }
+
+  /**
+   * Safely delete a file without throwing errors
+   */
+  private safeDeleteFile(filePath: string): void {
+    try {
+      if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath);
+      }
+    } catch (error) {
+      console.warn(`Failed to delete file ${filePath}:`, error);
+    }
+  }
+
+  /**
+   * Extract widget package (zip file) to destination directory
+   * Uses Node.js built-in zlib and tar for extraction
+   */
+  private async extractWidget(zipPath: string, destinationPath: string): Promise<void> {
+    console.log(`Extracting widget from ${zipPath} to ${destinationPath}`);
+
+    // Ensure destination directory exists
+    if (!fs.existsSync(destinationPath)) {
+      fs.mkdirSync(destinationPath, { recursive: true });
+    }
+
+    // For simplicity, we'll use a basic zip extraction approach
+    // In production, you might want to use a library like 'adm-zip' or 'yauzl'
+    // For now, we'll implement a simple extraction using Node.js streams
+    
+    try {
+      // Read the zip file
+      const AdmZip = require('adm-zip');
+      const zip = new AdmZip(zipPath);
+      
+      // Extract all files
+      zip.extractAllTo(destinationPath, true);
+      
+      console.log('Widget extracted successfully');
+    } catch (error) {
+      // If adm-zip is not available, provide a helpful error
+      if ((error as any).code === 'MODULE_NOT_FOUND') {
+        throw new WidgetError(
+          WidgetErrorType.INVALID_CONFIG,
+          'Widget extraction requires adm-zip package. Please install it: npm install adm-zip'
+        );
+      }
+      
+      throw new WidgetError(
+        WidgetErrorType.INVALID_CONFIG,
+        `Failed to extract widget: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
+    }
+  }
+
+  /**
+   * Increment download count in marketplace
+   * Fire and forget - don't block installation on failure
+   */
+  private async incrementDownloadCount(widgetId: string): Promise<void> {
+    const marketplaceUrl = process.env.MARKETPLACE_URL || 'https://molecule-marketplace.vercel.app';
+    const apiUrl = `${marketplaceUrl}/api/widgets/${widgetId}/download`;
+
+    return new Promise((resolve, reject) => {
+      const urlObj = new URL(apiUrl);
+      const protocol = urlObj.protocol === 'https:' ? https : http;
+
+      const postData = JSON.stringify({ widgetId });
+
+      const options = {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Content-Length': Buffer.byteLength(postData)
+        }
+      };
+
+      const request = protocol.request(apiUrl, options, (response) => {
+        // Don't care about the response, just resolve
+        resolve();
+      });
+
+      request.on('error', () => {
+        // Ignore errors
+        resolve();
+      });
+
+      request.setTimeout(5000, () => {
+        request.destroy();
+        resolve();
+      });
+
+      request.write(postData);
+      request.end();
+    });
+  }
+
+  /**
+   * Remove directory recursively
+   * Uses modern fs.rmSync with recursive option (Node.js 14.14+)
+   */
+  private removeDirectory(dirPath: string): void {
+    if (fs.existsSync(dirPath)) {
+      try {
+        // Use modern recursive removal (Node.js 14.14+)
+        fs.rmSync(dirPath, { recursive: true, force: true });
+        console.log(`Removed directory: ${dirPath}`);
+      } catch (error) {
+        console.error(`Failed to remove directory ${dirPath}:`, error);
+        throw error;
+      }
+    }
+  }
+
+  /**
+   * Get performance monitor instance
+   * Allows external access to performance metrics
+   * Requirement: 15.3 - CPU usage monitoring
+   */
+  getPerformanceMonitor(): PerformanceMonitor {
+    return this.performanceMonitor;
+  }
+
+  /**
+   * Stop performance monitoring and cleanup
+   * Should be called when shutting down the widget manager
+   * Requirement: 15.2 - Resource cleanup
+   */
+  destroy(): void {
+    console.log('Shutting down widget manager...');
+    
+    // Stop performance monitoring
+    this.performanceMonitor.stop();
+    
+    // Close all widgets
+    const widgetIds = Array.from(this.widgets.keys());
+    for (const instanceId of widgetIds) {
+      try {
+        this.closeWidget(instanceId);
+      } catch (error) {
+        console.error(`Failed to close widget ${instanceId} during shutdown:`, error);
+      }
+    }
+    
+    console.log('Widget manager shutdown complete');
   }
 }

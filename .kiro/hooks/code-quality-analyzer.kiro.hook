@@ -26,6 +26,6 @@
   },
   "then": {
     "type": "askAgent",
-    "prompt": "Analyze the modified code files for potential improvements. Focus on:\n1. Code smells and anti-patterns\n2. Applicable design patterns\n3. Best practices violations\n4. Readability improvements\n5. Maintainability concerns\n6. Performance optimizations\n7. Preventing over-engineering\n\nProvide specific, actionable suggestions while maintaining existing functionality. Be concise and prioritize the most impactful improvements.\nMake changes to those you think is critical or must-to-do improvements. Make testing so that every changes won't break the app."
+    "prompt": "Analyze the modified code files for potential improvements. Focus on:\n1. Code smells and anti-patterns\n2. Applicable design patterns\n3. Best practices violations\n4. Readability improvements\n5. Maintainability concerns\n6. Performance optimizations\n7. Preventing over-engineering\n\nProvide specific, actionable suggestions while maintaining existing functionality. Be concise and prioritize the most impactful improvements.\nMake changes to those you think is critical or must-to-do improvements. Make testing so that every changes won't break the app.\nDO NOT CREATE DOCS!!"
   }
 }

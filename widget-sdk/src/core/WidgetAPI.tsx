@@ -11,6 +11,8 @@
 
 import React, { createContext, useMemo } from 'react';
 import type { WidgetConfig, SystemMemoryInfo, WidgetAPIBridge } from '../types/window';
+import { ErrorBoundary } from '../components/ErrorBoundary';
+import { WidgetError, toWidgetError } from '../types/errors';
 
 // ============================================================================
 // API Interfaces
@@ -246,50 +248,89 @@ export function createMockAPI(): WidgetAPIContext {
 
 /**
  * Create the real API that bridges to window.widgetAPI (Electron)
+ * Wraps all API calls with proper error handling
  */
 function createElectronAPI(bridge: WidgetAPIBridge): WidgetAPIContext {
+  const widgetId = bridge.widgetId;
+  
   return {
     storage: {
       async get<T = any>(key: string): Promise<T | undefined> {
-        return bridge.storage.get(key);
+        try {
+          return await bridge.storage.get(key);
+        } catch (error) {
+          throw toWidgetError(error, widgetId);
+        }
       },
       
       async set<T = any>(key: string, value: T): Promise<void> {
-        return bridge.storage.set(key, value);
+        try {
+          return await bridge.storage.set(key, value);
+        } catch (error) {
+          throw toWidgetError(error, widgetId);
+        }
       },
       
       async remove(key: string): Promise<void> {
-        return bridge.storage.remove(key);
+        try {
+          return await bridge.storage.remove(key);
+        } catch (error) {
+          throw toWidgetError(error, widgetId);
+        }
       },
     },
 
     settings: {
       async get<T = any>(key: string): Promise<T | undefined> {
-        return bridge.settings.get(key);
+        try {
+          return await bridge.settings.get(key);
+        } catch (error) {
+          throw toWidgetError(error, widgetId);
+        }
       },
       
       async getAll(): Promise<Record<string, any>> {
-        return bridge.settings.getAll();
+        try {
+          return await bridge.settings.getAll();
+        } catch (error) {
+          throw toWidgetError(error, widgetId);
+        }
       },
     },
 
     system: {
       async getCPU(): Promise<number> {
-        return bridge.system.getCPU();
+        try {
+          return await bridge.system.getCPU();
+        } catch (error) {
+          throw toWidgetError(error, widgetId);
+        }
       },
       
       async getMemory(): Promise<SystemMemoryInfo> {
-        return bridge.system.getMemory();
+        try {
+          return await bridge.system.getMemory();
+        } catch (error) {
+          throw toWidgetError(error, widgetId);
+        }
       },
     },
 
     ui: {
       async resize(width: number, height: number): Promise<void> {
-        return bridge.ui.resize(width, height);
+        try {
+          return await bridge.ui.resize(width, height);
+        } catch (error) {
+          throw toWidgetError(error, widgetId);
+        }
       },
       
       async setPosition(x: number, y: number): Promise<void> {
-        return bridge.ui.setPosition(x, y);
+        try {
+          return await bridge.ui.setPosition(x, y);
+        } catch (error) {
+          throw toWidgetError(error, widgetId);
+        }
       },
     },
 
@@ -313,6 +354,8 @@ export interface WidgetProviderProps {
  * - Electron environment (uses window.widgetAPI)
  * - Development/browser environment (uses mock API)
  * 
+ * Includes an ErrorBoundary to catch and handle React errors gracefully.
+ * 
  * @example
  * ```tsx
  * import { WidgetProvider } from '@molecule/widget-sdk';
@@ -325,8 +368,22 @@ export interface WidgetProviderProps {
  *   );
  * }
  * ```
+ * 
+ * @example With custom error handler
+ * ```tsx
+ * <WidgetProvider
+ *   onError={(error) => {
+ *     console.error('Widget error:', error);
+ *     // Send to error tracking service
+ *   }}
+ * >
+ *   <MyWidget />
+ * </WidgetProvider>
+ * ```
  */
-export const WidgetProvider: React.FC<WidgetProviderProps> = ({ children }) => {
+export const WidgetProvider: React.FC<WidgetProviderProps & {
+  onError?: (error: WidgetError) => void;
+}> = ({ children, onError }) => {
   const api = useMemo(() => {
     // Check if we're running in Electron with the widget API bridge
     if (typeof window !== 'undefined' && window.widgetAPI) {
@@ -340,9 +397,24 @@ export const WidgetProvider: React.FC<WidgetProviderProps> = ({ children }) => {
   }, []);
 
   return (
-    <WidgetContext.Provider value={api}>
-      {children}
-    </WidgetContext.Provider>
+    <ErrorBoundary
+      onError={(error, errorInfo) => {
+        // Log error with component stack
+        console.error('[WidgetProvider] Error caught by boundary:', {
+          error: error.toJSON(),
+          componentStack: errorInfo.componentStack
+        });
+        
+        // Call custom error handler if provided
+        if (onError) {
+          onError(error);
+        }
+      }}
+    >
+      <WidgetContext.Provider value={api}>
+        {children}
+      </WidgetContext.Provider>
+    </ErrorBoundary>
   );
 };
 

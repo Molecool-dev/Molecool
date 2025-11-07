@@ -1,28 +1,77 @@
 /**
  * Widget Container Styles
- * Glassmorphism effect with blur and transparency
+ * Enhanced glassmorphism effect with blur and transparency
  */
 
 .container {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-  padding: 16px;
-  color: rgba(255, 255, 255, 0.9);
-  animation: fadeIn 0.2s ease-out;
+  /* Enhanced glassmorphism */
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  
+  /* Improved border and shadow */
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  
+  /* Layout */
+  padding: 20px;
+  color: rgba(255, 255, 255, 0.95);
   box-sizing: border-box;
+  
+  /* Smooth entrance animation */
+  animation: widgetFadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  
+  /* Subtle hover effect */
+  transition: 
+    transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.3s ease;
 }
 
-@keyframes fadeIn {
-  from {
+.container:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 12px 40px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Enhanced fade-in animation with scale and blur */
+@keyframes widgetFadeIn {
+  0% {
     opacity: 0;
-    transform: scale(0.95);
+    transform: scale(0.92) translateY(8px);
+    filter: blur(4px);
   }
-  to {
+  60% {
+    opacity: 0.8;
+    filter: blur(2px);
+  }
+  100% {
     opacity: 1;
-    transform: scale(1);
+    transform: scale(1) translateY(0);
+    filter: blur(0);
   }
+}
+
+/* Fade-out animation for widget removal */
+@keyframes widgetFadeOut {
+  0% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+    filter: blur(0);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.92) translateY(8px);
+    filter: blur(4px);
+  }
+}
+
+/* Class for programmatic fade-out */
+.container.fadeOut {
+  animation: widgetFadeOut 0.3s cubic-bezier(0.4, 0, 1, 1) forwards;
 }

@@ -100,6 +100,42 @@ npm run build
 npm run type-check
 ```
 
+## Error Handling
+
+The Widget SDK provides comprehensive error handling with standardized error types and user-friendly messages. See the [Error Handling Guide](./docs/error-handling.md) for detailed documentation.
+
+### Quick Example
+
+```tsx
+import { useWidgetAPI, isWidgetError, WidgetErrorType } from '@molecule/widget-sdk';
+
+function MyWidget() {
+  const { storage } = useWidgetAPI();
+  
+  const saveData = async () => {
+    try {
+      await storage.set('myKey', 'myValue');
+    } catch (error) {
+      if (isWidgetError(error)) {
+        console.error('Error type:', error.type);
+        console.error('User message:', error.getUserMessage());
+      }
+    }
+  };
+  
+  return <button onClick={saveData}>Save</button>;
+}
+```
+
+### Error Types
+
+- `PERMISSION_DENIED` - Permission required for operation
+- `RATE_LIMIT_EXCEEDED` - Too many API calls
+- `INVALID_CONFIG` - Invalid configuration or parameters
+- `WIDGET_CRASHED` - Widget encountered an error
+- `NETWORK_ERROR` - Network request failed
+- `STORAGE_ERROR` - Storage operation failed
+
 ## API Reference
 
 ### Components
@@ -175,6 +211,42 @@ import { ProgressBar } from '@molecule/widget-sdk';
 - Customizable colors
 - Optional percentage label
 
+#### List and ListItem
+
+Display lists of items with smooth animations and hover effects.
+
+```tsx
+import { Widget } from '@molecule/widget-sdk';
+
+<Widget.List>
+  <Widget.ListItem>Item 1</Widget.ListItem>
+  <Widget.ListItem onClick={() => console.log('clicked')}>
+    Clickable Item
+  </Widget.ListItem>
+  <Widget.ListItem active={true}>Active Item</Widget.ListItem>
+  <Widget.ListItem icon={<Icon />}>Item with Icon</Widget.ListItem>
+</Widget.List>
+```
+
+**List Props:**
+- `children: React.ReactNode` - List items
+- `className?: string` - Optional CSS class for custom styling
+
+**ListItem Props:**
+- `children: React.ReactNode` - Item content
+- `onClick?: () => void` - Optional click handler (makes item clickable)
+- `active?: boolean` - Highlight as active/selected
+- `icon?: React.ReactNode` - Optional icon to display
+- `className?: string` - Optional CSS class for custom styling
+
+**Features:**
+- Staggered fade-in animations (50ms delay per item, up to 6 items)
+- Smooth hover effects with transform (translateX + scale) and shadow
+- Active state styling with blue accent and glow
+- Icon support with scale and rotate animation on hover
+- Glassmorphism design with backdrop blur
+- Smooth transitions using cubic-bezier easing
+
 ### Hooks
 
 #### useInterval
@@ -216,8 +288,36 @@ Access system information (requires permissions).
 ```tsx
 import { useSystemInfo } from '@molecule/widget-sdk';
 
-const memoryInfo = useSystemInfo('memory', 2000); // Update every 2 seconds
+const cpuUsage = useSystemInfo('cpu', 2000); // Returns number (0-100)
+const memoryInfo = useSystemInfo('memory', 2000); // Returns memory object
 ```
+
+**Return Types:**
+- `'cpu'`: Returns `number` - CPU usage percentage (0-100)
+- `'memory'`: Returns `{ total: number, used: number, free: number, usagePercent: number }`
+
+**Parameters:**
+- `type`: `'cpu' | 'memory'` - Type of system information to retrieve
+- `interval`: `number` - Update interval in milliseconds (minimum 100ms recommended)
+
+#### useThrottle
+
+Throttle a value to limit update frequency (performance optimization).
+
+```tsx
+import { useThrottle, useSystemInfo } from '@molecule/widget-sdk';
+
+// Fetch every 100ms but display every 1s
+const cpuUsage = useSystemInfo('cpu', 100);
+const throttledCPU = useThrottle(cpuUsage, 1000);
+```
+
+**Benefits:**
+- Reduces re-renders and improves performance
+- Limits expensive operations
+- Maintains data accuracy while optimizing display updates
+
+See the [useThrottle documentation](./docs/hooks/useThrottle.md) for detailed usage examples.
 
 ### Provider
 
@@ -233,9 +333,137 @@ import { WidgetProvider } from '@molecule/widget-sdk';
 </WidgetProvider>
 ```
 
+### Error Handling
+
+#### WidgetError
+
+Custom error class with additional context.
+
+```tsx
+import { WidgetError, WidgetErrorType } from '@molecule/widget-sdk';
+
+const error = new WidgetError(
+  WidgetErrorType.STORAGE_ERROR,
+  'Failed to save data',
+  'my-widget-id'
+);
+
+console.log(error.getUserMessage()); // User-friendly message
+console.log(error.toJSON()); // Full error details
+```
+
+#### isWidgetError
+
+Type guard to check if an error is a WidgetError.
+
+```tsx
+import { isWidgetError } from '@molecule/widget-sdk';
+
+try {
+  await someOperation();
+} catch (error) {
+  if (isWidgetError(error)) {
+    console.log('Widget error:', error.type);
+  }
+}
+```
+
+#### toWidgetError
+
+Convert any error to a WidgetError.
+
+```tsx
+import { toWidgetError } from '@molecule/widget-sdk';
+
+try {
+  await someOperation();
+} catch (error) {
+  const widgetError = toWidgetError(error, 'my-widget-id');
+  console.error(widgetError.toJSON());
+}
+```
+
+## Performance Optimization
+
+The Widget SDK includes several features to help you build performant widgets:
+
+### 1. Throttling Hook
+
+Use `useThrottle` to limit how often values update:
+
+```tsx
+import { useThrottle, useSystemInfo } from '@molecule/widget-sdk';
+
+function SystemMonitor() {
+  // Fetch data every 100ms for accuracy
+  const cpuUsage = useSystemInfo('cpu', 100);
+  
+  // But only update display every 1 second
+  const throttledCPU = useThrottle(cpuUsage, 1000);
+  
+  return <div>CPU: {throttledCPU}%</div>;
+}
+```
+
+### 2. Optimize Update Intervals
+
+Choose appropriate intervals for different use cases:
+
+```tsx
+// ✅ Good: Reasonable intervals
+useSystemInfo('cpu', 2000);      // Every 2 seconds
+useInterval(fetchWeather, 600000); // Every 10 minutes
+
+// ❌ Bad: Too frequent
+useSystemInfo('cpu', 100);       // Every 100ms (too fast for display)
+useInterval(fetchWeather, 1000); // Every second (unnecessary)
+```
+
+### 3. Memoize Expensive Calculations
+
+```tsx
+import { useMemo } from 'react';
+
+function DataWidget() {
+  const data = useStorage('data');
+  
+  // Memoize expensive calculation
+  const processedData = useMemo(() => {
+    return expensiveProcessing(data);
+  }, [data]);
+  
+  return <div>{processedData}</div>;
+}
+```
+
+### 4. Clean Up Resources
+
+Always clean up subscriptions and timers:
+
+```tsx
+useEffect(() => {
+  const subscription = subscribeToData();
+  
+  return () => subscription.unsubscribe();
+}, []);
+```
+
+### Performance Best Practices
+
+- Use `useThrottle` for high-frequency updates
+- Choose appropriate update intervals (1-2s for system info, 10min for weather)
+- Memoize expensive calculations with `useMemo`
+- Clean up resources in `useEffect` cleanup functions
+- Avoid creating objects in render (use `useMemo` or move outside component)
+- Limit API calls (max 10 per second per widget)
+
+See the [Performance Optimization Guide](../widget-container/docs/performance-optimization.md) for more details.
+
 ## Documentation
 
-Full documentation will be available after implementation is complete.
+- [Error Handling Guide](./docs/error-handling.md) - Comprehensive error handling documentation
+- [useThrottle Hook](./docs/hooks/useThrottle.md) - Detailed throttling documentation
+- Full API documentation will be available after implementation is complete.
 
 ## License
 

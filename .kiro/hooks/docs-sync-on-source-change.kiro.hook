@@ -6,12 +6,22 @@
   "when": {
     "type": "fileEdited",
     "patterns": [
-      "widget-container/src/**/*.ts",
-      "widget-container/package.json",
-      "widget-container/tsconfig.json",
       "**/*.js",
       "**/*.ts",
-      "**/*.tsx"
+      "**/*.jsx",
+      "**/*.tsx",
+      "**/*.py",
+      "**/*.java",
+      "**/*.go",
+      "**/*.rb",
+      "**/*.php",
+      "**/*.cs",
+      "**/*.cpp",
+      "**/*.c",
+      "**/*.h",
+      "**/*.rs",
+      "**/*.swift",
+      "**/*.kt"
     ]
   },
   "then": {

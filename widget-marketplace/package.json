@@ -1,0 +1,39 @@
+{
+  "name": "widget-marketplace",
+  "version": "0.1.0",
+  "description": "Molecule Widget Marketplace - Discover and install desktop widgets",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "verify-db": "tsx scripts/verify-database.ts",
+    "test": "vitest"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.80.0",
+    "next": "16.0.1",
+    "react": "19.2.0",
+    "react-dom": "19.2.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "@vitejs/plugin-react": "^5.1.0",
+    "babel-plugin-react-compiler": "1.0.0",
+    "dotenv": "^17.2.3",
+    "eslint": "^9",
+    "eslint-config-next": "16.0.1",
+    "happy-dom": "^20.0.10",
+    "tailwindcss": "^4",
+    "tsx": "^4.7.0",
+    "typescript": "^5",
+    "vitest": "^3.2.4"
+  }
+}

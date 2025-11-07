@@ -27,6 +27,9 @@ export { List, ListItem } from './List';
 export { Badge } from './Badge';
 export { Link } from './Link';
 
+// Export error handling component (Task 32)
+export { ErrorBoundary } from './ErrorBoundary';
+
 // Export types (Task 9)
 export type { ContainerProps } from './Widget';
 export type { TitleProps, LargeTextProps, SmallTextProps } from './Typography';

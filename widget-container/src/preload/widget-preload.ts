@@ -49,7 +49,7 @@ contextBridge.exposeInMainWorld('widgetAPI', {
   // System API
   system: {
     getCPU: async () => {
-      return handleIPCResponse(ipcRenderer.invoke('system:getCPU'));
+      return handleIPCResponse<number>(ipcRenderer.invoke('system:getCPU'));
     },
     getMemory: async () => {
       return handleIPCResponse(ipcRenderer.invoke('system:getMemory'));

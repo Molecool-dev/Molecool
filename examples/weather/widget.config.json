@@ -1,0 +1,38 @@
+{
+  "id": "weather-widget",
+  "name": "weather",
+  "displayName": "Weather Widget",
+  "version": "1.0.0",
+  "description": "A weather widget that displays current weather conditions",
+  "author": {
+    "name": "Molecule Team",
+    "email": "team@molecule.dev"
+  },
+  "permissions": {
+    "systemInfo": {
+      "cpu": false,
+      "memory": false
+    },
+    "network": {
+      "enabled": true,
+      "allowedDomains": [
+        "https://api.openweathermap.org"
+      ]
+    }
+  },
+  "sizes": {
+    "default": {
+      "width": 300,
+      "height": 200
+    },
+    "min": {
+      "width": 250,
+      "height": 180
+    },
+    "max": {
+      "width": 400,
+      "height": 250
+    }
+  },
+  "entryPoint": "dist/index.html"
+}

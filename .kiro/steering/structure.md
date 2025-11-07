@@ -5,36 +5,52 @@ inclusion: always
 # Code Structure & Conventions
 
 ## Naming Conventions
-- Components: PascalCase (`WidgetProvider`, `Widget.Container`)
-- Hooks: camelCase with `use` prefix (`useWidgetAPI`, `useInterval`)
-- Types/Interfaces: PascalCase (`WidgetConfig`, `SystemMemoryInfo`)
-- Constants: UPPER_SNAKE_CASE (`SDK_VERSION`)
-- Files: `.ts` or `.tsx`, tests in `__tests__/*.test.ts(x)`, types in `*.d.ts`
 
-## Architecture Patterns
+- **Components:** PascalCase (`WidgetProvider`, `Widget.Container`)
+- **Hooks:** camelCase with `use` prefix (`useWidgetAPI`, `useInterval`)
+- **Types/Interfaces:** PascalCase (`WidgetConfig`, `SystemMemoryInfo`)
+- **Constants:** UPPER_SNAKE_CASE (`SDK_VERSION`)
+- **Files:** `.ts` or `.tsx`, tests in `__tests__/*.test.ts(x)`, types in `*.d.ts`
 
-### Electron Security (Widget Container)
-- Context isolation enabled, node integration disabled, sandbox enabled
-- Preload scripts expose APIs via `contextBridge.exposeInMainWorld()`
-- IPC: `ipcRenderer` (renderer) ↔ `ipcMain` (main)
-- Main process: Node.js APIs, app lifecycle
-- Renderer process: Sandboxed, no Node.js access
-- Compiled output preserves source structure in `dist/`
+## Electron Security Architecture
 
-### Widget SDK Patterns
-- Provider Pattern: `WidgetProvider` wraps app, provides context via React Context
-- Compound Components: `Widget.Container`, `Widget.LargeText`, etc.
-- Custom Hooks: Encapsulate API access and state management
+**Security Configuration (Non-Negotiable):**
+- Context isolation: ENABLED
+- Node integration: DISABLED
+- Renderer sandbox: ENABLED
+
+**Communication Pattern:**
+- Main process: Node.js APIs, app lifecycle, IPC handlers
+- Preload scripts: Expose APIs via `contextBridge.exposeInMainWorld()`
+- Renderer process: Sandboxed UI, NO Node.js access
+- IPC flow: `ipcRenderer` (renderer) ↔ `ipcMain` (main)
+
+## Widget SDK Patterns
+
+**Provider Pattern:**
+- `WidgetProvider` wraps app, provides context via React Context
 - Single entry point: `src/index.ts` exports all public APIs
-- Window types: Extend global `Window` interface in `types/window.d.ts`
-- React/ReactDOM are peer dependencies (never bundle)
 
-### Widget Dragging
+**Compound Components:**
+- Use dot notation: `Widget.Container`, `Widget.LargeText`
+
+**Custom Hooks:**
+- Encapsulate API access and state management
+- Always use `use` prefix
+
+**Type Extensions:**
+- Extend global `Window` interface in `types/window.d.ts`
+
+## Widget Dragging
+
 - Hybrid approach: Renderer calculates positions, main process moves windows
-- Screen coordinates with delta-based positioning
-- 500ms debounced auto-save for positions
-- Smart element detection: Skip dragging on buttons, inputs, links, selects
+- Use screen coordinates with delta-based positioning
+- Debounce auto-save by 500ms minimum
+- Skip dragging on interactive elements (buttons, inputs, links, selects)
 
-## Build Artifacts
-- Widget Container: `dist/` (compiled TS), `dist-build/` (installers)
-- Widget SDK: `dist/` (ES module + types + source maps), published as `@molecule/widget-sdk`
+## Code Style
+
+- TypeScript strict mode required
+- Functional components and hooks only (NO class components)
+- React 18+ as peer dependency (NEVER bundle React/ReactDOM)
+- State management: React Context + custom hooks

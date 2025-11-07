@@ -141,17 +141,20 @@ export class StorageManager {
 
   /**
    * Save permissions
-   * To be implemented in Task 4
+   * Persists widget permissions to storage
    */
   savePermissions(widgetId: string, permissions: PermissionSet): void {
-    throw new Error('Not implemented yet - will be implemented in Task 4');
+    const allPermissions = this.store.get('permissions', {});
+    allPermissions[widgetId] = permissions;
+    this.store.set('permissions', allPermissions);
   }
 
   /**
    * Get permissions
-   * To be implemented in Task 4
+   * Retrieves saved widget permissions
    */
   getPermissions(widgetId: string): PermissionSet | null {
-    throw new Error('Not implemented yet - will be implemented in Task 4');
+    const allPermissions = this.store.get('permissions', {});
+    return allPermissions[widgetId] || null;
   }
 }

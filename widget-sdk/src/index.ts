@@ -29,6 +29,7 @@ export {
   useSettings,
   useAllSettings,
   useSystemInfo,
+  useThrottle,
 } from './hooks';
 
 // UI Components exports (Task 9 - First batch of 8 components)
@@ -72,6 +73,15 @@ export {
   type BadgeProps,
   type LinkProps,
 } from './components';
+
+// Error handling exports (Task 32)
+export { ErrorBoundary } from './components/ErrorBoundary';
+export {
+  WidgetError,
+  WidgetErrorType,
+  isWidgetError,
+  toWidgetError
+} from './types/errors';
 
 // Placeholder export to make the package valid
 export const SDK_VERSION = '1.0.0';
