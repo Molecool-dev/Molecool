@@ -53,7 +53,7 @@ The build output is a bundled JavaScript application that can be loaded by the W
    .\install-widget.ps1
    ```
    
-   This copies the built widget to `%APPDATA%\molecule-widget-container\widgets\system-monitor-widget\`
+   This copies the built widget to `%APPDATA%\Molecool-widget-container\widgets\system-monitor-widget\`
 
 3. Open the Widget Manager and create a new System Monitor widget instance
 

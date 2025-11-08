@@ -1,7 +1,7 @@
 {
-  "name": "molecule-widget-container",
+  "name": "Molecool-widget-container",
   "version": "1.0.0",
-  "description": "Molecule Desktop Widget Platform - Widget Container",
+  "description": "Molecool Desktop Widget Platform - Widget Container",
   "main": "dist/main/main.js",
   "scripts": {
     "start": "electron .",
@@ -23,7 +23,7 @@
     "widget",
     "desktop"
   ],
-  "author": "Molecule Team",
+  "author": "Molecool Team",
   "license": "MIT",
   "devDependencies": {
     "@types/jest": "^30.0.0",
@@ -44,12 +44,12 @@
     "uuid": "^13.0.0"
   },
   "build": {
-    "appId": "com.molecule.widget-platform",
-    "productName": "Molecule",
-    "copyright": "Copyright © 2024 Molecule Team",
+    "appId": "com.Molecool.widget-platform",
+    "productName": "Molecool",
+    "copyright": "Copyright © 2024 Molecool Team",
     "protocols": [
       {
-        "name": "Molecule Widget Protocol",
+        "name": "Molecool Widget Protocol",
         "schemes": [
           "widget"
         ]
@@ -84,14 +84,14 @@
       ],
       "icon": "assets/icon.ico",
       "artifactName": "${productName}-Setup-${version}.${ext}",
-      "publisherName": "Molecule Team"
+      "publisherName": "Molecool Team"
     },
     "nsis": {
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
-      "shortcutName": "Molecule",
+      "shortcutName": "Molecool",
       "perMachine": false,
       "installerIcon": "assets/icon.ico",
       "uninstallerIcon": "assets/icon.ico",

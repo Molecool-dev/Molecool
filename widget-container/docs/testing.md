@@ -1,6 +1,6 @@
 # Testing Documentation
 
-This document provides an overview of all testing approaches for the Molecule Desktop Widget Platform.
+This document provides an overview of all testing approaches for the Molecool Desktop Widget Platform.
 
 ## Testing Strategy
 

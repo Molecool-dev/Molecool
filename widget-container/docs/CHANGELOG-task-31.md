@@ -2,7 +2,7 @@
 
 ## Overview
 
-Implemented comprehensive system tray functionality for the Molecule Widget Container, allowing the application to run in the background even when all windows are closed.
+Implemented comprehensive system tray functionality for the Molecool Widget Container, allowing the application to run in the background even when all windows are closed.
 
 ## Changes Made
 
@@ -22,7 +22,7 @@ Implemented comprehensive system tray functionality for the Molecule Widget Cont
 - Creates system tray icon with fallback mechanism
 - Attempts to load custom icon from `assets/tray-icon.png`
 - Falls back to programmatically generated 16x16 icon (blue border, white center)
-- Sets tooltip: "Molecule Widget Platform"
+- Sets tooltip: "Molecool Widget Platform"
 - Creates context menu with "Open Manager" and "Exit" options
 - Registers double-click handler for Windows/Linux
 
@@ -93,7 +93,7 @@ Implemented comprehensive system tray functionality for the Molecule Widget Cont
 - Tray icon displays in Windows notification area / macOS menu bar
 - Custom icon support via `assets/tray-icon.png`
 - Fallback to programmatically generated icon
-- Tooltip shows "Molecule Widget Platform"
+- Tooltip shows "Molecool Widget Platform"
 
 ### ✅ Requirement 10.2: Context Menu
 - Right-click shows context menu

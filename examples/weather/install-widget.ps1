@@ -4,7 +4,7 @@
 $ErrorActionPreference = "Stop"
 
 # Get the user data directory for Electron app
-$appName = "molecule-widget-container"
+$appName = "Molecool-widget-container"
 $userDataPath = "$env:APPDATA\$appName"
 $widgetsPath = "$userDataPath\widgets\weather-widget"
 

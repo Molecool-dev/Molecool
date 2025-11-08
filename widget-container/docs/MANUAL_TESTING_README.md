@@ -1,6 +1,6 @@
 # Manual Testing Documentation
 
-This directory contains comprehensive documentation for manually testing the Molecule Desktop Widget Platform.
+This directory contains comprehensive documentation for manually testing the Molecool Desktop Widget Platform.
 
 ## Quick Start
 

@@ -93,7 +93,7 @@ From Widget SDK:
 ## Technical Implementation
 
 ### Dependencies
-- `@molecule/widget-sdk` - Core SDK with hooks and components
+- `@Molecool/widget-sdk` - Core SDK with hooks and components
 - `react` ^18.3.1 - UI framework
 - `react-dom` ^18.3.1 - React DOM renderer
 
@@ -111,7 +111,7 @@ powershell -ExecutionPolicy Bypass -File install-widget.ps1
 
 This copies the built widget to:
 ```
-%APPDATA%\molecule-widget-container\widgets\system-monitor-widget\
+%APPDATA%\Molecool-widget-container\widgets\system-monitor-widget\
 ```
 
 ## Testing

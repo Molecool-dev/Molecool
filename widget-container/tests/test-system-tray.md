@@ -21,7 +21,7 @@ This document provides a comprehensive checklist for manually testing the system
 **Expected Result:**
 - ✅ Tray icon is visible
 - ✅ Icon is recognizable (blue border with white center, or custom icon if provided)
-- ✅ Hovering shows tooltip: "Molecule Widget Platform"
+- ✅ Hovering shows tooltip: "Molecool Widget Platform"
 
 **Status:** [ ] Pass [ ] Fail
 
@@ -235,7 +235,7 @@ _______________________________________________________________________
 
 **Steps:**
 1. Hide or close the manager window
-2. Click the Molecule icon in the dock
+2. Click the Molecool icon in the dock
 3. Observe what happens
 
 **Expected Result:**

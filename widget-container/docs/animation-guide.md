@@ -2,7 +2,7 @@
 
 ## Animation Timing Reference
 
-This guide provides a quick reference for all animations in the Molecule platform.
+This guide provides a quick reference for all animations in the Molecool platform.
 
 ## Timing Chart
 
@@ -294,4 +294,4 @@ export const MyComponent = () => {
 
 ## Conclusion
 
-This animation system provides a consistent, performant, and delightful user experience across the entire Molecule platform. All animations are carefully timed and eased to feel natural and premium.
+This animation system provides a consistent, performant, and delightful user experience across the entire Molecool platform. All animations are carefully timed and eased to feel natural and premium.

@@ -5,8 +5,8 @@
   "version": "1.0.0",
   "description": "A system monitor widget that displays CPU and memory usage",
   "author": {
-    "name": "Molecule Team",
-    "email": "team@molecule.dev"
+    "name": "Molecool Team",
+    "email": "team@Molecool.dev"
   },
   "permissions": {
     "systemInfo": {

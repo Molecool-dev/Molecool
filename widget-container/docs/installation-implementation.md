@@ -2,7 +2,7 @@
 
 ## Overview
 
-Task 30 implements the complete widget download and installation system for the Molecule Widget Platform. This allows users to install widgets directly from the Marketplace using the `widget://install/{widgetId}` protocol.
+Task 30 implements the complete widget download and installation system for the Molecool Widget Platform. This allows users to install widgets directly from the Marketplace using the `widget://install/{widgetId}` protocol.
 
 ## Implementation Summary
 
@@ -191,11 +191,11 @@ widget-name.widget/
 
 ### Environment Variables
 
-- `MARKETPLACE_URL`: Marketplace base URL (default: https://molecule-marketplace.vercel.app)
+- `MARKETPLACE_URL`: Marketplace base URL (default: https://Molecool-marketplace.vercel.app)
 
 ### File Locations
 
-- **Widgets Directory**: `%APPDATA%/molecule-widget-container/widgets/`
+- **Widgets Directory**: `%APPDATA%/Molecool-widget-container/widgets/`
 - **Temp Downloads**: `%TEMP%/{widgetId}.widget`
 
 ### Timeouts

@@ -2,7 +2,7 @@
 
 ## Overview
 
-Task 41 has been successfully completed. The Molecule Widget Container now has a complete packaging and building system for creating distributable installers for Windows and macOS.
+Task 41 has been successfully completed. The Molecool Widget Container now has a complete packaging and building system for creating distributable installers for Windows and macOS.
 
 ## What Was Implemented
 
@@ -170,8 +170,8 @@ npm run package:mac
 ### Output
 
 Installers are created in `dist-build/`:
-- Windows: `Molecule-Setup-1.0.0.exe`
-- macOS: `Molecule-1.0.0-x64.dmg` and `Molecule-1.0.0-arm64.dmg`
+- Windows: `Molecool-Setup-1.0.0.exe`
+- macOS: `Molecool-1.0.0-x64.dmg` and `Molecool-1.0.0-arm64.dmg`
 
 ## Testing Results
 

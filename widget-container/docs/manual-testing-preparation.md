@@ -49,7 +49,7 @@ The script performs the following checks:
 ### All Checks Pass ✅
 
 ```
-=== Molecule Manual Testing Preparation ===
+=== Molecool Manual Testing Preparation ===
 
 Checking Widget Container...
   ✓ Widget Container dist/
@@ -102,7 +102,7 @@ Test Execution Report:
 ### Some Checks Fail ❌
 
 ```
-=== Molecule Manual Testing Preparation ===
+=== Molecool Manual Testing Preparation ===
 
 Checking Widget Container...
   ✓ Widget Container dist/

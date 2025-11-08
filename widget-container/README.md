@@ -1,4 +1,4 @@
-# Molecule Widget Container
+# Molecool Widget Container
 
 The Electron-based desktop application that manages and runs widgets on your desktop.
 

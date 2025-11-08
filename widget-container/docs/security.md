@@ -1,6 +1,6 @@
 # Security Configuration
 
-This document describes the security features implemented in the Molecule Widget Container, including Content Security Policy (CSP) and network filtering.
+This document describes the security features implemented in the Molecool Widget Container, including Content Security Policy (CSP) and network filtering.
 
 ## Overview
 

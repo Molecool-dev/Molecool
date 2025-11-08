@@ -48,7 +48,7 @@ function checkComponent(name, distPath, buildCommand) {
 }
 
 function main() {
-  log('\n=== Molecule Manual Testing Preparation ===\n', 'cyan');
+  log('\n=== Molecool Manual Testing Preparation ===\n', 'cyan');
 
   const rootDir = path.join(__dirname, '..', '..');
   const checks = [];

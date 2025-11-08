@@ -5,8 +5,8 @@
   "version": "1.0.0",
   "description": "A weather widget that displays current weather conditions",
   "author": {
-    "name": "Molecule Team",
-    "email": "team@molecule.dev"
+    "name": "Molecool Team",
+    "email": "team@Molecool.dev"
   },
   "permissions": {
     "systemInfo": {

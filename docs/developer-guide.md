@@ -1,6 +1,6 @@
 # Widget Developer Guide
 
-Complete guide to building widgets for the Molecule platform.
+Complete guide to building widgets for the Molecool platform.
 
 ## Table of Contents
 
@@ -36,7 +36,7 @@ npm init -y
 
 ```bash
 # Core dependencies
-npm install @molecule/widget-sdk react react-dom
+npm install @Molecool/widget-sdk react react-dom
 
 # Development dependencies
 npm install -D vite @vitejs/plugin-react typescript @types/react @types/react-dom
@@ -110,7 +110,7 @@ Create `src/index.tsx`:
 ```tsx
 import React from 'react';
 import { createRoot } from 'react-dom/client';
-import { WidgetProvider, Widget } from '@molecule/widget-sdk';
+import { WidgetProvider, Widget } from '@Molecool/widget-sdk';
 
 const MyWidget: React.FC = () => {
   return (
@@ -183,7 +183,7 @@ interface StorageAPI {
 **Example:**
 
 ```tsx
-import { useWidgetAPI } from '@molecule/widget-sdk';
+import { useWidgetAPI } from '@Molecool/widget-sdk';
 
 const MyWidget = () => {
   const { storage } = useWidgetAPI();
@@ -639,7 +639,7 @@ All components accept `className` prop for custom styling:
 Access all widget APIs.
 
 ```tsx
-import { useWidgetAPI } from '@molecule/widget-sdk';
+import { useWidgetAPI } from '@Molecool/widget-sdk';
 
 const MyWidget = () => {
   const { storage, settings, system, ui, widgetId, config } = useWidgetAPI();
@@ -653,7 +653,7 @@ const MyWidget = () => {
 Reactive storage hook with automatic state management.
 
 ```tsx
-import { useStorage } from '@molecule/widget-sdk';
+import { useStorage } from '@Molecool/widget-sdk';
 
 const MyWidget = () => {
   const [count, setCount, removeCount] = useStorage('count', 0);
@@ -673,7 +673,7 @@ const MyWidget = () => {
 Reactive settings hook.
 
 ```tsx
-import { useSettings } from '@molecule/widget-sdk';
+import { useSettings } from '@Molecool/widget-sdk';
 
 const WeatherWidget = () => {
   const [city] = useSettings('city', 'Taipei');
@@ -688,7 +688,7 @@ const WeatherWidget = () => {
 Safe interval hook with automatic cleanup.
 
 ```tsx
-import { useInterval } from '@molecule/widget-sdk';
+import { useInterval } from '@Molecool/widget-sdk';
 
 const ClockWidget = () => {
   const [time, setTime] = useState(new Date());
@@ -706,7 +706,7 @@ const ClockWidget = () => {
 Fetch system information with automatic refresh.
 
 ```tsx
-import { useSystemInfo } from '@molecule/widget-sdk';
+import { useSystemInfo } from '@Molecool/widget-sdk';
 
 const SystemMonitor = () => {
   const cpuUsage = useSystemInfo('cpu', 2000); // Refresh every 2s
@@ -726,7 +726,7 @@ const SystemMonitor = () => {
 Throttle rapid value changes.
 
 ```tsx
-import { useThrottle } from '@molecule/widget-sdk';
+import { useThrottle } from '@Molecool/widget-sdk';
 
 const SearchWidget = () => {
   const [query, setQuery] = useState('');
@@ -848,7 +848,7 @@ Use Vitest and React Testing Library:
 ```tsx
 // MyWidget.test.tsx
 import { render, screen } from '@testing-library/react';
-import { WidgetProvider } from '@molecule/widget-sdk';
+import { WidgetProvider } from '@Molecool/widget-sdk';
 import MyWidget from './MyWidget';
 
 describe('MyWidget', () => {
@@ -870,7 +870,7 @@ Test API interactions:
 
 ```tsx
 import { renderHook } from '@testing-library/react';
-import { useStorage } from '@molecule/widget-sdk';
+import { useStorage } from '@Molecool/widget-sdk';
 
 describe('useStorage', () => {
   it('stores and retrieves values', async () => {
@@ -956,7 +956,7 @@ Users can install it by clicking the Install button on the Marketplace.
 
 ```tsx
 import React, { useState } from 'react';
-import { WidgetProvider, Widget, useInterval } from '@molecule/widget-sdk';
+import { WidgetProvider, Widget, useInterval } from '@Molecool/widget-sdk';
 
 const ClockWidget = () => {
   const [time, setTime] = useState(new Date());
@@ -986,7 +986,7 @@ export default () => (
 
 ```tsx
 import React from 'react';
-import { WidgetProvider, Widget, useStorage } from '@molecule/widget-sdk';
+import { WidgetProvider, Widget, useStorage } from '@Molecool/widget-sdk';
 
 const CounterWidget = () => {
   const [count, setCount] = useStorage('count', 0);
@@ -1039,8 +1039,8 @@ export default () => (
 
 - 📖 [API Reference](api-reference.md)
 - 🏗️ [Architecture Guide](architecture.md)
-- 💬 [Community Forum](https://forum.molecule-widgets.com)
-- 🐛 [Report Issues](https://github.com/your-org/molecule/issues)
+- 💬 [Community Forum](https://forum.Molecool-widgets.com)
+- 🐛 [Report Issues](https://github.com/your-org/Molecool/issues)
 
 ---
 

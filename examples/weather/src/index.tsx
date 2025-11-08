@@ -8,7 +8,7 @@ import {
   LargeText,
   SmallText,
   ErrorBoundary
-} from '@molecule/widget-sdk';
+} from '@Molecool/widget-sdk';
 import styles from './App.module.css';
 
 interface WeatherData {

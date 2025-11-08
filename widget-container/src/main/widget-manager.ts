@@ -805,7 +805,7 @@ export class WidgetManager {
    */
   private async fetchWidgetMetadata(widgetId: string): Promise<any> {
     // Get marketplace URL from environment or use default
-    const marketplaceUrl = process.env.MARKETPLACE_URL || 'https://molecule-marketplace.vercel.app';
+    const marketplaceUrl = process.env.MARKETPLACE_URL || 'https://Molecool-marketplace.vercel.app';
     const apiUrl = `${marketplaceUrl}/api/widgets/${widgetId}`;
 
     console.log(`Fetching widget metadata from: ${apiUrl}`);
@@ -1058,7 +1058,7 @@ export class WidgetManager {
    * Fire and forget - don't block installation on failure
    */
   private async incrementDownloadCount(widgetId: string): Promise<void> {
-    const marketplaceUrl = process.env.MARKETPLACE_URL || 'https://molecule-marketplace.vercel.app';
+    const marketplaceUrl = process.env.MARKETPLACE_URL || 'https://Molecool-marketplace.vercel.app';
     const apiUrl = `${marketplaceUrl}/api/widgets/${widgetId}/download`;
 
     return new Promise((resolve, reject) => {

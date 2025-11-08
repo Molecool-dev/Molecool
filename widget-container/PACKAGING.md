@@ -1,6 +1,6 @@
 # Packaging Guide
 
-Quick reference for building and packaging Molecule Widget Container.
+Quick reference for building and packaging Molecool Widget Container.
 
 ## Quick Commands
 
@@ -57,14 +57,14 @@ Compiles TypeScript and prepares distribution files in `dist/`.
 npm run package:win
 ```
 
-Creates: `dist-build/Molecule-Setup-{version}.exe`
+Creates: `dist-build/Molecool-Setup-{version}.exe`
 
 **macOS:**
 ```bash
 npm run package:mac
 ```
 
-Creates: `dist-build/Molecule-{version}-{arch}.dmg`
+Creates: `dist-build/Molecool-{version}-{arch}.dmg`
 
 ## Output Files
 
@@ -72,9 +72,9 @@ After packaging, installers are in `dist-build/`:
 
 ```
 dist-build/
-├── Molecule-Setup-1.0.0.exe          # Windows installer
-├── Molecule-1.0.0-x64.dmg            # macOS Intel
-└── Molecule-1.0.0-arm64.dmg          # macOS Apple Silicon
+├── Molecool-Setup-1.0.0.exe          # Windows installer
+├── Molecool-1.0.0-x64.dmg            # macOS Intel
+└── Molecool-1.0.0-arm64.dmg          # macOS Apple Silicon
 ```
 
 ## Icon Requirements

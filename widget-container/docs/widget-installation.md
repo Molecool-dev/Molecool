@@ -118,7 +118,7 @@ All errors are displayed to the user via dialog boxes.
 
 ## Environment Variables
 
-- `MARKETPLACE_URL`: URL of the Marketplace (default: https://molecule-marketplace.vercel.app)
+- `MARKETPLACE_URL`: URL of the Marketplace (default: https://Molecool-marketplace.vercel.app)
 
 ## Testing
 
@@ -127,7 +127,7 @@ To test widget installation:
 1. Start the Widget Container: `npm run dev`
 2. Open a browser and navigate to: `widget://install/clock-widget`
 3. Confirm the installation dialog
-4. Check the widgets directory: `%APPDATA%/molecule-widget-container/widgets/`
+4. Check the widgets directory: `%APPDATA%/Molecool-widget-container/widgets/`
 
 ## Implementation Details
 
@@ -138,7 +138,7 @@ To test widget installation:
 
 ### File Locations
 
-- **Widgets Directory**: `%APPDATA%/molecule-widget-container/widgets/`
+- **Widgets Directory**: `%APPDATA%/Molecool-widget-container/widgets/`
 - **Temp Downloads**: `%TEMP%/{widgetId}.widget`
 
 ### Download Timeout

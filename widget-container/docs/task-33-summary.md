@@ -149,7 +149,7 @@ function useThrottle<T>(value: T, delay: number): T
 
 **Example Usage**:
 ```typescript
-import { useThrottle, useSystemInfo } from '@molecule/widget-sdk';
+import { useThrottle, useSystemInfo } from '@Molecool/widget-sdk';
 
 function SystemMonitor() {
   // Fetch every 100ms for accuracy
@@ -254,7 +254,7 @@ widgetManager.destroy(); // Stops monitoring and cleans up
 ### For Widget Developers
 
 ```typescript
-import { useThrottle, useSystemInfo } from '@molecule/widget-sdk';
+import { useThrottle, useSystemInfo } from '@Molecool/widget-sdk';
 
 function MyWidget() {
   // Throttle system info updates

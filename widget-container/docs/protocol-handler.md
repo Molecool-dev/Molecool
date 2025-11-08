@@ -153,7 +153,7 @@ The protocol is registered in `package.json` for production builds:
   "build": {
     "protocols": [
       {
-        "name": "Molecule Widget Protocol",
+        "name": "Molecool Widget Protocol",
         "schemes": ["widget"]
       }
     ]

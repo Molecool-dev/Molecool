@@ -1,6 +1,6 @@
 # Clock Widget
 
-A simple clock widget for the Molecule Desktop Widget Platform that displays the current time and date.
+A simple clock widget for the Molecool Desktop Widget Platform that displays the current time and date.
 
 ## Features
 
@@ -47,7 +47,7 @@ The widget uses Vite for building and development. Configuration is in `vite.con
 ## Requirements
 
 - React 18+
-- Molecule Widget SDK
+- Molecool Widget SDK
 
 ## Permissions
 

@@ -134,7 +134,7 @@ try {
 The `ErrorBoundary` component catches React errors and displays a fallback UI:
 
 ```tsx
-import { WidgetProvider, ErrorBoundary } from '@molecule/widget-sdk';
+import { WidgetProvider, ErrorBoundary } from '@Molecool/widget-sdk';
 
 function App() {
   return (
@@ -164,7 +164,7 @@ The `WidgetProvider` automatically includes an `ErrorBoundary`, so you don't nee
 4. **Log errors**: Always log errors for debugging
 
 ```typescript
-import { useWidgetAPI, isWidgetError } from '@molecule/widget-sdk';
+import { useWidgetAPI, isWidgetError } from '@Molecool/widget-sdk';
 
 function MyWidget() {
   const { storage } = useWidgetAPI();

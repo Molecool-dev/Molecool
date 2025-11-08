@@ -1,6 +1,6 @@
-# Molecule Architecture Documentation
+# Molecool Architecture Documentation
 
-Comprehensive technical architecture guide for the Molecule Desktop Widget Platform.
+Comprehensive technical architecture guide for the Molecool Desktop Widget Platform.
 
 ## Table of Contents
 
@@ -14,7 +14,7 @@ Comprehensive technical architecture guide for the Molecule Desktop Widget Platf
 
 ## System Overview
 
-Molecule is a desktop widget platform built on Electron and React, consisting of four main components:
+Molecool is a desktop widget platform built on Electron and React, consisting of four main components:
 
 1. **Widget Container** - Electron application managing widget lifecycle
 2. **Widget SDK** - React library for building widgets
@@ -43,7 +43,7 @@ Molecule is a desktop widget platform built on Electron and React, consisting of
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                        Molecule Platform                         │
+│                        Molecool Platform                         │
 └─────────────────────────────────────────────────────────────────┘
                                 │
                 ┌───────────────┼───────────────┐
@@ -911,7 +911,7 @@ setInterval(() => {
 
 ## Conclusion
 
-The Molecule architecture is designed for:
+The Molecool architecture is designed for:
 
 - **Security:** Multi-layer protection with sandboxing and permissions
 - **Performance:** Optimized for multiple concurrent widgets

@@ -1,783 +1,527 @@
 # Implementation Plan
 
-## Phase 1: 核心基礎設施
+## Phase 1: Core Infrastructure
 
-- [x] 1. 設置 Widget Container 專案結構
-
-
-
-
-
-  - 初始化 Electron 專案，配置 TypeScript 和基本的 package.json
-  - 創建 src/main、src/renderer、src/preload 目錄結構
-  - 配置 electron-builder 用於打包
-  - 安裝核心依賴：electron、electron-store
+- [x] 1. Set up Widget Container project structure
+  - Initialize Electron project, configure TypeScript and basic package.json
+  - Create src/main, src/renderer, src/preload directory structure
+  - Configure electron-builder for packaging
+  - Install core dependencies: electron, electron-store
   - _Requirements: 1.1, 1.2_
 
-- [x] 2. 實現基礎視窗系統
-
-
-
-
-
-  - 創建 window-controller.js，實現 createWidgetWindow 和 createManagerWindow 方法
-  - 配置 BrowserWindow 的安全選項（nodeIntegration: false, contextIsolation: true, sandbox: true）
-  - 實現毛玻璃效果和透明背景
-  - 創建無邊框、置頂的 Widget 視窗
+- [x] 2. Implement basic window system
+  - Create window-controller.js, implement createWidgetWindow and createManagerWindow methods
+  - Configure BrowserWindow security options (nodeIntegration: false, contextIsolation: true, sandbox: true)
+  - Implement glassmorphism effect and transparent background
+  - Create frameless, always-on-top widget windows
   - _Requirements: 1.2, 2.1, 2.2, 12.1, 12.2, 12.3, 12.4_
 
-- [x] 3. 建立 IPC 通訊基礎
-
-
-
-
-
-  - 創建 ipc-handlers.js，設置 ipcMain.handle 的基本結構
-  - 實現 widget-preload.js，使用 contextBridge 暴露安全的 API
-  - 實現 manager-preload.js，為 Manager 提供 API
-  - 測試基本的 renderer → main → renderer 通訊流程
+- [x] 3. Establish IPC communication foundation
+  - Create ipc-handlers.js, set up basic ipcMain.handle structure
+  - Implement widget-preload.js, expose secure API using contextBridge
+  - Implement manager-preload.js, provide API for Manager
+  - Test basic renderer → main → renderer communication flow
   - _Requirements: 1.3, 2.4, 14.1, 14.2, 14.3, 14.4, 14.5_
 
-- [x] 4. 實現數據持久化
-
-
-
-
-
-  - 創建 storage.js，初始化 electron-store
-  - 實現 setWidgetData、getWidgetData、deleteWidgetData 方法
-  - 實現 saveWidgetState 和 getWidgetState 方法
-  - 在 IPC handlers 中添加 storage:get、storage:set、storage:delete handlers
+- [x] 4. Implement data persistence
+  - Create storage.js, initialize electron-store
+  - Implement setWidgetData, getWidgetData, deleteWidgetData methods
+  - Implement saveWidgetState and getWidgetState methods
+  - Add storage:get, storage:set, storage:delete handlers in IPC handlers
   - _Requirements: 1.4, 4.4_
 
-- [x] 5. 實現 Widget 視窗拖曳功能
-
-
-
-
-
-
-
-
-
-
-  - 在 window-controller.ts 中實現 enableDragging 方法
-  - 監聽視窗移動事件，更新 Widget 位置
-  - 實現位置自動儲存到 storage（500ms 防抖）
-  - 智能檢測互動元素，避免拖曳衝突
-  - 使用 delta-based 定位避免漂移
-  - 測試拖曳功能和位置持久化
+- [x] 5. Implement widget window dragging functionality
+  - Implement enableDragging method in window-controller.ts
+  - Listen to window move events, update widget position
+  - Implement automatic position saving to storage (500ms debounce)
+  - Smart detection of interactive elements to avoid drag conflicts
+  - Use delta-based positioning to avoid drift
+  - Test dragging functionality and position persistence
   - _Requirements: 1.3, 1.4_
-  
 
-## Phase 2: Widget SDK 核心
+## Phase 2: Widget SDK Core
 
-- [x] 6. 設置 Widget SDK 專案
-
-
-
-
-
-  - 初始化 React + TypeScript + Vite 專案
-  - 配置 package.json，設置為 library 模式
-  - 配置 vite.config.ts，設置 build.lib 選項
-  - 設置 TypeScript 類型定義導出
+- [x] 6. Set up Widget SDK project
+  - Initialize React + TypeScript + Vite project
+  - Configure package.json, set to library mode
+  - Configure vite.config.ts, set build.lib options
+  - Set up TypeScript type definition exports
   - _Requirements: 4.1, 11.5_
 
-- [x] 7. 實現核心 API 介面
-
-
-
-
-
-
-
-
-
-
-
-  - 創建 core/WidgetAPI.ts，定義 WidgetAPIContext、StorageAPI、SettingsAPI、SystemAPI、UIAPI 介面
-  - 實現 WidgetProvider 元件，創建 React Context
-  - 實現開發模式的模擬 API（createMockAPI）
-  - 實現 API 與 window.widgetAPI 的橋接
+- [x] 7. Implement core API interfaces
+  - Create core/WidgetAPI.ts, define WidgetAPIContext, StorageAPI, SettingsAPI, SystemAPI, UIAPI interfaces
+  - Implement WidgetProvider component, create React Context
+  - Implement development mode mock API (createMockAPI)
+  - Implement API bridging with window.widgetAPI
   - _Requirements: 4.1, 4.2, 11.4_
 
-- [x] 8. 實現基礎 React Hooks
-
-
-
-
-  - 創建 hooks/useWidgetAPI.ts
-  - 創建 hooks/useInterval.ts，實現定時器 Hook
-  - 創建 hooks/useStorage.ts，實現響應式 storage Hook
-  - 創建 hooks/useSettings.ts
+- [x] 8. Implement basic React Hooks
+  - Create hooks/useWidgetAPI.ts
+  - Create hooks/useInterval.ts, implement timer Hook
+  - Create hooks/useStorage.ts, implement reactive storage Hook
+  - Create hooks/useSettings.ts
   - _Requirements: 4.3_
 
-- [x] 9. 實現基礎 UI 元件（第一批 8 個）
-
-
-
-
-
-  - 創建 components/Widget.tsx，實現 Container 元件
-  - 創建 components/Typography.tsx，實現 Title、LargeText、SmallText 元件
-  - 創建 components/Buttons.tsx，實現 Button 元件
-  - 創建 components/Layout.tsx，實現 Grid、Divider、Header 元件
-  - 為所有元件添加 CSS Modules 樣式，應用毛玻璃效果
+- [x] 9. Implement basic UI components (first batch of 8)
+  - Create components/Widget.tsx, implement Container component
+  - Create components/Typography.tsx, implement Title, LargeText, SmallText components
+  - Create components/Buttons.tsx, implement Button component
+  - Create components/Layout.tsx, implement Grid, Divider, Header components
+  - Add CSS Modules styles for all components, apply glassmorphism effect
   - _Requirements: 4.2, 12.5_
 
-- [x] 10. 實現進階 UI 元件（第二批 7 個）
-
-
-
-
-
-  - 創建 components/DataDisplay.tsx，實現 Stat、ProgressBar 元件
-  - 創建 components/Forms.tsx，實現 Input、Select 元件
-  - 創建 components/List.tsx，實現 List、ListItem 元件
-  - 創建 components/Badge.tsx 和 Link.tsx
-  - 為所有元件添加 TypeScript 類型定義和樣式
+- [x] 10. Implement advanced UI components (second batch of 7)
+  - Create components/DataDisplay.tsx, implement Stat, ProgressBar components
+  - Create components/Forms.tsx, implement Input, Select components
+  - Create components/List.tsx, implement List, ListItem components
+  - Create components/Badge.tsx and Link.tsx
+  - Add TypeScript type definitions and styles for all components
   - _Requirements: 4.2_
 
+## Phase 3: Widget Manager and Lifecycle
 
-## Phase 3: Widget Manager 和生命週期
-
-- [x] 11. 實現 Widget Manager 核心邏輯
-
-
-
-
-
-  - 創建 widget-manager.js，定義 WidgetInstance 介面
-  - 實現 loadInstalledWidgets 方法，掃描 widgets 目錄
-  - 實現 createWidget 方法，創建 Widget 視窗並載入內容
-  - 實現 closeWidget 方法，清理資源
-  - 實現 getRunningWidgets 方法
+- [x] 11. Implement Widget Manager core logic
+  - Create widget-manager.js, define WidgetInstance interface
+  - Implement loadInstalledWidgets method, scan widgets directory
+  - Implement createWidget method, create widget window and load content
+  - Implement closeWidget method, clean up resources
+  - Implement getRunningWidgets method
   - _Requirements: 1.1, 1.5_
 
-- [x] 12. 實現 Widget 狀態管理
-
-
-
-
-
-  - 在 widget-manager.js 中實現 saveWidgetState 方法
-  - 實現 restoreWidgets 方法，在應用啟動時恢復上次的 Widget
-  - 在 Widget 關閉時自動儲存狀態
-  - 測試重啟後 Widget 位置和狀態恢復
+- [x] 12. Implement widget state management
+  - Implement saveWidgetState method in widget-manager.js
+  - Implement restoreWidgets method, restore widgets from last session on app startup
+  - Automatically save state when widget closes
+  - Test widget position and state restoration after restart
   - _Requirements: 1.4, 1.5_
 
-- [x] 13. 創建 Widget Manager UI
-
-
-
-
-
-  - 創建 src/renderer/manager.html，設計 Manager 介面
-  - 創建 src/renderer/manager.js，實現 Widget 列表顯示
-  - 實現「創建 Widget」按鈕，調用 IPC 創建 Widget
-  - 實現「關閉 Widget」功能
-  - 顯示運行中的 Widget 列表
+- [x] 13. Create Widget Manager UI
+  - Create src/renderer/manager.html, design Manager interface
+  - Create src/renderer/manager.js, implement widget list display
+  - Implement "Create Widget" button, call IPC to create widget
+  - Implement "Close Widget" functionality
+  - Display running widget list
   - _Requirements: 1.1, 1.5_
 
-- [x] 14. 實現 widget.config.json 驗證
-
-
-
-
-
-  - 在 widget-manager.js 中添加 validateConfig 方法
-  - 驗證必要欄位：id, name, displayName, version, permissions, sizes
-  - 驗證 permissions 結構
-  - 拒絕載入無效的 Widget 配置
+- [x] 14. Implement widget.config.json validation
+  - Add validateConfig method in widget-manager.js
+  - Validate required fields: id, name, displayName, version, permissions, sizes
+  - Validate permissions structure
+  - Reject loading of invalid widget configurations
   - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5_
 
+## Phase 4: System API and Permissions
 
-## Phase 4: 系統 API 和權限
-
-- [x] 15. 實現系統資訊 API
-
-
-
-
-  - 創建 system-api.ts，使用 Node.js os 模組
-  - 實現 getCPUUsage 方法，計算 CPU 使用率（delta-based 計算）
-  - 實現 getMemoryInfo 方法，返回記憶體資訊
-  - 實現 getSystemInfo 方法，返回完整系統資訊
-  - 整合到 IPC handlers，實現 system:getCPU 和 system:getMemory
-  - 添加除零保護和錯誤處理
+- [x] 15. Implement system information API
+  - Create system-api.ts, use Node.js os module
+  - Implement getCPUUsage method, calculate CPU usage (delta-based calculation)
+  - Implement getMemoryInfo method, return memory information
+  - Implement getSystemInfo method, return complete system information
+  - Integrate into IPC handlers, implement system:getCPU and system:getMemory
+  - Add zero-division protection and error handling
   - _Requirements: 4.5, 8.1, 8.2_
 
-- [x] 16. 實現權限管理系統 ✨ ENHANCED
-
-
-
-
-
-  - 創建 permissions.ts，定義 PermissionSet 介面
-  - 實現 hasPermission 方法，檢查 Widget 權限（含驗證）
-  - 實現 savePermission 和 getPermissions 方法（含驗證）
-  - 在 storage.ts 中添加權限儲存功能
-  - ✨ 新增：權限格式驗證和錯誤處理
-  - ✨ 新增：記憶體洩漏防護（自動清理過期限流記錄）
-  - ✨ 新增：增強的速率限制（支援拋出錯誤選項）
-  - ✨ 新增：資源清理方法（destroy）
+- [x] 16. Implement permission management system ✨ ENHANCED
+  - Create permissions.ts, define PermissionSet interface
+  - Implement hasPermission method, check widget permissions (with validation)
+  - Implement savePermission and getPermissions methods (with validation)
+  - Add permission storage functionality in storage.ts
+  - ✨ New: Permission format validation and error handling
+  - ✨ New: Memory leak protection (automatic cleanup of expired rate limit records)
+  - ✨ New: Enhanced rate limiting (support for throwing error option)
+  - ✨ New: Resource cleanup method (destroy)
   - _Requirements: 3.2, 3.3, 8.4_
 
-- [x] 17. 實現權限請求對話框 ✅ COMPLETE
-  - 在 permissions.js 中實現 requestPermission 方法
-  - 使用 Electron dialog 顯示權限請求對話框
-  - 顯示 Widget 名稱和請求的權限
-  - 儲存用戶的授權決定
-  - ✅ 測試完成：所有測試通過
-  - ✅ 文檔已更新：permissions-api.md
+- [x] 17. Implement permission request dialog ✅ COMPLETE
+  - Implement requestPermission method in permissions.js
+  - Use Electron dialog to display permission request dialog
+  - Display widget name and requested permissions
+  - Save user's authorization decision
+  - ✅ Testing complete: All tests passing
+  - ✅ Documentation updated: permissions-api.md
   - _Requirements: 3.1, 3.5_
 
-- [x] 18. 實現 API 速率限制 ✅ COMPLETE
-  - 在 permissions.js 中實現 checkRateLimit 方法
-  - 使用 Map 記錄每個 Widget 的 API 調用次數
-  - 設置每秒最多 10 次調用的限制
-  - 超過限制時拋出 RATE_LIMIT_EXCEEDED 錯誤
-  - ✅ 包含記憶體洩漏防護和自動清理
+- [x] 18. Implement API rate limiting ✅ COMPLETE
+  - Implement checkRateLimit method in permissions.js
+  - Use Map to track API call count for each widget
+  - Set limit of maximum 10 calls per second
+  - Throw RATE_LIMIT_EXCEEDED error when limit exceeded
+  - ✅ Includes memory leak protection and automatic cleanup
   - _Requirements: 3.4, 15.4_
 
-- [x] 19. 整合系統 API 到 IPC handlers
-
-
-
-
-
-  - 在 ipc-handlers.js 中添加 system:getCPU 和 system:getMemory handlers
-  - 在 handlers 中調用權限檢查和速率限制
-  - 在 widget-preload.js 中暴露 system API
-  - 測試權限請求流程
+- [x] 19. Integrate system API into IPC handlers
+  - Add system:getCPU and system:getMemory handlers in ipc-handlers.js
+  - Call permission checks and rate limiting in handlers
+  - Expose system API in widget-preload.js
+  - Test permission request flow
   - _Requirements: 4.5, 8.4, 8.5_
 
-- [x] 20. 實現 useSystemInfo Hook
-
-
-
-
-  - 創建 hooks/useSystemInfo.ts
-  - 使用 useInterval 定期獲取系統資訊
-  - 處理權限拒絕錯誤
-  - 支援 CPU 和記憶體兩種類型
+- [x] 20. Implement useSystemInfo Hook
+  - Create hooks/useSystemInfo.ts
+  - Use useInterval to periodically fetch system information
+  - Handle permission denied errors
+  - Support both CPU and memory types
   - _Requirements: 4.3, 8.3_
 
+## Phase 5: Example Widgets
 
-## Phase 5: 範例 Widgets
-
-- [x] 21. 創建 Clock Widget ✅ COMPLETE + TESTED
-
-
-
-
-
-  - ✅ 初始化 examples/clock 專案，安裝 Widget SDK
-  - ✅ 創建 widget.config.json，聲明不需要特殊權限
-  - ✅ 創建 src/index.tsx，實現時鐘 UI
-  - ✅ 使用 useState 和 useInterval 實現每秒更新
-  - ✅ 顯示 HH:MM 格式的時間和日期
-  - ✅ 使用 Widget.Container、Widget.LargeText、Widget.SmallText 元件
-  - ✅ 配置 Vite 打包
-  - ✅ 測試完成：7/7 個測試全部通過（ClockWidget.test.tsx）
-    - 渲染測試（1/1 通過）
-    - 時間顯示測試（1/1 通過）
-    - 日期顯示測試（1/1 通過）
-    - 時間更新測試（1/1 通過）
-    - 零填充測試（1/1 通過）
-    - 邊界情況測試（2/2 通過：午夜和正午）
-  - ✅ 文檔已更新：README.md 包含測試說明
+- [x] 21. Create Clock Widget ✅ COMPLETE + TESTED
+  - ✅ Initialize examples/clock project, install Widget SDK
+  - ✅ Create widget.config.json, declare no special permissions required
+  - ✅ Create src/index.tsx, implement clock UI
+  - ✅ Use useState and useInterval to implement per-second updates
+  - ✅ Display time in HH:MM format and date
+  - ✅ Use Widget.Container, Widget.LargeText, Widget.SmallText components
+  - ✅ Configure Vite bundling
+  - ✅ Testing complete: 7/7 tests all passing (ClockWidget.test.tsx)
+    - Render test (1/1 passing)
+    - Time display test (1/1 passing)
+    - Date display test (1/1 passing)
+    - Time update test (1/1 passing)
+    - Zero-padding test (1/1 passing)
+    - Edge case tests (2/2 passing: midnight and noon)
+  - ✅ Documentation updated: README.md includes testing instructions
   - _Requirements: 7.1, 7.2, 7.3, 7.4, 7.5_
 
-- [x] 22. 創建 System Monitor Widget
-
-
-
-
-
-  - 初始化 examples/system-monitor 專案
-  - 創建 widget.config.json，聲明需要 systemInfo.cpu 和 systemInfo.memory 權限
-  - 創建 src/index.tsx，實現系統監控 UI
-  - 使用 useSystemInfo Hook 獲取 CPU 和記憶體資訊
-  - 使用 Widget.Stat 和 Widget.ProgressBar 顯示數據
-  - 每 2 秒更新一次數據
-  - 測試權限請求流程
+- [x] 22. Create System Monitor Widget
+  - Initialize examples/system-monitor project
+  - Create widget.config.json, declare requirements for systemInfo.cpu and systemInfo.memory permissions
+  - Create src/index.tsx, implement system monitor UI
+  - Use useSystemInfo Hook to fetch CPU and memory information
+  - Use Widget.Stat and Widget.ProgressBar to display data
+  - Update data every 2 seconds
+  - Test permission request flow
   - _Requirements: 8.1, 8.2, 8.3, 8.4, 8.5_
 
-- [x] 23. 創建 Weather Widget
-
-
-
-
-
-  - 初始化 examples/weather 專案
-  - 創建 widget.config.json，聲明需要 network 權限和允許的天氣 API 域名
-  - 創建 src/index.tsx，實現天氣 UI
-  - 使用 useSettings Hook 讀取城市設定
-  - 實現 fetchWeather 函數，調用天氣 API
-  - 使用 useInterval 每 10 分鐘更新天氣
-  - 顯示溫度和天氣狀況
+- [x] 23. Create Weather Widget
+  - Initialize examples/weather project
+  - Create widget.config.json, declare network permission requirement and allowed weather API domains
+  - Create src/index.tsx, implement weather UI
+  - Use useSettings Hook to read city settings
+  - Implement fetchWeather function, call weather API
+  - Use useInterval to update weather every 10 minutes
+  - Display temperature and weather conditions
   - _Requirements: 9.1, 9.2, 9.3, 9.4, 9.5_
 
+## Phase 6: Marketplace Foundation
 
-## Phase 6: Marketplace 基礎
-
-- [x] 24. 設置 Marketplace 專案
-
-
-
-
-
-
-
-
-
-
-  - 初始化 Next.js 15 專案（App Router）
-  - 安裝 Tailwind CSS 和配置
-  - 設置 Supabase 客戶端（lib/supabas e.ts）
-  - 配置環境變數（NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY）
+- [x] 24. Set up Marketplace project
+  - Initialize Next.js 15 project (App Router)
+  - Install and configure Tailwind CSS
+  - Set up Supabase client (lib/supabase.ts)
+  - Configure environment variables (NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY)
   - _Requirements: 13.1_
 
-- [x] 25. 創建 Supabase 資料庫 Schema
-
-
-
-
-
-  - 在 Supabase 中創建 widgets 表
-  - 定義欄位：id, widget_id, name, display_name, description, author_name, author_email, version, downloads, permissions, sizes, icon_url, download_url, created_at, updated_at
-  - 創建索引：idx_widgets_widget_id, idx_widgets_downloads
-  - 填充 5-10 個範例 Widget 數據
+- [x] 25. Create Supabase database schema
+  - Create widgets table in Supabase
+  - Define fields: id, widget_id, name, display_name, description, author_name, author_email, version, downloads, permissions, sizes, icon_url, download_url, created_at, updated_at
+  - Create indexes: idx_widgets_widget_id, idx_widgets_downloads
+  - Populate with 5-10 example widget data
   - _Requirements: 13.2, 13.5_
 
-- [x] 26. 實現 Marketplace 首頁
-
-
-
-
-
-  - 創建 app/page.tsx，實現首頁佈局
-  - 從 Supabase 查詢所有 Widget
-  - 創建 components/WidgetCard.tsx，顯示 Widget 卡片
-  - 使用 Grid 佈局顯示 Widget 列表
-  - 顯示 Widget 名稱、描述、下載數
+- [x] 26. Implement Marketplace homepage
+  - Create app/page.tsx, implement homepage layout
+  - Query all widgets from Supabase
+  - Create components/WidgetCard.tsx, display widget cards
+  - Use Grid layout to display widget list
+  - Display widget name, description, download count
   - _Requirements: 6.1, 13.3_
 
-- [x] 27. 實現搜索功能
-
-
-
-
-
-  - 創建 components/SearchBar.tsx
-  - 實現前端搜索，根據名稱和描述篩選
-  - 使用 useState 管理搜索狀態
-  - 即時更新搜索結果
+- [x] 27. Implement search functionality
+  - Create components/SearchBar.tsx
+  - Implement frontend search, filter by name and description
+  - Use useState to manage search state
+  - Update search results in real-time
   - _Requirements: 13.4_
 
-- [x] 28. 實現 Widget 詳情頁
-
-
-
-
-
-  - 創建 app/widgets/[id]/page.tsx
-  - 從 Supabase 查詢單個 Widget
-  - 顯示完整的 Widget 資訊（名稱、描述、作者、版本、下載數）
-  - 創建 components/PermissionsList.tsx，顯示權限需求
-  - 實現 Install 按鈕，打開 widget://install/xxx 協議
-  - 處理 Widget 不存在的情況（404）
+- [x] 28. Implement widget detail page
+  - Create app/widgets/[id]/page.tsx
+  - Query single widget from Supabase
+  - Display complete widget information (name, description, author, version, download count)
+  - Create components/PermissionsList.tsx, display permission requirements
+  - Implement Install button, open widget://install/xxx protocol
+  - Handle widget not found case (404)
   - _Requirements: 6.2, 6.3, 6.4_
 
+## Phase 7: Widget Installation Mechanism
 
-## Phase 7: Widget 安裝機制
-
-- [x] 29. 實現自訂 URL 協議 ✅ COMPLETE + ENHANCED
-
+- [x] 29. Implement custom URL protocol ✅ COMPLETE + ENHANCED
 
 
 
 
 
-
-
-
-
-  - 在 Widget Container 中註冊 widget:// 協議
-  - 使用 app.setAsDefaultProtocolClient('widget')
-  - 監聽 open-url 事件（macOS）和 second-instance 事件（Windows）
-  - 解析 widget://install/xxx URL，提取 Widget ID
-  - ✅ 增強：Widget ID 格式驗證（防止路徑遍歷和 XSS）
-  - ✅ 增強：使用 dialog.showMessageBox 替代 showErrorBox（非阻塞）
-  - ✅ 增強：等待 app.whenReady() 避免競態條件
-  - ✅ 增強：提取 handleWidgetInstall 函數提高可維護性
-  - ✅ 增強：正確的 URL 解析（host + pathname 組合）
-  - ✅ 測試：19 個測試用例全部通過（verify-protocol-handler.js）
-  - ✅ 文檔：README.md 和 docs/ 已更新
+  - Register widget:// protocol in Widget Container
+  - Use app.setAsDefaultProtocolClient('widget')
+  - Listen to open-url event (macOS) and second-instance event (Windows)
+  - Parse widget://install/xxx URL, extract Widget ID
+  - ✅ Enhancement: Widget ID format validation (prevent path traversal and XSS)
+  - ✅ Enhancement: Use dialog.showMessageBox instead of showErrorBox (non-blocking)
+  - ✅ Enhancement: Wait for app.whenReady() to avoid race conditions
+  - ✅ Enhancement: Extract handleWidgetInstall function for better maintainability
+  - ✅ Enhancement: Correct URL parsing (host + pathname combination)
+  - ✅ Testing: 19 test cases all passing (verify-protocol-handler.js)
+  - ✅ Documentation: README.md and docs/ updated
   - _Requirements: 6.5_
 
-- [x] 30. 實現 Widget 下載和安裝
-
-
-
-
-  - 在 widget-manager.js 中實現 installWidget 方法
-  - 從 Marketplace API 獲取 Widget 下載 URL
-  - 下載 Widget 文件（.widget zip）
-  - 解壓到 widgets 目錄
-  - 驗證 widget.config.json
-  - 添加到已安裝 Widget 列表
+- [x] 30. Implement widget download and installation
+  - Implement installWidget method in widget-manager.js
+  - Get widget download URL from Marketplace API
+  - Download widget file (.widget zip)
+  - Extract to widgets directory
+  - Validate widget.config.json
+  - Add to installed widget list
   - _Requirements: 6.5_
 
+## Phase 8: System Tray and Optimization
 
-## Phase 8: 系統托盤和優化
-
-- [x] 31. 實現系統托盤
-
-
-
-
-
-  - 在 main process 中創建 Tray 實例
-  - 設置托盤圖示
-  - 創建右鍵選單（打開 Manager、退出）
-  - 實現「打開 Manager」功能，顯示或聚焦 Manager 視窗
-  - 實現「退出」功能，關閉所有 Widget 並退出應用
-  - 關閉 Manager 視窗時隱藏而不退出
+- [x] 31. Implement system tray
+  - Create Tray instance in main process
+  - Set tray icon
+  - Create context menu (Open Manager, Exit)
+  - Implement "Open Manager" functionality, show or focus Manager window
+  - Implement "Exit" functionality, close all widgets and exit application
+  - Hide Manager window instead of exiting when closed
   - _Requirements: 10.1, 10.2, 10.3, 10.4, 10.5_
 
-- [x] 32. 實現錯誤處理 ✅ COMPLETE
-
-
-
-
-
-  - ✅ 創建 Wid getError 類和 WidgetErrorType 枚舉（widget-sdk/src/types/errors.ts）
-  - ✅ 在所有 IPC handlers 中添加 try-catch（widget-container/src/main/ipc-handlers.ts）
-  - ✅ 返回標準化的錯誤響應 { success: false, error: { type, message } }
-  - ✅ 在 Widget SDK 中處理錯誤，拋出 WidgetError
-  - ✅ 在 WidgetProvider 中添加 Error Boundary
-  - ✅ 測試完成：11/11 個測試全部通過 ✨（error-handling.test.ts）
-    - Storage 錯誤處理測試（3/3 通過）
-    - UI 錯誤處理測試（4/4 通過）
-    - 錯誤響應格式測試（3/3 通過）
-    - WidgetError 類測試（1/1 通過）
-  - ✅ 文檔已更新：README.md 和 docs/error-handling.md
-  - ✅ 新增功能：
-    - getUserMessage() - 用戶友好的錯誤訊息
-    - toJSON() - 錯誤序列化用於日誌記錄
-    - isWidgetError() - 類型守衛函數
-    - toWidgetError() - 錯誤轉換工具
-    - 完整的錯誤類型系統（6 種錯誤類型）
-    - 標準化的 IPC 錯誤響應格式
+- [x] 32. Implement error handling ✅ COMPLETE
+  - ✅ Create WidgetError class and WidgetErrorType enum (widget-sdk/src/types/errors.ts)
+  - ✅ Add try-catch in all IPC handlers (widget-container/src/main/ipc-handlers.ts)
+  - ✅ Return standardized error response { success: false, error: { type, message } }
+  - ✅ Handle errors in Widget SDK, throw WidgetError
+  - ✅ Add Error Boundary in WidgetProvider
+  - ✅ Testing complete: 11/11 tests all passing ✨ (error-handling.test.ts)
+    - Storage error handling tests (3/3 passing)
+    - UI error handling tests (4/4 passing)
+    - Error response format tests (3/3 passing)
+    - WidgetError class tests (1/1 passing)
+  - ✅ Documentation updated: README.md and docs/error-handling.md
+  - ✅ New features:
+    - getUserMessage() - User-friendly error messages
+    - toJSON() - Error serialization for logging
+    - isWidgetError() - Type guard function
+    - toWidgetError() - Error conversion utility
+    - Complete error type system (6 error types)
+    - Standardized IPC error response format
   - _Requirements: 15.5_
 
-- [x] 33. 實現性能優化 ✅ COMPLETE
-  - ✅ 在 BrowserWindow 配置中啟用硬體加速和 v8 緩存
-  - ✅ 實現 Widget 數量限制（最多 10 個）
-  - ✅ 在 closeWidget 中清理事件監聽器和資源
-  - ✅ 監控 Widget CPU 使用率，超過 20% 時記錄警告
-  - ✅ 在 Widget SDK 中提供 useThrottle Hook
-  - ✅ 測試完成：17/17 個測試全部通過（useThrottle.test.tsx + useThrottle.test.ts）
-  - ✅ 已導出到 SDK 公共 API（src/index.ts）
-  - ✅ 包含記憶體洩漏防護（timeout cleanup）
-  - ✅ 支援泛型類型（適用於任何數據類型）
-  - ✅ 文檔已更新：README.md 和 docs/hooks/useThrottle.md
+- [x] 33. Implement performance optimization ✅ COMPLETE
+  - ✅ Enable hardware acceleration and v8 cache in BrowserWindow configuration
+  - ✅ Implement widget count limit (maximum 10)
+  - ✅ Clean up event listeners and resources in closeWidget
+  - ✅ Monitor widget CPU usage, log warning when exceeding 20%
+  - ✅ Provide useThrottle Hook in Widget SDK
+  - ✅ Testing complete: 17/17 tests all passing (useThrottle.test.tsx + useThrottle.test.ts)
+  - ✅ Exported to SDK public API (src/index.ts)
+  - ✅ Includes memory leak protection (timeout cleanup)
+  - ✅ Supports generic types (applicable to any data type)
+  - ✅ Documentation updated: README.md and docs/hooks/useThrottle.md
   - _Requirements: 15.1, 15.2, 15.3, 15.4_
 
-- [x] 34. 實現 CSP 和安全配置 ✅ COMPLETE + ENHANCED
-
-
-
-
-
-  - ✅ 在 session.defaultSession.webRequest.onHeadersReceived 中設置 CSP
-  - ✅ 配置 default-src 'none', script-src 'self', style-src 'self' 'unsafe-inline'
-  - ✅ 根據 Widget 配置動態設置 connect-src 白名單
-  - ✅ 在 onBeforeRequest 中阻止 HTTP 請求，只允許 HTTPS
-  - ✅ 測試完成：20/20 個測試全部通過（security.test.ts）
-  - ✅ 增強功能：
-    - 防止重複初始化（避免記憶體洩漏）
-    - 域名格式驗證（防止 XSS 和路徑遍歷）
-    - 拒絕 HTTP 域名（僅允許 HTTPS）
-    - 拒絕通配符和惡意模式
-    - 錯誤處理（CSP 和網路過濾）
-    - 圖片來源限制（img-src 'self' data: https:）
-    - 域名標準化（自動添加 https://）
-  - ✅ 文檔已更新：README.md 和 docs/security.md
-  - ✅ SecurityManager 類實現完成（src/main/security.ts）
-  - ✅ 包含 initialize(), registerWidget(), unregisterWidget(), destroy() 方法
-  - ✅ 動態 CSP 基於註冊的 Widget 配置
-  - ✅ 支援 localhost 開發環境（HTTP 例外）
+- [x] 34. Implement CSP and security configuration ✅ COMPLETE + ENHANCED
+  - ✅ Set CSP in session.defaultSession.webRequest.onHeadersReceived
+  - ✅ Configure default-src 'none', script-src 'self', style-src 'self' 'unsafe-inline'
+  - ✅ Dynamically set connect-src whitelist based on widget configuration
+  - ✅ Block HTTP requests in onBeforeRequest, only allow HTTPS
+  - ✅ Testing complete: 20/20 tests all passing (security.test.ts)
+  - ✅ Enhanced features:
+    - Prevent duplicate initialization (avoid memory leaks)
+    - Domain format validation (prevent XSS and path traversal)
+    - Reject HTTP domains (HTTPS only)
+    - Reject wildcards and malicious patterns
+    - Error handling (CSP and network filtering)
+    - Image source restrictions (img-src 'self' data: https:)
+    - Domain normalization (automatically add https://)
+  - ✅ Documentation updated: README.md and docs/security.md
+  - ✅ SecurityManager class implementation complete (src/main/security.ts)
+  - ✅ Includes initialize(), registerWidget(), unregisterWidget(), destroy() methods
+  - ✅ Dynamic CSP based on registered widget configuration
+  - ✅ Supports localhost development environment (HTTP exception)
   - _Requirements: 2.3, 2.5_
 
+## Phase 9: Testing and Documentation
 
-## Phase 9: 測試和文檔
-
-- [x] 35. 編寫單元測試
-
-
-
-
-
-  - [x] 35.1 為 widget-manager.js 編寫 Jest 測試 ✅ COMPLETE
-
-    - ✅ 測試 validateWidgetConfig 方法（4 個測試用例）
-    - ✅ 測試 loadInstalledWidgets 方法（3 個測試用例）
-    - ✅ 測試 safeDeleteFile 方法（3 個測試用例）
-    - ✅ 測試 removeDirectory 方法（2 個測試用例）
-    - ✅ 測試 getRunningWidgets 和 getWidgetsDirectory 方法
-    - ✅ 所有 14 個測試通過
-    - ✅ Jest 配置完成（jest.config.js）
-    - ✅ TypeScript 類型支援完成
+- [x] 35. Write unit tests
+  - [x] 35.1 Write Jest tests for widget-manager.js ✅ COMPLETE
+    - ✅ Test validateWidgetConfig method (4 test cases)
+    - ✅ Test loadInstalledWidgets method (3 test cases)
+    - ✅ Test safeDeleteFile method (3 test cases)
+    - ✅ Test removeDirectory method (2 test cases)
+    - ✅ Test getRunningWidgets and getWidgetsDirectory methods
+    - ✅ All 14 tests passing
+    - ✅ Jest configuration complete (jest.config.js)
+    - ✅ TypeScript type support complete
     - _Requirements: 1.1, 1.5_
   
-  - [x] 35.2 為 Widget SDK Hooks 編寫 Vitest 測試
-
-
-
-    - 測試 useStorage Hook 的 get/set/remove 功能
-    - 測試 useInterval Hook
-    - 使用 React Testing Library
+  - [x] 35.2 Write Vitest tests for Widget SDK Hooks
+    - Test useStorage Hook get/set/remove functionality
+    - Test useInterval Hook
+    - Use React Testing Library
     - _Requirements: 4.3_
 
-- [x] 36. 編寫集成測試 ✅ COMPLETE
-
-
-
-
-
-
-  - [x] 36.1 測試 IPC 通訊 ✅ COMPLETE (20/20 tests passing)
-
-
-    - ✅ 測試 storage API 的完整流程（4 個測試）
-    - ✅ 測試 system API 的權限檢查（6 個測試）
-    - ✅ 測試 settings API（2 個測試）
-    - ✅ 測試 UI API（5 個測試）
-    - ✅ 測試錯誤處理（2 個測試）
-    - ✅ 測試跨 API 集成（1 個測試）
-    - ✅ 包含類型安全改進
-    - ✅ 包含速率限制清理防止測試干擾
-    - ✅ 文檔已更新：README.md, docs/testing.md, docs/ipc-response-format.md
+- [x] 36. Write integration tests ✅ COMPLETE
+  - [x] 36.1 Test IPC communication ✅ COMPLETE (20/20 tests passing)
+    - ✅ Test storage API complete flow (4 tests)
+    - ✅ Test system API permission checks (6 tests)
+    - ✅ Test settings API (2 tests)
+    - ✅ Test UI API (5 tests)
+    - ✅ Test error handling (2 tests)
+    - ✅ Test cross-API integration (1 test)
+    - ✅ Includes type safety improvements
+    - ✅ Includes rate limit cleanup to prevent test interference
+    - ✅ Documentation updated: README.md, docs/testing.md, docs/ipc-response-format.md
     - _Requirements: 14.4, 14.5_
 
-- [x] 37. 執行手動測試 ✅ PREPARATION COMPLETE
-
-
-
-
-
-
-
-
-
-
-  - [x] 37.0 準備手動測試環境 ✅ COMPLETE
-
-    - ✅ 創建 prepare-manual-testing.js 腳本
-    - ✅ 檢查 Widget Container 構建狀態
-    - ✅ 檢查範例 Widgets 構建狀態
-    - ✅ 檢查 Widget SDK 構建狀態
-    - ✅ 檢查文檔可用性
-    - ✅ 提供構建命令和快速啟動指令
-    - ✅ 添加 npm run test:manual 腳本
-    - ✅ 更新 README.md 和 MANUAL_TESTING_GUIDE.md
-    - ✅ 創建 manual-testing-preparation.md 文檔
+- [x] 37. Execute manual testing ✅ PREPARATION COMPLETE
+  - [x] 37.0 Prepare manual testing environment ✅ COMPLETE
+    - ✅ Create prepare-manual-testing.js script
+    - ✅ Check Widget Container build status
+    - ✅ Check example widgets build status
+    - ✅ Check Widget SDK build status
+    - ✅ Check documentation availability
+    - ✅ Provide build commands and quick start instructions
+    - ✅ Add npm run test:manual script
+    - ✅ Update README.md and MANUAL_TESTING_GUIDE.md
+    - ✅ Create manual-testing-preparation.md documentation
     - _Requirements: All (preparation)_
 
-  - [x] 37.1 測試 Widget 生命週期
-
-
-
-    - 驗證 Widget 可以正常創建和關閉
-    - 驗證 Widget 可以拖曳
-    - 驗證 Widget 位置在重啟後保持
+  - [x] 37.1 Test widget lifecycle
+    - Verify widgets can be created and closed normally
+    - Verify widgets can be dragged
+    - Verify widget position persists after restart
     - _Requirements: 1.1, 1.3, 1.4_
-  
 
-  - [x] 37.2 測試權限系統 ✅ COMPLETE (30+ tests)
-
-
-
-
-
-
-
-
-    - ✅ 驗證權限對話框正常顯示（3 個測試）
-    - ✅ 驗證權限授予和拒絕功能（8 個測試）
-    - ✅ 驗證速率限制（7 個測試）
-    - ✅ 驗證未授權 API 訪問阻止（5 個測試）
-    - ✅ 權限持久化和資源清理（7+ 個測試）
-    - ✅ 測試文件：`widget-container/src/main/__tests__/permissions.test.ts`
-    - ✅ 文檔已更新：README.md, testing.md, permissions-api.md
+  - [x] 37.2 Test permission system ✅ COMPLETE (30+ tests)
+    - ✅ Verify permission dialog displays correctly (3 tests)
+    - ✅ Verify permission grant and deny functionality (8 tests)
+    - ✅ Verify rate limiting (7 tests)
+    - ✅ Verify unauthorized API access blocking (5 tests)
+    - ✅ Permission persistence and resource cleanup (7+ tests)
+    - ✅ Test file: `widget-container/src/main/__tests__/permissions.test.ts`
+    - ✅ Documentation updated: README.md, testing.md, permissions-api.md
     - _Requirements: 3.1, 3.2, 3.3, 3.4_
 
-  
-  - [x] 37.3 測試範例 Widgets
+  - [x] 37.3 Test example widgets
 
 
 
-
-
-
-
-    - 驗證 Clock Widget 正常顯示和更新
-    - 驗證 System Monitor Widget 顯示正確的系統資訊
-    - 驗證 Weather Widget 可以獲取天氣數據
-
+    - Verify Clock Widget displays and updates correctly
+    - Verify System Monitor Widget displays correct system information
+    - Verify Weather Widget can fetch weather data
     - _Requirements: 7.1, 7.2, 7.3, 8.1, 8.2, 9.1, 9.2_
   
-  - [x] 37.4 測試 Marketplace
-
-
-
-
-
-    - 驗證首頁顯示 Widget 列表
-    - 驗證搜索功能
-    - 驗證詳情頁顯示完整資訊
-    - 驗證 Install 按鈕觸發協議
+  - [x] 37.4 Test Marketplace
+    - Verify homepage displays widget list
+    - Verify search functionality
+    - Verify detail page displays complete information
+    - Verify Install button triggers protocol
     - _Requirements: 6.1, 6.2, 6.3, 6.4_
 
-- [x] 38. 編寫文檔
-
-
-
-
-
-
-  - [x] 38.1 創建 README.md
-
-
-
-    - 專案概述和功能介紹
-    - 安裝和運行指南
-    - 開發環境設置
+- [x] 38. Write documentation
+  - [x] 38.1 Create README.md
+    - Project overview and feature introduction
+    - Installation and running guide
+    - Development environment setup
     - _Requirements: All_
   
-  - [x] 38.2 創建 Widget 開發者文檔
-
-
-
-    - Widget SDK API 參考
-    - 創建新 Widget 的教程
-    - widget.config.json 配置說明
-    - 權限系統說明
+  - [x] 38.2 Create widget developer documentation
+    - Widget SDK API reference
+    - Tutorial for creating new widgets
+    - widget.config.json configuration instructions
+    - Permission system explanation
     - _Requirements: 4.1, 4.2, 4.3, 5.1, 5.2, 5.3_
   
-  - [x] 38.3 創建架構文檔
-
-
-
-    - 系統架構圖
-    - IPC 通訊流程
-    - 安全機制說明
+  - [x] 38.3 Create architecture documentation
+    - System architecture diagram
+    - IPC communication flow
+    - Security mechanism explanation
     - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5_
 
+## Phase 10: Final Integration and Deployment
 
-## Phase 10: 最終整合和部署
-
-- [x] 39. UI/UX 拋光
-
-
-
-
-
-  - 為所有 UI 元件添加過渡動畫（fadeIn, hover 效果）
-  - 優化毛玻璃效果的視覺表現
-  - 確保所有文字在透明背景上可讀
-  - 添加 Widget 出現和消失的動畫
-  - 優化 Manager UI 的佈局和樣式
+- [x] 39. UI/UX polish
+  - Add transition animations to all UI components (fadeIn, hover effects)
+  - Optimize glassmorphism visual presentation
+  - Ensure all text is readable on transparent backgrounds
+  - Add widget appearance and disappearance animations
+  - Optimize Manager UI layout and styling
   - _Requirements: 12.1, 12.2, 12.3, 12.4, 12.5_
 
-- [ ] 40. 跨平台測試
-  - 在 Windows 10/11 上測試所有功能
-  - 測試系統托盤在 Windows 上的表現
-  - 測試自訂協議在 Windows 上的註冊
-  - 如果可能，在 macOS 上測試
-  - 修復平台特定的問題
+- [ ] 40. Cross-platform testing
+  - Test all functionality on Windows 10/11
+  - Test system tray behavior on Windows
+  - Test custom protocol registration on Windows
+  - Test on macOS if possible
+  - Fix platform-specific issues
   - _Requirements: All_
 
-- [x] 41. 打包和構建
-
-
-
-
-
-  - 配置 electron-builder 的 Windows 和 macOS 目標
-  - 設置應用圖示（icon.ico 和 icon.icns）
-  - 構建 Windows 安裝程式（NSIS）
-  - 構建 macOS DMG（如果可能）
-  - 測試安裝程式
+- [x] 41. Packaging and building
+  - Configure electron-builder for Windows and macOS targets
+  - Set up application icons (icon.ico and icon.icns)
+  - Build Windows installer (NSIS)
+  - Build macOS DMG (if possible)
+  - Test installers
   - _Requirements: All_
 
-- [ ] 42. 部署 Marketplace
-  - 配置 Vercel 專案
-  - 設置環境變數（Supabase 連接）
-  - 部署到生產環境
-  - 測試生產環境的功能
-  - 配置自訂域名（可選）
+- [ ] 42. Deploy Marketplace
+  - Configure Vercel project
+  - Set up environment variables (Supabase connection)
+  - Deploy to production environment
+  - Test production environment functionality
+  - Configure custom domain (optional)
   - _Requirements: 6.1, 6.2, 6.3, 6.4, 13.1, 13.2, 13.3, 13.4, 13.5_
 
-- [ ] 43. 準備演示
-  - 創建演示腳本，展示核心功能
-  - 準備 3 個範例 Widget 的演示
-  - 準備 Marketplace 的演示
-  - 準備安裝和使用流程的演示
-  - 錄製演示視頻（可選）
+- [ ] 43. Prepare demonstration
+  - Create demonstration script showcasing core features
+  - Prepare demonstration of 3 example widgets
+  - Prepare Marketplace demonstration
+  - Prepare installation and usage flow demonstration
+  - Record demonstration video (optional)
   - _Requirements: All_
 
-- [x] 44. 最終檢查和 Bug 修復
-
-
-
-
-  - 執行完整的功能測試清單
-  - 修復發現的所有 critical bugs
-  - 優化性能瓶頸
-  - 確保所有需求都已實現
+- [x] 44. Final checks and bug fixes
+  - Execute complete functional test checklist
+  - Fix all discovered critical bugs
+  - Optimize performance bottlenecks
+  - Ensure all requirements are implemented
   - _Requirements: All_
 
-## 注意事項
+## Notes
 
-### 開發優先級
+### Development Priorities
 
-1. **Phase 1-3**: 核心基礎設施和 SDK（Week 1）- 最高優先級
-2. **Phase 4-5**: 系統 API 和範例 Widgets（Week 2）- 高優先級
-3. **Phase 6-7**: Marketplace 和安裝機制（Week 3）- 中優先級
-4. **Phase 8-10**: 優化和部署（Week 4）- 最終階段
+1. **Phase 1-3**: Core infrastructure and SDK (Week 1) - Highest priority
+2. **Phase 4-5**: System API and example widgets (Week 2) - High priority
+3. **Phase 6-7**: Marketplace and installation mechanism (Week 3) - Medium priority
+4. **Phase 8-10**: Optimization and deployment (Week 4) - Final stage
 
-### MVP 定義
+### MVP Definition
 
-最小可行產品必須包含：
-- ✅ Electron 應用可以啟動並創建 Widget 視窗
-- ✅ Widget SDK 可以正常使用
-- ✅ 至少 1 個可運行的範例 Widget（Clock）
-- ✅ Widget 可以拖曳和儲存位置
-- ✅ 基礎的沙盒安全機制
-- ✅ Storage API 正常工作
+Minimum viable product must include:
+- ✅ Electron app can launch and create widget windows
+- ✅ Widget SDK works properly
+- ✅ At least 1 runnable example widget (Clock)
+- ✅ Widgets can be dragged and position saved
+- ✅ Basic sandbox security mechanism
+- ✅ Storage API works properly
 
-有了這些，專案就能正常演示。其他功能都是加分項。
+With these, the project can be demonstrated properly. Other features are bonuses.
 
-### 可選功能（時間不足時可跳過）
+### Optional Features (Can be skipped if time is limited)
 
-- 系統托盤（Task 31）
-- Weather Widget（Task 23）
-- Widget 安裝機制（Task 29-30）
-- 所有標記為 * 的測試和文檔任務
+- System Tray (Task 31)
+- Weather Widget (Task 23)
+- Widget Installation Mechanism (Task 29-30)
+- All tasks marked with * for testing and documentation
 
-### 技術債務追蹤
+### Technical Debt Tracking
 
-在開發過程中，如果遇到需要後續優化的地方，記錄在 TODO 註釋中：
+During development, if you encounter areas that need future optimization, record them in TODO comments:
 
 ```typescript
-// TODO: 實現更精確的 CPU 使用率計算
-// TODO: 添加 Widget 更新機制
-// TODO: 支援 Widget 主題自訂
+// TODO: Implement more accurate CPU usage calculation
+// TODO: Add widget update mechanism
+// TODO: Support widget theme customization
 ```
 
-這些可以在黑客松後繼續完善。
+These can be refined after the hackathon.

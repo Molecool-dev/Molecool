@@ -1,6 +1,6 @@
 # Building and Packaging Guide
 
-This guide covers how to build and package the Molecule Widget Container for distribution.
+This guide covers how to build and package the Molecool Widget Container for distribution.
 
 ## Prerequisites
 
@@ -77,7 +77,7 @@ npm run package:win
 ```
 
 Creates:
-- `Molecule-Setup-{version}.exe` - NSIS installer
+- `Molecool-Setup-{version}.exe` - NSIS installer
 - Supports x64 architecture
 - Includes desktop and start menu shortcuts
 - Registers `widget://` protocol handler
@@ -96,8 +96,8 @@ npm run package:mac
 ```
 
 Creates:
-- `Molecule-{version}-x64.dmg` - Intel Macs
-- `Molecule-{version}-arm64.dmg` - Apple Silicon
+- `Molecool-{version}-x64.dmg` - Intel Macs
+- `Molecool-{version}-arm64.dmg` - Apple Silicon
 - Universal binary support
 
 **DMG Features:**
@@ -115,8 +115,8 @@ Configuration is in `package.json` under the `build` key:
 ```json
 {
   "build": {
-    "appId": "com.molecule.widget-platform",
-    "productName": "Molecule",
+    "appId": "com.Molecool.widget-platform",
+    "productName": "Molecool",
     "directories": {
       "output": "dist-build"
     }
@@ -180,14 +180,14 @@ After packaging, find installers in `dist-build/`:
 **Windows:**
 ```
 dist-build/
-  └── Molecule-Setup-1.0.0.exe
+  └── Molecool-Setup-1.0.0.exe
 ```
 
 **macOS:**
 ```
 dist-build/
-  ├── Molecule-1.0.0-x64.dmg
-  └── Molecule-1.0.0-arm64.dmg
+  ├── Molecool-1.0.0-x64.dmg
+  └── Molecool-1.0.0-arm64.dmg
 ```
 
 ## Testing Installers
@@ -340,7 +340,7 @@ Configure electron-updater for automatic updates:
   "publish": {
     "provider": "github",
     "owner": "your-org",
-    "repo": "molecule"
+    "repo": "Molecool"
   }
 }
 ```

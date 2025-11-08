@@ -47,7 +47,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const description = widget.description || 'No description available';
 
   return {
-    title: `${displayName} - Molecule Widget Marketplace`,
+    title: `${displayName} - Molecool Widget Marketplace`,
     description,
     openGraph: {
       title: displayName,
@@ -166,7 +166,7 @@ export default async function WidgetDetailPage({ params }: PageProps) {
             <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900">
               <InstallButton widgetId={widget.widget_id} />
               <p className="mt-3 text-center text-xs text-gray-500 dark:text-gray-500">
-                Requires Molecule Widget Container
+                Requires Molecool Widget Container
               </p>
             </div>
 

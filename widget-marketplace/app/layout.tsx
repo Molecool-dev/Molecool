@@ -25,15 +25,15 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   title: {
-    default: "Molecule Widget Marketplace",
-    template: "%s | Molecule",
+    default: "Molecool Widget Marketplace",
+    template: "%s | Molecool",
   },
-  description: "Discover and install desktop widgets for the Molecule platform",
-  keywords: ["widgets", "desktop", "molecule", "marketplace", "electron"],
-  authors: [{ name: "Molecule Team" }],
+  description: "Discover and install desktop widgets for the Molecool platform",
+  keywords: ["widgets", "desktop", "Molecool", "marketplace", "electron"],
+  authors: [{ name: "Molecool Team" }],
   openGraph: {
-    title: "Molecule Widget Marketplace",
-    description: "Discover and install desktop widgets for the Molecule platform",
+    title: "Molecool Widget Marketplace",
+    description: "Discover and install desktop widgets for the Molecool platform",
     type: "website",
   },
 };

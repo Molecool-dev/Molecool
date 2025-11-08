@@ -2,7 +2,7 @@
 
 ## Current Status
 
-This directory contains placeholder icons for the Molecule Widget Platform.
+This directory contains placeholder icons for the Molecool Widget Platform.
 
 ## Icon Files
 

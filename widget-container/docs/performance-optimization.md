@@ -1,6 +1,6 @@
 # Performance Optimization Guide
 
-This document describes the performance optimizations implemented in the Molecule Widget Platform to ensure smooth operation with multiple widgets running simultaneously.
+This document describes the performance optimizations implemented in the Molecool Widget Platform to ensure smooth operation with multiple widgets running simultaneously.
 
 ## Overview
 
@@ -178,7 +178,7 @@ monitor.updateThresholds({
 The Widget SDK provides a `useThrottle` hook to help developers optimize their widgets:
 
 ```typescript
-import { useThrottle } from '@molecule/widget-sdk';
+import { useThrottle } from '@Molecool/widget-sdk';
 
 function SystemMonitor() {
   const cpuUsage = useSystemInfo('cpu', 100); // Updates every 100ms

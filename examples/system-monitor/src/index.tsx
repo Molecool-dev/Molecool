@@ -9,7 +9,7 @@ import {
   ProgressBar,
   Divider,
   ErrorBoundary
-} from '@molecule/widget-sdk';
+} from '@Molecool/widget-sdk';
 import styles from './App.module.css';
 
 const SystemMonitorWidget: React.FC = () => {

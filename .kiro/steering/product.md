@@ -2,7 +2,7 @@
 inclusion: always
 ---
 
-# Molecule Desktop Widget Platform
+# Molecool Desktop Widget Platform
 
 Three-package monorepo:
 - `widget-container/` - Electron app hosting widgets

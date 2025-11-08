@@ -1,7 +1,7 @@
 {
   "name": "widget-marketplace",
   "version": "0.1.0",
-  "description": "Molecule Widget Marketplace - Discover and install desktop widgets",
+  "description": "Molecool Widget Marketplace - Discover and install desktop widgets",
   "private": true,
   "scripts": {
     "dev": "next dev",

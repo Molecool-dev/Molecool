@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Molecule Widget Container now includes system tray functionality that allows the application to run in the background even when all windows are closed.
+The Molecool Widget Container now includes system tray functionality that allows the application to run in the background even when all windows are closed.
 
 ## Features
 

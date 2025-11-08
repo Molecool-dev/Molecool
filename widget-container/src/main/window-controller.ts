@@ -17,7 +17,7 @@ export interface WindowOptions {
 }
 
 // Window type metadata key
-const WINDOW_TYPE_KEY = 'moleculeWindowType';
+const WINDOW_TYPE_KEY = 'MolecoolWindowType';
 
 export enum WindowType {
   WIDGET = 'widget',
@@ -25,7 +25,7 @@ export enum WindowType {
 }
 
 // Type-safe window metadata
-interface MoleculeWindow extends BrowserWindow {
+interface MolecoolWindow extends BrowserWindow {
   [WINDOW_TYPE_KEY]?: WindowType;
 }
 
@@ -85,7 +85,7 @@ export class WindowController {
     });
 
     // Mark as widget window
-    (window as MoleculeWindow)[WINDOW_TYPE_KEY] = WindowType.WIDGET;
+    (window as MolecoolWindow)[WINDOW_TYPE_KEY] = WindowType.WIDGET;
 
     // Clean up timers when window is destroyed
     window.once('closed', () => {
@@ -105,14 +105,14 @@ export class WindowController {
    * Check if a window is a manager window
    */
   static isManagerWindow(window: BrowserWindow): boolean {
-    return (window as MoleculeWindow)[WINDOW_TYPE_KEY] === WindowType.MANAGER;
+    return (window as MolecoolWindow)[WINDOW_TYPE_KEY] === WindowType.MANAGER;
   }
 
   /**
    * Check if a window is a widget window
    */
   static isWidgetWindow(window: BrowserWindow): boolean {
-    return (window as MoleculeWindow)[WINDOW_TYPE_KEY] === WindowType.WIDGET;
+    return (window as MolecoolWindow)[WINDOW_TYPE_KEY] === WindowType.WIDGET;
   }
 
   /**
@@ -141,7 +141,7 @@ export class WindowController {
     });
 
     // Mark as manager window
-    (window as MoleculeWindow)[WINDOW_TYPE_KEY] = WindowType.MANAGER;
+    (window as MolecoolWindow)[WINDOW_TYPE_KEY] = WindowType.MANAGER;
 
     // Clean up timers when window is destroyed
     window.once('closed', () => {

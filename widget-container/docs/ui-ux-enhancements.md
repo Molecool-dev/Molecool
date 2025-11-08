@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document describes the comprehensive UI/UX polish applied to the Molecule Widget Platform, including animations, glassmorphism effects, and visual improvements across all components.
+This document describes the comprehensive UI/UX polish applied to the Molecool Widget Platform, including animations, glassmorphism effects, and visual improvements across all components.
 
 ## Enhanced Features
 

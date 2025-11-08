@@ -1,8 +1,8 @@
-# Molecule - Desktop Widget Platform
+# Molecool - Desktop Widget Platform
 
 <div align="center">
 
-![Molecule Logo](docs/images/logo.png)
+![Molecool Logo](docs/images/logo.svg)
 
 **A modern desktop widget platform built with Electron and React**
 
@@ -19,7 +19,7 @@ Bring back the joy of desktop widgets with modern web technologies and enterpris
 
 ## 📖 Overview
 
-Molecule is a desktop widget platform that revives the Windows 7/Vista gadget experience using modern web technologies. It provides:
+Molecool is a desktop widget platform that revives the Windows 7/Vista gadget experience using modern web technologies. It provides:
 
 - 🎨 **Beautiful Glassmorphism UI** - Modern frosted glass effects with smooth animations
 - 🔒 **Secure Sandbox Environment** - All widgets run in isolated, sandboxed processes
@@ -42,9 +42,10 @@ Molecule is a desktop widget platform that revives the Windows 7/Vista gadget ex
 
 ### For Developers
 
-- **React Components** - 15+ pre-built UI components with glassmorphism styling
-- **Custom Hooks** - `useStorage`, `useInterval`, `useSystemInfo`, and more
+- **React Components** - 15 pre-built UI components with glassmorphism styling
+- **Custom Hooks** - 7 React hooks: `useWidgetAPI`, `useStorage`, `useSettings`, `useAllSettings`, `useInterval`, `useSystemInfo`, `useThrottle`
 - **TypeScript Support** - Full type definitions for better DX
+- **Error Handling** - Comprehensive error types and boundaries
 - **Hot Reload** - Fast development with Vite
 - **Simple API** - Clean, intuitive API for storage, settings, and system info
 - **Mock Environment** - Develop and test in browser without Electron
@@ -53,7 +54,7 @@ Molecule is a desktop widget platform that revives the Windows 7/Vista gadget ex
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│                  Molecule Platform                       │
+│                  Molecool Platform                       │
 ├─────────────────────────────────────────────────────────┤
 │                                                          │
 │  ┌──────────────────┐  ┌──────────────────────────┐   │
@@ -89,8 +90,8 @@ Molecule is a desktop widget platform that revives the Windows 7/Vista gadget ex
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-org/molecule.git
-cd molecule
+git clone https://github.com/your-org/Molecool.git
+cd Molecool
 
 # Install dependencies for all packages
 npm install
@@ -140,7 +141,7 @@ Visit `http://localhost:3000` to browse widgets.
 ## 📦 Project Structure
 
 ```
-molecule/
+Molecool/
 ├── widget-container/          # Electron desktop application
 │   ├── src/
 │   │   ├── main/             # Main process (Node.js)
@@ -180,7 +181,7 @@ molecule/
 mkdir my-widget
 cd my-widget
 npm init -y
-npm install @molecule/widget-sdk react react-dom
+npm install @Molecool/widget-sdk react react-dom
 npm install -D vite @vitejs/plugin-react typescript
 ```
 
@@ -221,7 +222,7 @@ npm install -D vite @vitejs/plugin-react typescript
 ```tsx
 import React, { useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { WidgetProvider, Widget, useInterval } from '@molecule/widget-sdk';
+import { WidgetProvider, Widget, useInterval } from '@Molecool/widget-sdk';
 
 const MyWidget: React.FC = () => {
   const [count, setCount] = useState(0);
@@ -303,7 +304,7 @@ npm test -- security.test.ts        # Security (20 tests)
 
 ## 🔒 Security
 
-Molecule implements multiple security layers:
+Molecool implements multiple security layers:
 
 - **Context Isolation** - Widgets run in isolated contexts
 - **Sandbox Mode** - All renderer processes are sandboxed
@@ -350,9 +351,9 @@ This project is licensed under the MIT License - see [LICENSE](LICENSE) file for
 ## 📞 Support
 
 - 📖 [Documentation](docs/)
-- 🐛 [Issue Tracker](https://github.com/your-org/molecule/issues)
-- 💬 [Discussions](https://github.com/your-org/molecule/discussions)
-- 📧 Email: support@molecule-widgets.com
+- 🐛 [Issue Tracker](https://github.com/your-org/Molecool/issues)
+- 💬 [Discussions](https://github.com/your-org/Molecool/discussions)
+- 📧 Email: support@Molecool-widgets.com
 
 ## 🗺️ Roadmap
 
@@ -371,8 +372,8 @@ This project is licensed under the MIT License - see [LICENSE](LICENSE) file for
 
 <div align="center">
 
-**Made with ❤️ by the Molecule Team**
+**Made with ❤️ by the Molecool Team**
 
-[Website](https://molecule-widgets.com) • [Documentation](docs/) • [Marketplace](https://marketplace.molecule-widgets.com)
+[Website](https://Molecool-widgets.com) • [Documentation](docs/) • [Marketplace](https://marketplace.Molecool-widgets.com)
 
 </div>

@@ -26,7 +26,7 @@ export default async function HomePage() {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
-                Molecule Widget Marketplace
+                Molecool Widget Marketplace
               </h1>
               <p className="mt-1 text-gray-600 dark:text-gray-400">
                 Discover and install desktop widgets for your workspace
@@ -61,7 +61,7 @@ export default async function HomePage() {
       <footer className="mt-16 border-t border-gray-200 bg-white py-8 dark:border-gray-800 dark:bg-gray-900">
         <div className="container mx-auto px-4 text-center text-sm text-gray-600 dark:text-gray-400">
           <p>
-            Molecule Widget Platform &copy; {new Date().getFullYear()}
+            Molecool Widget Platform &copy; {new Date().getFullYear()}
           </p>
           <p className="mt-2">
             Built with Next.js, Supabase, and Electron

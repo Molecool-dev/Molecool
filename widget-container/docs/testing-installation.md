@@ -19,14 +19,14 @@
 
 **Expected Result:**
 - Installation success dialog appears
-- Widget is extracted to `%APPDATA%/molecule-widget-container/widgets/{widgetId}/`
+- Widget is extracted to `%APPDATA%/Molecool-widget-container/widgets/{widgetId}/`
 - Widget appears in the installed widgets list
 - Download count is incremented in the Marketplace
 
 **Verification:**
 ```powershell
 # Check if widget directory exists
-dir "$env:APPDATA\molecule-widget-container\widgets\clock-widget"
+dir "$env:APPDATA\Molecool-widget-container\widgets\clock-widget"
 
 # Should contain:
 # - widget.config.json
@@ -168,7 +168,7 @@ export MARKETPLACE_URL=http://localhost:3000
 
 ### Production
 
-The default Marketplace URL is: `https://molecule-marketplace.vercel.app`
+The default Marketplace URL is: `https://Molecool-marketplace.vercel.app`
 
 ## Test Data
 

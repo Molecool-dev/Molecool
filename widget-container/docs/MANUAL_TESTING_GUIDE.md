@@ -1,6 +1,6 @@
 # Manual Testing Guide
 
-This guide provides step-by-step instructions for manually testing all features of the Molecule Desktop Widget Platform.
+This guide provides step-by-step instructions for manually testing all features of the Molecool Desktop Widget Platform.
 
 ## Prerequisites
 

@@ -1,6 +1,6 @@
 # Widget Marketplace
 
-The Molecule Widget Marketplace is a Next.js 15 web application that allows users to discover, browse, and install desktop widgets for the Molecule platform.
+The Molecool Widget Marketplace is a Next.js 15 web application that allows users to discover, browse, and install desktop widgets for the Molecool platform.
 
 ## Tech Stack
 
@@ -85,7 +85,7 @@ The `app/layout.tsx` file provides the application's root layout with:
 - Font optimization with `display: "swap"` for better performance
 
 ### Metadata & SEO
-- Dynamic page titles with template: `%s | Molecule`
+- Dynamic page titles with template: `%s | Molecool`
 - SEO-optimized description and keywords
 - Open Graph tags for social media sharing
 - Responsive viewport configuration
@@ -139,7 +139,7 @@ async function getWidget(widgetId: string): Promise<Widget | null> {
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const widget = await getWidget(id);
   return {
-    title: `${widget.display_name} - Molecule Widget Marketplace`,
+    title: `${widget.display_name} - Molecool Widget Marketplace`,
     description: widget.description,
     openGraph: { /* ... */ }
   };
@@ -192,7 +192,7 @@ Button component that triggers widget installation via the widget:// protocol.
 **Features:**
 - Opens widget://install/{widgetId} URL
 - Styled with primary action button design
-- Requires Molecule Widget Container to be installed
+- Requires Molecool Widget Container to be installed
 
 ## Supabase Client
 
@@ -363,4 +363,4 @@ The marketplace is designed to be deployed on Vercel:
 
 ## License
 
-Part of the Molecule Desktop Widget Platform project.
+Part of the Molecool Desktop Widget Platform project.

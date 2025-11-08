@@ -10,7 +10,7 @@
 ## Manual Testing Checklist
 
 ### 1. Widget Installation ✓
-- [x] Widget files copied to `%APPDATA%\molecule-widget-container\widgets\system-monitor-widget`
+- [x] Widget files copied to `%APPDATA%\Molecool-widget-container\widgets\system-monitor-widget`
 - [x] `widget.config.json` present and valid
 - [x] `dist/index.html` present
 
@@ -90,7 +90,7 @@ dist/assets/index-BAEX0xRC.js   147.78 kB
 ```
 powershell -ExecutionPolicy Bypass -File install-widget.ps1
 Installing System Monitor Widget...
-Target directory: C:\Users\USER\AppData\Roaming\molecule-widget-container\widgets\system-monitor-widget
+Target directory: C:\Users\USER\AppData\Roaming\Molecool-widget-container\widgets\system-monitor-widget
 Created widgets directory
 Copying widget files...
   Copied dist/

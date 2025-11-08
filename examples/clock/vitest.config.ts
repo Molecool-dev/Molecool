@@ -15,7 +15,7 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      '@molecule/widget-sdk': new URL('../../widget-sdk/src/index.ts', import.meta.url).pathname
+      '@Molecool/widget-sdk': new URL('../../widget-sdk/src/index.ts', import.meta.url).pathname
     }
   }
 });

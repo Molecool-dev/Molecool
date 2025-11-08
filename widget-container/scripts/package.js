@@ -1,5 +1,5 @@
 /**
- * Package Script for Molecule Widget Container
+ * Package Script for Molecool Widget Container
  * 
  * This script handles packaging the application for distribution:
  * 1. Verify build exists
@@ -21,7 +21,7 @@ const DIST_BUILD_DIR = path.join(ROOT_DIR, 'dist-build');
 const args = process.argv.slice(2);
 const platform = args[0] || 'win'; // Default to Windows
 
-console.log(`📦 Packaging Molecule Widget Container for ${platform === 'win' ? 'Windows' : 'macOS'}...\n`);
+console.log(`📦 Packaging Molecool Widget Container for ${platform === 'win' ? 'Windows' : 'macOS'}...\n`);
 
 // Step 1: Verify build exists
 console.log('1️⃣  Verifying build...');
@@ -107,10 +107,10 @@ if (platform === 'win') {
   console.log('📝 Windows Installation:');
   console.log('   1. Run the .exe installer');
   console.log('   2. Follow the installation wizard');
-  console.log('   3. Launch Molecule from Start Menu or Desktop shortcut\n');
+  console.log('   3. Launch Molecool from Start Menu or Desktop shortcut\n');
 } else {
   console.log('📝 macOS Installation:');
   console.log('   1. Open the .dmg file');
-  console.log('   2. Drag Molecule to Applications folder');
+  console.log('   2. Drag Molecool to Applications folder');
   console.log('   3. Launch from Applications or Launchpad\n');
 }

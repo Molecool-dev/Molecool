@@ -2,200 +2,200 @@
 
 ## Introduction
 
-Molecule 是一個桌面 Widget 平台，旨在復興 Windows 7/Vista 時代的桌面小工具體驗，但使用現代 Web 技術（Electron + React）來解決原始的安全問題。該平台允許用戶在桌面上放置可自訂的小工具，開發者可以使用 React 創建 Widget，所有 Widget 在沙盒環境中安全運行，並提供 Marketplace 讓用戶發現和安裝新的 Widget。
+molecool is a desktop widget platform that aims to revive the Windows 7/Vista gadget experience using modern web technologies (Electron + React) while addressing the original security concerns. The platform allows users to place customizable widgets on their desktop, enables developers to create widgets using React, runs all widgets in a secure sandbox environment, and provides a Marketplace for users to discover and install new widgets.
 
 ## Glossary
 
-- **Widget Container**: 基於 Electron 的桌面應用程式，負責管理和運行所有 Widget
-- **Widget SDK**: React 元件庫和 API，供開發者創建 Widget
-- **Widget**: 在桌面上顯示的小型應用程式（如時鐘、天氣、系統監控）
-- **Marketplace**: Next.js 網站，用於展示和分發 Widget
-- **Main Process**: Electron 主進程，負責系統級操作和視窗管理
-- **Renderer Process**: Electron 渲染進程，負責 UI 顯示
-- **Preload Script**: 在渲染進程中運行的腳本，提供安全的 IPC 橋接
-- **Sandbox**: 隔離環境，限制 Widget 對系統資源的訪問
-- **IPC**: Inter-Process Communication，進程間通訊機制
-- **Widget Manager**: Widget Container 的主介面，用於管理已安裝的 Widget
-- **CSP**: Content Security Policy，內容安全策略
+- **Widget Container**: Electron-based desktop application responsible for managing and running all widgets
+- **Widget SDK**: React component library and API for developers to create widgets
+- **Widget**: Small applications displayed on the desktop (e.g., clock, weather, system monitor)
+- **Marketplace**: Next.js website for showcasing and distributing widgets
+- **Main Process**: Electron main process responsible for system-level operations and window management
+- **Renderer Process**: Electron renderer process responsible for UI display
+- **Preload Script**: Script running in the renderer process that provides secure IPC bridging
+- **Sandbox**: Isolated environment that restricts widget access to system resources
+- **IPC**: Inter-Process Communication mechanism
+- **Widget Manager**: Main interface of Widget Container for managing installed widgets
+- **CSP**: Content Security Policy
 
 ## Requirements
 
 ### Requirement 1
 
-**User Story:** 作為用戶，我想要在桌面上創建和顯示 Widget，以便快速查看資訊
+**User Story:** As a user, I want to create and display widgets on my desktop so that I can quickly view information
 
 #### Acceptance Criteria
 
-1. WHEN 用戶啟動 Widget Container，THE Widget Container SHALL 顯示 Widget Manager 主視窗
-2. WHEN 用戶從 Widget Manager 選擇一個 Widget，THE Widget Container SHALL 創建一個無邊框、透明、置頂的浮動視窗來顯示該 Widget
-3. WHEN 用戶拖曳 Widget 視窗，THE Widget Container SHALL 更新 Widget 的位置並即時顯示
-4. WHEN 用戶關閉 Widget Container 並重新啟動，THE Widget Container SHALL 在上次儲存的位置重新顯示所有 Widget
-5. WHEN 用戶關閉某個 Widget 視窗，THE Widget Container SHALL 移除該 Widget 並更新 Widget Manager 的顯示狀態
+1. WHEN the user launches Widget Container, THE Widget Container SHALL display the Widget Manager main window
+2. WHEN the user selects a widget from Widget Manager, THE Widget Container SHALL create a frameless, transparent, always-on-top floating window to display that widget
+3. WHEN the user drags a widget window, THE Widget Container SHALL update the widget's position and display it in real-time
+4. WHEN the user closes Widget Container and restarts it, THE Widget Container SHALL redisplay all widgets at their last saved positions
+5. WHEN the user closes a widget window, THE Widget Container SHALL remove that widget and update the Widget Manager's display state
 
 ### Requirement 2
 
-**User Story:** 作為用戶，我想要 Widget 在沙盒環境中運行，以確保系統安全
+**User Story:** As a user, I want widgets to run in a sandbox environment to ensure system security
 
 #### Acceptance Criteria
 
-1. THE Widget Container SHALL 在所有 Widget 視窗中啟用 Electron sandbox 模式
-2. THE Widget Container SHALL 設置 nodeIntegration 為 false 且 contextIsolation 為 true
-3. THE Widget Container SHALL 為所有 Widget 視窗配置 Content Security Policy，禁止執行未授權的腳本
-4. WHEN Widget 嘗試訪問系統 API，THE Widget Container SHALL 通過 Preload Script 提供的安全橋接進行通訊
-5. THE Widget Container SHALL 阻止 Widget 直接訪問 Node.js API 或 Electron API
+1. THE Widget Container SHALL enable Electron sandbox mode in all widget windows
+2. THE Widget Container SHALL set nodeIntegration to false and contextIsolation to true
+3. THE Widget Container SHALL configure Content Security Policy for all widget windows to prohibit execution of unauthorized scripts
+4. WHEN a widget attempts to access system APIs, THE Widget Container SHALL communicate through the secure bridge provided by the Preload Script
+5. THE Widget Container SHALL prevent widgets from directly accessing Node.js APIs or Electron APIs
 
 ### Requirement 3
 
-**User Story:** 作為用戶，我想要控制 Widget 的權限，以保護我的隱私和系統安全
+**User Story:** As a user, I want to control widget permissions to protect my privacy and system security
 
 #### Acceptance Criteria
 
-1. WHEN Widget 首次請求敏感權限（如系統資訊或網路訪問），THE Widget Container SHALL 顯示權限請求對話框
-2. WHEN 用戶授予或拒絕權限，THE Widget Container SHALL 儲存用戶的選擇並在後續請求中自動應用
-3. WHEN Widget 嘗試使用未授權的 API，THE Widget Container SHALL 拒絕請求並返回錯誤訊息
-4. THE Widget Container SHALL 對每個 API 實施速率限制，防止 Widget 濫用系統資源
-5. WHEN 用戶查看 Widget 詳情，THE Widget Container SHALL 顯示該 Widget 在 widget.config.json 中聲明的所有權限需求
+1. WHEN a widget first requests sensitive permissions (such as system information or network access), THE Widget Container SHALL display a permission request dialog
+2. WHEN the user grants or denies permission, THE Widget Container SHALL save the user's choice and automatically apply it in subsequent requests
+3. WHEN a widget attempts to use an unauthorized API, THE Widget Container SHALL reject the request and return an error message
+4. THE Widget Container SHALL implement rate limiting for each API to prevent widgets from abusing system resources
+5. WHEN the user views widget details, THE Widget Container SHALL display all permission requirements declared in widget.config.json for that widget
 
 ### Requirement 4
 
-**User Story:** 作為開發者，我想要使用 React 和簡單的 API 創建 Widget，以快速開發功能
+**User Story:** As a developer, I want to create widgets using React and simple APIs to quickly develop features
 
 #### Acceptance Criteria
 
-1. THE Widget SDK SHALL 提供 WidgetAPI 介面，包含 storage、settings、ui 和 system 四個命名空間
-2. THE Widget SDK SHALL 提供至少 15 個預製 UI 元件（如 Container、Title、Button、ProgressBar 等）
-3. THE Widget SDK SHALL 提供 useWidgetAPI、useStorage、useSettings、useInterval 和 useSystemInfo 等 React Hooks
-4. WHEN 開發者調用 storage.set(key, value)，THE Widget SDK SHALL 通過 IPC 將數據儲存到 Widget Container 的持久化存儲中
-5. WHEN 開發者調用 system.getCPU()，THE Widget SDK SHALL 通過 IPC 從 Widget Container 獲取當前 CPU 使用率
+1. THE Widget SDK SHALL provide a WidgetAPI interface containing four namespaces: storage, settings, ui, and system
+2. THE Widget SDK SHALL provide at least 15 pre-built UI components (such as Container, Title, Button, ProgressBar, etc.)
+3. THE Widget SDK SHALL provide React Hooks including useWidgetAPI, useStorage, useSettings, useInterval, and useSystemInfo
+4. WHEN a developer calls storage.set(key, value), THE Widget SDK SHALL store the data in Widget Container's persistent storage via IPC
+5. WHEN a developer calls system.getCPU(), THE Widget SDK SHALL retrieve the current CPU usage from Widget Container via IPC
 
 ### Requirement 5
 
-**User Story:** 作為開發者，我想要在 widget.config.json 中聲明 Widget 的元數據和權限，以便系統正確載入和管理 Widget
+**User Story:** As a developer, I want to declare widget metadata and permissions in widget.config.json so that the system can properly load and manage widgets
 
 #### Acceptance Criteria
 
-1. THE Widget SDK SHALL 要求每個 Widget 包含 widget.config.json 文件
-2. THE widget.config.json SHALL 包含 id、name、displayName、version、description、author 和 permissions 欄位
-3. THE widget.config.json SHALL 在 permissions 欄位中聲明 systemInfo 和 network 權限需求
-4. THE widget.config.json SHALL 在 sizes 欄位中定義 Widget 的預設寬度和高度
-5. WHEN Widget Container 載入 Widget，THE Widget Container SHALL 驗證 widget.config.json 的格式並拒絕無效的配置
+1. THE Widget SDK SHALL require each widget to include a widget.config.json file
+2. THE widget.config.json SHALL contain fields: id, name, displayName, version, description, author, and permissions
+3. THE widget.config.json SHALL declare systemInfo and network permission requirements in the permissions field
+4. THE widget.config.json SHALL define the widget's default width and height in the sizes field
+5. WHEN Widget Container loads a widget, THE Widget Container SHALL validate the widget.config.json format and reject invalid configurations
 
 ### Requirement 6
 
-**User Story:** 作為用戶，我想要從 Marketplace 發現和安裝新的 Widget，以擴展平台功能
+**User Story:** As a user, I want to discover and install new widgets from the Marketplace to extend platform functionality
 
 #### Acceptance Criteria
 
-1. THE Marketplace SHALL 在首頁以網格形式顯示所有可用的 Widget
-2. WHEN 用戶點擊 Widget 卡片，THE Marketplace SHALL 導航到該 Widget 的詳情頁
-3. THE Widget 詳情頁 SHALL 顯示名稱、描述、作者、版本、下載數和權限需求
-4. WHEN 用戶點擊 Install 按鈕，THE Marketplace SHALL 打開自訂 URL 協議（widget://install/xxx）
-5. WHEN Widget Container 接收到安裝協議請求，THE Widget Container SHALL 下載、解壓並安裝該 Widget
+1. THE Marketplace SHALL display all available widgets in a grid format on the homepage
+2. WHEN the user clicks on a widget card, THE Marketplace SHALL navigate to that widget's detail page
+3. THE widget detail page SHALL display name, description, author, version, download count, and permission requirements
+4. WHEN the user clicks the Install button, THE Marketplace SHALL open a custom URL protocol (widget://install/xxx)
+5. WHEN Widget Container receives an installation protocol request, THE Widget Container SHALL download, extract, and install that widget
 
 ### Requirement 7
 
-**User Story:** 作為用戶，我想要使用時鐘 Widget 查看當前時間，以快速了解時間資訊
+**User Story:** As a user, I want to use a Clock widget to view the current time for quick time information
 
 #### Acceptance Criteria
 
-1. THE Clock Widget SHALL 顯示當前時間，格式為 HH:MM
-2. THE Clock Widget SHALL 顯示當前日期
-3. THE Clock Widget SHALL 每秒自動更新顯示的時間
-4. THE Clock Widget SHALL 使用 Widget SDK 提供的 UI 元件進行佈局
-5. THE Clock Widget SHALL 在 widget.config.json 中聲明不需要任何特殊權限
+1. THE Clock Widget SHALL display the current time in HH:MM format
+2. THE Clock Widget SHALL display the current date
+3. THE Clock Widget SHALL automatically update the displayed time every second
+4. THE Clock Widget SHALL use UI components provided by the Widget SDK for layout
+5. THE Clock Widget SHALL declare no special permissions required in widget.config.json
 
 ### Requirement 8
 
-**User Story:** 作為用戶，我想要使用系統監控 Widget 查看 CPU 和記憶體使用情況，以監控系統性能
+**User Story:** As a user, I want to use a System Monitor widget to view CPU and memory usage to monitor system performance
 
 #### Acceptance Criteria
 
-1. THE System Monitor Widget SHALL 顯示當前 CPU 使用率（百分比數字和進度條）
-2. THE System Monitor Widget SHALL 顯示當前記憶體使用量（已使用/總量）
-3. THE System Monitor Widget SHALL 每 2 秒更新一次系統資訊
-4. WHEN System Monitor Widget 首次啟動，THE System Monitor Widget SHALL 請求 systemInfo 權限
-5. THE System Monitor Widget SHALL 在 widget.config.json 中聲明需要 systemInfo.cpu 和 systemInfo.memory 權限
+1. THE System Monitor Widget SHALL display current CPU usage (percentage number and progress bar)
+2. THE System Monitor Widget SHALL display current memory usage (used/total)
+3. THE System Monitor Widget SHALL update system information every 2 seconds
+4. WHEN System Monitor Widget first launches, THE System Monitor Widget SHALL request systemInfo permissions
+5. THE System Monitor Widget SHALL declare requirements for systemInfo.cpu and systemInfo.memory permissions in widget.config.json
 
 ### Requirement 9
 
-**User Story:** 作為用戶，我想要使用天氣 Widget 查看當前天氣，以了解外部環境
+**User Story:** As a user, I want to use a Weather widget to view current weather to understand the external environment
 
 #### Acceptance Criteria
 
-1. THE Weather Widget SHALL 從天氣 API 獲取並顯示當前溫度
-2. THE Weather Widget SHALL 顯示天氣狀況（如晴天、多雲、雨天）
-3. WHEN 用戶配置城市設定，THE Weather Widget SHALL 使用 settings API 儲存並讀取城市偏好
-4. WHEN Weather Widget 首次啟動，THE Weather Widget SHALL 請求 network 權限
-5. THE Weather Widget SHALL 在 widget.config.json 中聲明需要 network.enabled 權限
+1. THE Weather Widget SHALL fetch and display current temperature from a weather API
+2. THE Weather Widget SHALL display weather conditions (such as sunny, cloudy, rainy)
+3. WHEN the user configures city settings, THE Weather Widget SHALL use the settings API to store and retrieve city preferences
+4. WHEN Weather Widget first launches, THE Weather Widget SHALL request network permissions
+5. THE Weather Widget SHALL declare requirement for network.enabled permission in widget.config.json
 
 ### Requirement 10
 
-**User Story:** 作為用戶，我想要通過系統托盤快速訪問 Widget Manager，以方便管理 Widget
+**User Story:** As a user, I want to quickly access Widget Manager through the system tray for convenient widget management
 
 #### Acceptance Criteria
 
-1. WHEN Widget Container 啟動，THE Widget Container SHALL 在系統托盤顯示圖示
-2. WHEN 用戶右鍵點擊托盤圖示，THE Widget Container SHALL 顯示選單，包含「打開 Manager」和「退出」選項
-3. WHEN 用戶選擇「打開 Manager」，THE Widget Container SHALL 顯示或聚焦 Widget Manager 視窗
-4. WHEN 用戶選擇「退出」，THE Widget Container SHALL 關閉所有 Widget 視窗並退出應用程式
-5. WHEN 用戶關閉 Widget Manager 視窗，THE Widget Container SHALL 隱藏視窗但保持應用程式在托盤中運行
+1. WHEN Widget Container launches, THE Widget Container SHALL display an icon in the system tray
+2. WHEN the user right-clicks the tray icon, THE Widget Container SHALL display a menu containing "Open Manager" and "Exit" options
+3. WHEN the user selects "Open Manager", THE Widget Container SHALL show or focus the Widget Manager window
+4. WHEN the user selects "Exit", THE Widget Container SHALL close all widget windows and exit the application
+5. WHEN the user closes the Widget Manager window, THE Widget Container SHALL hide the window but keep the application running in the tray
 
 ### Requirement 11
 
-**User Story:** 作為開發者，我想要在本地開發和測試 Widget，以提高開發效率
+**User Story:** As a developer, I want to develop and test widgets locally to improve development efficiency
 
 #### Acceptance Criteria
 
-1. THE Widget SDK SHALL 提供開發模式，允許開發者在瀏覽器中預覽 Widget
-2. WHEN 開發者運行 npm run dev，THE Widget 專案 SHALL 啟動 Vite 開發伺服器並自動重新載入變更
-3. WHEN 開發者運行 npm run build，THE Widget 專案 SHALL 打包 Widget 為可分發的格式
-4. THE Widget SDK SHALL 在開發模式下提供模擬的 WidgetAPI，無需連接到 Widget Container
-5. THE Widget SDK SHALL 提供 TypeScript 類型定義，支援開發者的 IDE 自動完成
+1. THE Widget SDK SHALL provide a development mode allowing developers to preview widgets in a browser
+2. WHEN a developer runs npm run dev, THE widget project SHALL start a Vite development server and automatically reload changes
+3. WHEN a developer runs npm run build, THE widget project SHALL package the widget into a distributable format
+4. THE Widget SDK SHALL provide a mocked WidgetAPI in development mode without needing to connect to Widget Container
+5. THE Widget SDK SHALL provide TypeScript type definitions to support IDE auto-completion for developers
 
 ### Requirement 12
 
-**User Story:** 作為用戶，我想要 Widget 具有美觀的毛玻璃效果，以提升視覺體驗
+**User Story:** As a user, I want widgets to have beautiful glassmorphism effects to enhance the visual experience
 
 #### Acceptance Criteria
 
-1. THE Widget Container SHALL 為所有 Widget 視窗應用毛玻璃背景效果（backdrop-filter: blur(10px)）
-2. THE Widget Container SHALL 設置 Widget 視窗背景為半透明（rgba(255, 255, 255, 0.1)）
-3. THE Widget Container SHALL 為 Widget 視窗添加 12px 圓角
-4. THE Widget Container SHALL 為 Widget 視窗添加陰影效果（0 8px 32px rgba(0, 0, 0, 0.3)）
-5. THE Widget SDK 提供的 UI 元件 SHALL 使用白色文字（rgba(255, 255, 255, 0.9)）以確保在透明背景上可讀
+1. THE Widget Container SHALL apply glassmorphism background effects to all widget windows (backdrop-filter: blur(10px))
+2. THE Widget Container SHALL set widget window backgrounds to semi-transparent (rgba(255, 255, 255, 0.1))
+3. THE Widget Container SHALL add 12px border radius to widget windows
+4. THE Widget Container SHALL add shadow effects to widget windows (0 8px 32px rgba(0, 0, 0, 0.3))
+5. THE UI components provided by Widget SDK SHALL use white text (rgba(255, 255, 255, 0.9)) to ensure readability on transparent backgrounds
 
 ### Requirement 13
 
-**User Story:** 作為平台管理員，我想要在 Marketplace 資料庫中儲存 Widget 資訊，以支援動態內容管理
+**User Story:** As a platform administrator, I want to store widget information in the Marketplace database to support dynamic content management
 
 #### Acceptance Criteria
 
-1. THE Marketplace SHALL 使用 Supabase PostgreSQL 資料庫儲存 Widget 資訊
-2. THE widgets 資料表 SHALL 包含 id、name、description、author、version、downloads 和 permissions 欄位
-3. WHEN 用戶訪問 Marketplace 首頁，THE Marketplace SHALL 從資料庫查詢並顯示所有 Widget
-4. WHEN 用戶搜索 Widget，THE Marketplace SHALL 在前端根據名稱和描述進行篩選
-5. THE Marketplace SHALL 在資料庫中預先填充至少 5 個 Widget 的示範數據
+1. THE Marketplace SHALL use Supabase PostgreSQL database to store widget information
+2. THE widgets table SHALL contain fields: id, name, description, author, version, downloads, and permissions
+3. WHEN a user visits the Marketplace homepage, THE Marketplace SHALL query and display all widgets from the database
+4. WHEN a user searches for widgets, THE Marketplace SHALL filter on the frontend based on name and description
+5. THE Marketplace SHALL pre-populate the database with demo data for at least 5 widgets
 
 ### Requirement 14
 
-**User Story:** 作為開發者，我想要 Widget Container 提供完整的 IPC 通訊系統，以實現 Widget 與主進程的安全互動
+**User Story:** As a developer, I want Widget Container to provide a complete IPC communication system to enable secure interaction between widgets and the main process
 
 #### Acceptance Criteria
 
-1. THE Widget Container SHALL 在 Main Process 中實現 ipc-handlers.js，處理所有來自 Renderer Process 的 IPC 訊息
-2. THE Widget Container SHALL 提供 manager-preload.js，為 Widget Manager 提供安全的 API 橋接
-3. THE Widget Container SHALL 提供 widget-preload.js，為 Widget 視窗提供安全的 API 橋接
-4. WHEN Widget 調用 storage API，THE widget-preload.js SHALL 通過 ipcRenderer.invoke 發送訊息到 Main Process
-5. WHEN Main Process 處理完請求，THE Main Process SHALL 通過 IPC 返回結果給 Renderer Process
+1. THE Widget Container SHALL implement ipc-handlers.js in the Main Process to handle all IPC messages from the Renderer Process
+2. THE Widget Container SHALL provide manager-preload.js to offer secure API bridging for Widget Manager
+3. THE Widget Container SHALL provide widget-preload.js to offer secure API bridging for widget windows
+4. WHEN a widget calls the storage API, THE widget-preload.js SHALL send messages to the Main Process via ipcRenderer.invoke
+5. WHEN the Main Process completes the request, THE Main Process SHALL return results to the Renderer Process via IPC
 
 ### Requirement 15
 
-**User Story:** 作為用戶，我想要 Widget Container 在多個 Widget 同時運行時保持良好性能，以確保流暢體驗
+**User Story:** As a user, I want Widget Container to maintain good performance when multiple widgets are running simultaneously to ensure a smooth experience
 
 #### Acceptance Criteria
 
-1. WHEN 5 個或更多 Widget 同時運行，THE Widget Container SHALL 保持總記憶體使用量低於 500MB
-2. WHEN Widget 更新 UI，THE Widget Container SHALL 確保渲染幀率不低於 30 FPS
-3. THE Widget Container SHALL 為每個 Widget 設置 CPU 使用率監控，當單個 Widget 持續超過 20% CPU 使用率時發出警告
-4. THE Widget Container SHALL 實施 API 速率限制，每個 Widget 每秒最多調用系統 API 10 次
-5. THE Widget Container SHALL 在 Widget 崩潰時隔離錯誤，不影響其他 Widget 或主應用程式的運行
+1. WHEN 5 or more widgets are running simultaneously, THE Widget Container SHALL maintain total memory usage below 500MB
+2. WHEN a widget updates its UI, THE Widget Container SHALL ensure rendering frame rate is not lower than 30 FPS
+3. THE Widget Container SHALL set up CPU usage monitoring for each widget and issue a warning when a single widget continuously exceeds 20% CPU usage
+4. THE Widget Container SHALL implement API rate limiting, allowing each widget to call system APIs at most 10 times per second
+5. THE Widget Container SHALL isolate errors when a widget crashes, not affecting other widgets or the main application's operatio

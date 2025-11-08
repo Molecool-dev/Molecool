@@ -498,7 +498,7 @@ function checkDocumentation() {
 
 function main() {
   log('\n╔════════════════════════════════════════════════════════════╗', 'blue');
-  log('║         MOLECULE PLATFORM - FINAL SYSTEM CHECK            ║', 'blue');
+  log('║         Molecool PLATFORM - FINAL SYSTEM CHECK            ║', 'blue');
   log('╚════════════════════════════════════════════════════════════╝', 'blue');
   
   // Run all checks

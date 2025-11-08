@@ -1,6 +1,6 @@
-# Molecule Documentation
+# Molecool Documentation
 
-Welcome to the Molecule Desktop Widget Platform documentation!
+Welcome to the Molecool Desktop Widget Platform documentation!
 
 ## 📚 Documentation Index
 
@@ -145,9 +145,9 @@ See [Contributing Guide](../CONTRIBUTING.md) for details (coming soon).
 ## 📞 Getting Help
 
 - 📖 Check this documentation first
-- 🐛 [Report Issues](https://github.com/your-org/molecule/issues)
-- 💬 [Ask Questions](https://github.com/your-org/molecule/discussions)
-- 📧 Email: support@molecule-widgets.com
+- 🐛 [Report Issues](https://github.com/your-org/Molecool/issues)
+- 💬 [Ask Questions](https://github.com/your-org/Molecool/discussions)
+- 📧 Email: support@Molecool-widgets.com
 
 ## 📅 Documentation Updates
 

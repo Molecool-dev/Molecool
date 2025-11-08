@@ -25,8 +25,8 @@ describe('Packaging Configuration', () => {
     });
 
     test('should have required build fields', () => {
-      expect(packageJson.build.appId).toBe('com.molecule.widget-platform');
-      expect(packageJson.build.productName).toBe('Molecule');
+      expect(packageJson.build.appId).toBe('com.Molecool.widget-platform');
+      expect(packageJson.build.productName).toBe('Molecool');
       expect(packageJson.build.directories).toBeDefined();
       expect(packageJson.build.directories.output).toBe('dist-build');
     });

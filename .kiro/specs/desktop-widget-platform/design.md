@@ -2,23 +2,23 @@
 
 ## Overview
 
-Molecule 是一個現代化的桌面 Widget 平台，採用 Electron + React 技術棧構建。系統由四個主要部分組成：
+Molecool is a modern desktop widget platform built with Electron + React technology stack. The system consists of four main components:
 
-1. **Widget Container** - Electron 桌面應用，負責 Widget 生命週期管理和安全沙盒
-2. **Widget SDK** - React 元件庫和 API，提供開發者友好的 Widget 開發體驗
-3. **Example Widgets** - 三個範例 Widget（時鐘、系統監控、天氣）展示平台能力
-4. **Marketplace** - Next.js 網站，提供 Widget 發現和分發功能
+1. **Widget Container** - Electron desktop application responsible for widget lifecycle management and security sandboxing
+2. **Widget SDK** - React component library and API providing a developer-friendly widget development experience
+3. **Example Widgets** - Three example widgets (Clock, System Monitor, Weather) demonstrating platform capabilities
+4. **Marketplace** - Next.js website providing widget discovery and distribution
 
-### 設計原則
+### Design Principles
 
-- **安全第一**: 所有 Widget 在沙盒環境中運行，使用 Context Isolation 和 CSP
-- **開發者友好**: 提供簡潔的 React API 和完整的 TypeScript 支援
-- **性能優化**: 多 Widget 並行運行時保持低記憶體和 CPU 使用
-- **視覺美觀**: 毛玻璃效果和現代化 UI 設計
+- **Security First**: All widgets run in a sandboxed environment using Context Isolation and CSP
+- **Developer Friendly**: Provides clean React APIs and complete TypeScript support
+- **Performance Optimized**: Maintains low memory and CPU usage when multiple widgets run concurrently
+- **Visually Beautiful**: Glassmorphism effects and modern UI design
 
 ## Architecture
 
-### 系統架構圖
+### System Architecture Diagram
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -73,6 +73,13 @@ Molecule 是一個現代化的桌面 Widget 平台，採用 Electron + React 技
 └─────────────────────────────────────────────────────────────┘
 ```
 
+**Architecture Rationale:**
+
+- **Process Isolation**: Each widget runs in a separate BrowserWindow with its own renderer process, ensuring that a crash in one widget doesn't affect others (Requirement 15.5)
+- **Security Layers**: The preload script acts as a security bridge, exposing only necessary APIs through contextBridge while maintaining context isolation (Requirements 2.1, 2.2, 2.4)
+- **Centralized Management**: Widget Manager in the main process controls all widget lifecycles, permissions, and state persistence (Requirements 1.1, 1.4, 3.2)
+- **IPC Communication**: All widget-to-system communication flows through IPC handlers with permission checks and rate limiting (Requirements 3.3, 3.4, 14.1-14.5)
+
 
 ## Components and Interfaces
 
@@ -82,7 +89,7 @@ Molecule 是一個現代化的桌面 Widget 平台，採用 Electron + React 技
 
 ##### Widget Manager (`widget-manager.js`)
 
-負責 Widget 的生命週期管理。
+Responsible for widget lifecycle management.
 
 ```typescript
 interface WidgetInstance {
@@ -98,29 +105,31 @@ interface WidgetInstance {
 class WidgetManager {
   private widgets: Map<string, WidgetInstance>;
   
-  // 載入已安裝的 Widget
+  // Load installed widgets
   async loadInstalledWidgets(): Promise<WidgetConfig[]>;
   
-  // 創建 Widget 視窗
+  // Create widget window
   async createWidget(widgetId: string): Promise<string>;
   
-  // 關閉 Widget
+  // Close widget
   async closeWidget(instanceId: string): Promise<void>;
   
-  // 獲取所有運行中的 Widget
+  // Get all running widgets
   getRunningWidgets(): WidgetInstance[];
   
-  // 儲存 Widget 狀態（位置、大小）
+  // Save widget state (position, size)
   async saveWidgetState(instanceId: string): Promise<void>;
   
-  // 恢復上次的 Widget 狀態
+  // Restore widgets from last session
   async restoreWidgets(): Promise<void>;
 }
 ```
 
+**Design Rationale**: The WidgetManager maintains a Map of widget instances to enable O(1) lookups and efficient state management. Each widget instance tracks its BrowserWindow, configuration, and permissions separately to ensure proper isolation (Requirements 1.1, 1.4, 1.5).
+
 ##### Window Controller (`window-controller.js`)
 
-管理 BrowserWindow 的創建和配置。
+Manages BrowserWindow creation and configuration.
 
 ```typescript
 interface WindowOptions {
@@ -134,23 +143,25 @@ interface WindowOptions {
 }
 
 class WindowController {
-  // 創建 Widget 視窗
+  // Create widget window
   createWidgetWindow(options: WindowOptions, preloadPath: string): BrowserWindow;
   
-  // 創建 Manager 視窗
+  // Create manager window
   createManagerWindow(): BrowserWindow;
   
-  // 應用毛玻璃效果
+  // Apply glassmorphism effect
   applyGlassEffect(window: BrowserWindow): void;
   
-  // 設置視窗可拖曳
+  // Enable window dragging
   enableDragging(window: BrowserWindow): void;
 }
 ```
 
+**Design Rationale**: WindowController centralizes all BrowserWindow configuration to ensure consistent security settings (sandbox, contextIsolation, nodeIntegration: false) across all windows. The glassmorphism effect is applied at the window level for platform-native rendering (Requirements 1.2, 2.1, 2.2, 12.1-12.4).
+
 ##### System API (`system-api.js`)
 
-提供系統資訊查詢功能。
+Provides system information query functionality.
 
 ```typescript
 interface SystemInfo {
@@ -167,20 +178,22 @@ interface SystemInfo {
 }
 
 class SystemAPI {
-  // 獲取 CPU 使用率
+  // Get CPU usage percentage
   async getCPUUsage(): Promise<number>;
   
-  // 獲取記憶體資訊
+  // Get memory information
   getMemoryInfo(): SystemInfo['memory'];
   
-  // 獲取完整系統資訊
+  // Get complete system information
   getSystemInfo(): SystemInfo;
 }
 ```
 
+**Design Rationale**: SystemAPI uses Node.js `os` module for cross-platform system information. CPU usage is calculated using delta-based measurement to provide accurate real-time data. All methods include zero-division protection and error handling (Requirements 4.5, 8.1, 8.2).
+
 ##### Permissions Manager (`permissions.js`)
 
-管理 Widget 權限請求和授權。
+Manages widget permission requests and authorization.
 
 ```typescript
 interface PermissionRequest {
@@ -201,53 +214,61 @@ interface PermissionSet {
 }
 
 class PermissionsManager {
-  // 請求權限（顯示對話框）
+  // Request permission (show dialog)
   async requestPermission(request: PermissionRequest): Promise<boolean>;
   
-  // 檢查權限
+  // Check permission
   hasPermission(widgetId: string, permission: string): boolean;
   
-  // 儲存權限決定
+  // Save permission decision
   savePermission(widgetId: string, permission: string, granted: boolean): void;
   
-  // 獲取 Widget 的所有權限
+  // Get all permissions for a widget
   getPermissions(widgetId: string): PermissionSet;
   
-  // 實施 API 速率限制
+  // Enforce API rate limiting
   checkRateLimit(widgetId: string, apiName: string): boolean;
 }
 ```
 
+**Design Rationale**: PermissionsManager implements a two-tier security model:
+1. **Permission-based access control**: Widgets must declare and request permissions before accessing sensitive APIs (Requirements 3.1, 3.2, 3.3)
+2. **Rate limiting**: Prevents resource abuse by limiting API calls to 10 per second per widget (Requirements 3.4, 15.4)
+
+The manager includes memory leak protection with automatic cleanup of expired rate limit records.
+
 ##### Storage Manager (`storage.js`)
 
-使用 electron-store 實現數據持久化。
+Implements data persistence using electron-store.
 
 ```typescript
 class StorageManager {
   private store: ElectronStore;
   
-  // Widget 數據儲存
+  // Widget data storage
   setWidgetData(widgetId: string, key: string, value: any): void;
   getWidgetData(widgetId: string, key: string): any;
   deleteWidgetData(widgetId: string, key: string): void;
   
-  // Widget 狀態儲存
+  // Widget state storage
   saveWidgetState(widgetId: string, state: WidgetState): void;
   getWidgetState(widgetId: string): WidgetState | null;
   
-  // 權限儲存
+  // Permission storage
   savePermissions(widgetId: string, permissions: PermissionSet): void;
   getPermissions(widgetId: string): PermissionSet | null;
 }
 ```
 
+**Design Rationale**: StorageManager uses electron-store for persistent, encrypted storage with automatic JSON serialization. All widget data is namespaced by widgetId to ensure isolation. Position updates are debounced by 500ms minimum to reduce disk I/O (Requirements 1.4, 4.4).
+
 ##### IPC Handlers (`ipc-handlers.js`)
 
-處理所有 IPC 通訊。
+Handles all IPC communication.
 
 ```typescript
 class IPCHandlers {
-  // 註冊所有 IPC handlers
+  // Register all IPC handlers
   registerHandlers(): void;
   
   // Storage API handlers
@@ -269,14 +290,16 @@ class IPCHandlers {
 }
 ```
 
+**Design Rationale**: All IPC handlers use try-catch blocks and return standardized responses `{ success: boolean, data?: any, error?: { type, message } }`. This ensures consistent error handling across the platform and enables proper error propagation to widgets (Requirements 14.1, 14.4, 14.5).
+
 #### 1.2 Preload Scripts
 
 ##### Widget Preload (`widget-preload.js`)
 
-為 Widget 提供安全的 API 橋接。
+Provides secure API bridging for widgets.
 
 ```typescript
-// 通過 contextBridge 暴露的 API
+// API exposed through contextBridge
 interface WidgetAPI {
   storage: {
     get: (key: string) => Promise<any>;
@@ -299,15 +322,17 @@ interface WidgetAPI {
     setPosition: (x: number, y: number) => Promise<void>;
   };
   
-  // Widget 元數據
+  // Widget metadata
   widgetId: string;
   widgetConfig: WidgetConfig;
 }
 ```
 
+**Design Rationale**: The preload script uses `contextBridge.exposeInMainWorld()` to expose only necessary APIs, never exposing raw `ipcRenderer` or Node.js APIs. This maintains the security boundary while providing widgets with required functionality (Requirements 2.4, 2.5, 14.3).
+
 ##### Manager Preload (`manager-preload.js`)
 
-為 Widget Manager 提供管理功能。
+Provides management functionality for Widget Manager.
 
 ```typescript
 interface ManagerAPI {
@@ -329,7 +354,7 @@ interface ManagerAPI {
 
 ##### WidgetAPI Interface (`core/WidgetAPI.ts`)
 
-主要的 API 介面，通過 React Context 提供。
+Primary API interface provided through React Context.
 
 ```typescript
 export interface WidgetAPIContext {
@@ -374,19 +399,19 @@ export interface UIAPI {
 
 ##### WidgetProvider (`core/WidgetAPI.ts`)
 
-提供 API Context 的 Provider 元件。
+Provider component that supplies API Context.
 
 ```typescript
 export const WidgetProvider: React.FC<{
   children: React.ReactNode;
 }> = ({ children }) => {
   const api = useMemo(() => {
-    // 檢查是否在 Electron 環境中
+    // Check if running in Electron environment
     if (typeof window !== 'undefined' && window.widgetAPI) {
       return window.widgetAPI;
     }
     
-    // 開發模式：返回模擬 API
+    // Development mode: return mock API
     return createMockAPI();
   }, []);
   
@@ -397,6 +422,8 @@ export const WidgetProvider: React.FC<{
   );
 };
 ```
+
+**Design Rationale**: WidgetProvider automatically detects the runtime environment (Electron vs browser) and provides appropriate API implementation. In development mode, it returns a mock API for browser-based testing without requiring Widget Container (Requirement 11.1, 11.4).
 
 #### 2.2 React Hooks
 
@@ -488,7 +515,7 @@ export function useSystemInfo(
 
 #### 2.3 UI Components
 
-所有 UI 元件使用 TypeScript 和 CSS Modules 構建，支援毛玻璃效果主題。
+All UI components are built with TypeScript and CSS Modules, supporting glassmorphism theme.
 
 ##### Widget.Container (`components/Widget.tsx`)
 
@@ -583,7 +610,7 @@ export const Stat: React.FC<{
 };
 ```
 
-完整的 UI 元件列表（至少 15 個）：
+Complete UI component list (minimum 15):
 1. Container
 2. Title
 3. LargeText
@@ -600,12 +627,13 @@ export const Stat: React.FC<{
 14. Badge
 15. Link
 
+**Design Rationale**: The SDK provides 15+ pre-built components to accelerate widget development. All components use white text (rgba(255, 255, 255, 0.9)) for readability on transparent backgrounds and include hover/transition animations for polish (Requirements 4.2, 12.5).
 
 ### 3. Example Widgets
 
 #### 3.1 Clock Widget
 
-簡單的時鐘 Widget，展示基本的 UI 元件和定時更新。
+Simple clock widget demonstrating basic UI components and timed updates.
 
 ```typescript
 // examples/clock/src/index.tsx
@@ -646,7 +674,7 @@ export default function App() {
 
 #### 3.2 System Monitor Widget
 
-展示系統資訊 API 和權限請求。
+Demonstrates system information API and permission requests.
 
 ```typescript
 // examples/system-monitor/src/index.tsx
@@ -700,7 +728,7 @@ export default function App() {
 
 #### 3.3 Weather Widget
 
-展示網路 API 調用和設定管理。
+Demonstrates network API calls and settings management.
 
 ```typescript
 // examples/weather/src/index.tsx
@@ -720,7 +748,7 @@ const WeatherWidget: React.FC = () => {
   
   const fetchWeather = async () => {
     try {
-      // 實際應用中應該使用真實的天氣 API
+      // In production, use real weather API
       const response = await fetch(
         `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=YOUR_API_KEY&units=metric`
       );
@@ -744,7 +772,7 @@ const WeatherWidget: React.FC = () => {
   
   useInterval(() => {
     fetchWeather();
-  }, 600000); // 每 10 分鐘更新
+  }, 600000); // Update every 10 minutes
   
   if (loading) {
     return (
@@ -772,12 +800,17 @@ export default function App() {
 }
 ```
 
+**Design Rationale**: The three example widgets demonstrate progressively complex features:
+- Clock: Basic UI and timing (Requirements 7.1-7.5)
+- System Monitor: System APIs and permissions (Requirements 8.1-8.5)
+- Weather: Network access and settings (Requirements 9.1-9.5)
+
 ### 4. Marketplace (Next.js Website)
 
 #### 4.1 Database Schema (Supabase)
 
 ```sql
--- widgets 表
+-- widgets table
 CREATE TABLE widgets (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   widget_id VARCHAR(255) UNIQUE NOT NULL,
@@ -796,10 +829,12 @@ CREATE TABLE widgets (
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- 索引
+-- Indexes
 CREATE INDEX idx_widgets_widget_id ON widgets(widget_id);
 CREATE INDEX idx_widgets_downloads ON widgets(downloads DESC);
 ```
+
+**Design Rationale**: The database schema uses JSONB for flexible storage of permissions and sizes, allowing widgets to declare complex permission requirements without schema changes. Indexes on widget_id and downloads optimize common queries (Requirements 13.1, 13.2).
 
 #### 4.2 API Routes
 
@@ -930,15 +965,15 @@ export default async function WidgetDetailPage({
 
 ### Widget Configuration (`widget.config.json`)
 
-每個 Widget 必須包含的配置文件。
+Configuration file required for each widget.
 
 ```typescript
 interface WidgetConfig {
-  id: string;                    // 唯一識別符，如 "clock-widget"
-  name: string;                  // 內部名稱，如 "clock"
-  displayName: string;           // 顯示名稱，如 "Clock Widget"
-  version: string;               // 版本號，如 "1.0.0"
-  description: string;           // 描述
+  id: string;                    // Unique identifier, e.g. "clock-widget"
+  name: string;                  // Internal name, e.g. "clock"
+  displayName: string;           // Display name, e.g. "Clock Widget"
+  version: string;               // Version number, e.g. "1.0.0"
+  description: string;           // Description
   author: {
     name: string;
     email: string;
@@ -967,13 +1002,15 @@ interface WidgetConfig {
       height: number;
     };
   };
-  entryPoint: string;            // 入口文件，如 "dist/index.html"
+  entryPoint: string;            // Entry file, e.g. "dist/index.html"
 }
 ```
 
+**Design Rationale**: widget.config.json serves as the widget manifest, declaring all metadata, permissions, and size constraints upfront. This enables Widget Container to validate widgets before loading and display permission requirements to users (Requirements 5.1-5.5).
+
 ### Widget State
 
-Widget Container 儲存的 Widget 狀態。
+Widget state stored by Widget Container.
 
 ```typescript
 interface WidgetState {
@@ -995,28 +1032,28 @@ interface WidgetState {
 
 ### Storage Schema
 
-electron-store 的數據結構。
+Data structure for electron-store.
 
 ```typescript
 interface StoreSchema {
-  // Widget 狀態
+  // Widget states
   widgetStates: {
     [instanceId: string]: WidgetState;
   };
   
-  // Widget 數據
+  // Widget data
   widgetData: {
     [widgetId: string]: {
       [key: string]: any;
     };
   };
   
-  // 權限
+  // Permissions
   permissions: {
     [widgetId: string]: PermissionSet;
   };
   
-  // 應用設定
+  // App settings
   appSettings: {
     autoRestore: boolean;
     maxWidgets: number;
@@ -1026,7 +1063,7 @@ interface StoreSchema {
 
 ## Error Handling
 
-### 錯誤類型
+### Error Types
 
 ```typescript
 enum WidgetErrorType {
@@ -1050,16 +1087,16 @@ class WidgetError extends Error {
 }
 ```
 
-### 錯誤處理策略
+### Error Handling Strategy
 
 #### Main Process
 
-1. **Widget 崩潰隔離**: 使用 `BrowserWindow` 的 `crashed` 事件監聽，單個 Widget 崩潰不影響其他 Widget
-2. **IPC 錯誤處理**: 所有 IPC handler 使用 try-catch，返回標準化錯誤響應
-3. **日誌記錄**: 使用 electron-log 記錄所有錯誤
+1. **Widget Crash Isolation**: Listen to `BrowserWindow` `crashed` event; single widget crash doesn't affect others
+2. **IPC Error Handling**: All IPC handlers use try-catch, return standardized error responses
+3. **Logging**: Use electron-log to record all errors
 
 ```typescript
-// 範例：IPC handler 錯誤處理
+// Example: IPC handler error handling
 ipcMain.handle('storage:get', async (event, widgetId, key) => {
   try {
     const value = storageManager.getWidgetData(widgetId, key);
@@ -1077,14 +1114,16 @@ ipcMain.handle('storage:get', async (event, widgetId, key) => {
 });
 ```
 
+**Design Rationale**: Standardized error responses `{ success, data?, error? }` enable consistent error handling across IPC boundaries. All errors include a type enum for programmatic handling and user-friendly messages (Requirement 15.5).
+
 #### Renderer Process (Widget SDK)
 
-1. **API 錯誤處理**: 所有 API 調用返回 Promise，使用 reject 傳遞錯誤
-2. **React Error Boundary**: 在 WidgetProvider 中包裹 Error Boundary
-3. **用戶友好提示**: 顯示錯誤訊息給用戶
+1. **API Error Handling**: All API calls return Promises, use reject to propagate errors
+2. **React Error Boundary**: Wrap WidgetProvider with Error Boundary
+3. **User-Friendly Messages**: Display error messages to users
 
 ```typescript
-// Widget SDK 錯誤處理範例
+// Widget SDK error handling example
 export const storage = {
   async get<T>(key: string): Promise<T | undefined> {
     try {
@@ -1106,9 +1145,9 @@ export const storage = {
 
 #### Marketplace
 
-1. **API 錯誤**: 使用 Next.js 的錯誤處理機制
-2. **404 處理**: Widget 不存在時顯示友好的 404 頁面
-3. **網路錯誤**: 顯示重試按鈕
+1. **API Errors**: Use Next.js error handling mechanisms
+2. **404 Handling**: Display friendly 404 page when widget doesn't exist
+3. **Network Errors**: Show retry button
 
 ## Testing Strategy
 
@@ -1116,7 +1155,7 @@ export const storage = {
 
 #### Widget Container (Main Process)
 
-使用 Jest 測試核心邏輯。
+Use Jest to test core logic.
 
 ```typescript
 // __tests__/widget-manager.test.ts
@@ -1143,7 +1182,7 @@ describe('WidgetManager', () => {
 
 #### Widget SDK
 
-使用 Vitest 和 React Testing Library。
+Use Vitest and React Testing Library.
 
 ```typescript
 // __tests__/useStorage.test.tsx
@@ -1167,13 +1206,13 @@ describe('useStorage', () => {
 
 ### Integration Tests
 
-測試 IPC 通訊和完整流程。
+Test IPC communication and complete flows.
 
 ```typescript
 // __tests__/integration/ipc.test.ts
 describe('IPC Communication', () => {
   test('should handle storage operations', async () => {
-    // 模擬 renderer 調用
+    // Simulate renderer call
     const result = await ipcRenderer.invoke('storage:set', 'widget-1', 'key', 'value');
     expect(result.success).toBe(true);
     
@@ -1185,40 +1224,40 @@ describe('IPC Communication', () => {
 
 ### E2E Tests
 
-使用 Playwright 測試完整的用戶流程。
+Use Playwright to test complete user flows.
 
 ```typescript
 // e2e/widget-lifecycle.spec.ts
 test('should create and close widget', async ({ page }) => {
   await page.goto('app://./manager.html');
   
-  // 點擊創建 Widget
+  // Click create widget
   await page.click('[data-widget-id="clock-widget"]');
   
-  // 驗證 Widget 視窗出現
+  // Verify widget window appears
   const widgetWindow = await page.waitForSelector('.widget-window');
   expect(widgetWindow).toBeTruthy();
   
-  // 關閉 Widget
+  // Close widget
   await page.click('.widget-close-button');
   
-  // 驗證 Widget 視窗消失
+  // Verify widget window disappears
   await page.waitForSelector('.widget-window', { state: 'hidden' });
 });
 ```
 
 ### Manual Testing Checklist
 
-- [ ] Widget 可以正常創建和顯示
-- [ ] Widget 可以拖曳到不同位置
-- [ ] Widget 位置在重啟後保持
-- [ ] 權限對話框正常顯示
-- [ ] 系統資訊 API 返回正確數據
-- [ ] Storage API 正常儲存和讀取
-- [ ] 多個 Widget 同時運行不卡頓
-- [ ] Widget 崩潰不影響其他 Widget
-- [ ] Marketplace 可以正常瀏覽和搜索
-- [ ] Install 按鈕觸發自訂協議
+- [ ] Widget can be created and displayed normally
+- [ ] Widget can be dragged to different positions
+- [ ] Widget position persists after restart
+- [ ] Permission dialog displays correctly
+- [ ] System info API returns correct data
+- [ ] Storage API saves and retrieves correctly
+- [ ] Multiple widgets run smoothly simultaneously
+- [ ] Widget crash doesn't affect other widgets
+- [ ] Marketplace can be browsed and searched normally
+- [ ] Install button triggers custom protocol
 
 
 ## Security Considerations
@@ -1227,7 +1266,7 @@ test('should create and close widget', async ({ page }) => {
 
 #### 1. Context Isolation
 
-所有 BrowserWindow 必須啟用 `contextIsolation`。
+All BrowserWindows must enable `contextIsolation`.
 
 ```typescript
 const window = new BrowserWindow({
@@ -1242,7 +1281,7 @@ const window = new BrowserWindow({
 
 #### 2. Content Security Policy
 
-為所有 Widget 視窗設置嚴格的 CSP。
+Set strict CSP for all widget windows.
 
 ```typescript
 session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
@@ -1262,17 +1301,17 @@ session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
 });
 ```
 
-#### 3. Preload Script 安全
+#### 3. Preload Script Security
 
-只暴露必要的 API，不直接暴露 `ipcRenderer`。
+Only expose necessary APIs, never expose `ipcRenderer` directly.
 
 ```typescript
-// ❌ 不安全
+// ❌ Insecure
 contextBridge.exposeInMainWorld('electron', {
   ipcRenderer: ipcRenderer
 });
 
-// ✅ 安全
+// ✅ Secure
 contextBridge.exposeInMainWorld('widgetAPI', {
   storage: {
     get: (key) => ipcRenderer.invoke('storage:get', key),
@@ -1281,9 +1320,11 @@ contextBridge.exposeInMainWorld('widgetAPI', {
 });
 ```
 
-#### 4. 權限驗證
+**Design Rationale**: Never expose raw IPC or Node.js APIs to renderer. The preload script acts as a security boundary, exposing only specific, validated methods (Requirements 2.4, 2.5).
 
-所有敏感 API 調用前檢查權限。
+#### 4. Permission Verification
+
+Check permissions before all sensitive API calls.
 
 ```typescript
 ipcMain.handle('system:getCPU', async (event) => {
@@ -1317,30 +1358,32 @@ ipcMain.handle('system:getCPU', async (event) => {
 });
 ```
 
-#### 5. Widget 隔離
+#### 5. Widget Isolation
 
-每個 Widget 在獨立的 BrowserWindow 中運行，數據隔離。
+Each widget runs in an independent BrowserWindow with data isolation.
 
 ```typescript
-// Widget A 無法訪問 Widget B 的數據
-storageManager.getWidgetData('widget-a', 'key'); // 只返回 widget-a 的數據
+// Widget A cannot access Widget B's data
+storageManager.getWidgetData('widget-a', 'key'); // Only returns widget-a's data
 ```
+
+**Design Rationale**: Process-level isolation ensures that a compromised widget cannot access other widgets' data or affect their operation (Requirement 15.5).
 
 ### Network Security
 
-#### 1. 白名單域名
+#### 1. Domain Whitelist
 
-只允許 Widget 訪問在 `widget.config.json` 中聲明的域名。
+Only allow widgets to access domains declared in `widget.config.json`.
 
 ```typescript
-// 在 CSP 中動態設置
+// Dynamically set in CSP
 const allowedDomains = widget.config.permissions.network.allowedDomains || [];
 const connectSrc = ['https:'].concat(allowedDomains).join(' ');
 ```
 
 #### 2. HTTPS Only
 
-強制所有網路請求使用 HTTPS。
+Force all network requests to use HTTPS.
 
 ```typescript
 session.defaultSession.webRequest.onBeforeRequest((details, callback) => {
@@ -1357,47 +1400,49 @@ session.defaultSession.webRequest.onBeforeRequest((details, callback) => {
 
 ## Performance Optimization
 
-### 記憶體管理
+### Memory Management
 
-#### 1. Widget 視窗優化
+#### 1. Widget Window Optimization
 
 ```typescript
 const window = new BrowserWindow({
   webPreferences: {
-    // 啟用硬體加速
+    // Enable hardware acceleration
     offscreen: false,
-    // 限制記憶體
+    // Limit memory
     v8CacheOptions: 'code',
-    // 禁用不需要的功能
+    // Disable unnecessary features
     webgl: false,
     plugins: false
   }
 });
 ```
 
-#### 2. 資源清理
+#### 2. Resource Cleanup
 
-Widget 關閉時清理資源。
+Clean up resources when widget closes.
 
 ```typescript
 async closeWidget(instanceId: string) {
   const widget = this.widgets.get(instanceId);
   
   if (widget?.window) {
-    // 清理事件監聽器
+    // Clean up event listeners
     widget.window.removeAllListeners();
     
-    // 關閉視窗
+    // Close window
     widget.window.close();
     widget.window = null;
   }
   
-  // 清理數據
+  // Clean up data
   this.widgets.delete(instanceId);
 }
 ```
 
-#### 3. 限制 Widget 數量
+**Design Rationale**: Proper resource cleanup prevents memory leaks when widgets are closed. All event listeners must be removed before destroying windows (Requirement 15.1).
+
+#### 3. Limit Widget Count
 
 ```typescript
 const MAX_WIDGETS = 10;
@@ -1407,15 +1452,15 @@ async createWidget(widgetId: string) {
     throw new Error('Maximum widget limit reached');
   }
   
-  // 創建 Widget...
+  // Create widget...
 }
 ```
 
-### CPU 優化
+### CPU Optimization
 
-#### 1. 節流更新
+#### 1. Throttle Updates
 
-在 Widget SDK 中提供節流工具。
+Provide throttling utilities in Widget SDK.
 
 ```typescript
 export function useThrottle<T>(value: T, delay: number): T {
@@ -1433,10 +1478,10 @@ export function useThrottle<T>(value: T, delay: number): T {
 }
 ```
 
-#### 2. 監控 CPU 使用
+#### 2. Monitor CPU Usage
 
 ```typescript
-// 定期檢查 Widget 的 CPU 使用
+// Periodically check widget CPU usage
 setInterval(() => {
   this.widgets.forEach((widget, instanceId) => {
     const cpuUsage = process.getCPUUsage();
@@ -1444,26 +1489,28 @@ setInterval(() => {
     if (cpuUsage.percentCPUUsage > 20) {
       logger.warn(`Widget ${instanceId} high CPU usage: ${cpuUsage.percentCPUUsage}%`);
       
-      // 可選：暫停或警告用戶
+      // Optional: pause or warn user
     }
   });
 }, 5000);
 ```
 
-### 打包優化
+**Design Rationale**: CPU monitoring helps identify misbehaving widgets. The 20% threshold triggers warnings but doesn't automatically kill widgets, giving users control (Requirement 15.3).
+
+### Build Optimization
 
 #### 1. Code Splitting
 
-Widget SDK 使用動態導入。
+Widget SDK uses dynamic imports.
 
 ```typescript
-// 延遲載入圖表元件
+// Lazy load chart components
 export const LineChart = lazy(() => import('./components/LineChart'));
 ```
 
 #### 2. Tree Shaking
 
-確保 Vite 配置支援 tree shaking。
+Ensure Vite configuration supports tree shaking.
 
 ```typescript
 // vite.config.ts
@@ -1482,9 +1529,9 @@ export default defineConfig({
 
 ## UI/UX Design
 
-### 視覺設計規範
+### Visual Design Specifications
 
-#### 毛玻璃效果
+#### Glassmorphism Effect
 
 ```css
 .widget-container {
@@ -1497,30 +1544,30 @@ export default defineConfig({
 }
 ```
 
-#### 顏色系統
+#### Color System
 
 ```css
 :root {
-  /* 主要顏色 */
+  /* Primary colors */
   --color-primary: #3b82f6;
   --color-primary-hover: #2563eb;
   
-  /* 狀態顏色 */
+  /* State colors */
   --color-success: #10b981;
   --color-warning: #f59e0b;
   --color-danger: #ef4444;
   
-  /* 文字顏色 */
+  /* Text colors */
   --color-text-primary: rgba(255, 255, 255, 0.9);
   --color-text-secondary: rgba(255, 255, 255, 0.6);
   
-  /* 背景 */
+  /* Backgrounds */
   --color-bg-widget: rgba(255, 255, 255, 0.1);
   --color-bg-hover: rgba(255, 255, 255, 0.15);
 }
 ```
 
-#### 字體系統
+#### Typography System
 
 ```css
 .widget-title-large {
@@ -1548,10 +1595,10 @@ export default defineConfig({
 }
 ```
 
-### 動畫和過渡
+### Animations and Transitions
 
 ```css
-/* Widget 出現動畫 */
+/* Widget appearance animation */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -1567,7 +1614,7 @@ export default defineConfig({
   animation: fadeIn 0.2s ease-out;
 }
 
-/* 按鈕 hover 效果 */
+/* Button hover effect */
 .widget-button {
   transition: all 0.2s ease;
 }
@@ -1578,12 +1625,12 @@ export default defineConfig({
 }
 ```
 
-### 響應式設計
+### Responsive Design
 
-Widget 應該支援不同的尺寸。
+Widgets should support different sizes.
 
 ```typescript
-// Widget 可以定義多個尺寸預設
+// Widgets can define multiple size presets
 sizes: {
   small: { width: 150, height: 150 },
   medium: { width: 250, height: 200 },
@@ -1593,16 +1640,16 @@ sizes: {
 
 ## Deployment and Distribution
 
-### Widget Container 打包
+### Widget Container Packaging
 
-使用 electron-builder 打包桌面應用。
+Use electron-builder to package desktop application.
 
 ```json
 // package.json
 {
   "build": {
-    "appId": "com.molecule.widget-platform",
-    "productName": "Molecule",
+    "appId": "com.Molecool.widget-platform",
+    "productName": "Molecool",
     "directories": {
       "output": "dist"
     },
@@ -1622,14 +1669,14 @@ sizes: {
 }
 ```
 
-### Widget SDK 發布
+### Widget SDK Publishing
 
-發布到 npm。
+Publish to npm.
 
 ```json
 // package.json
 {
-  "name": "@molecule/widget-sdk",
+  "name": "@Molecool/widget-sdk",
   "version": "1.0.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -1639,22 +1686,22 @@ sizes: {
 }
 ```
 
-### Marketplace 部署
+### Marketplace Deployment
 
-部署到 Vercel。
+Deploy to Vercel.
 
 ```bash
-# 安裝 Vercel CLI
+# Install Vercel CLI
 npm i -g vercel
 
-# 部署
+# Deploy
 cd widget-marketplace
 vercel --prod
 ```
 
-### Widget 分發
+### Widget Distribution
 
-Widget 打包為 `.widget` 文件（實際上是 zip）。
+Widgets are packaged as `.widget` files (actually zip archives).
 
 ```
 clock-widget.widget/
@@ -1669,7 +1716,7 @@ clock-widget.widget/
 
 ## Development Workflow
 
-### 開發環境設置
+### Development Environment Setup
 
 ```bash
 # 1. Clone repository
@@ -1700,51 +1747,60 @@ npm install
 npm run dev
 ```
 
-### 開發新 Widget
+### Developing New Widgets
 
 ```bash
-# 1. 創建新 Widget 專案
+# 1. Create new widget project
 mkdir examples/my-widget
 cd examples/my-widget
 
-# 2. 初始化專案
+# 2. Initialize project
 npm init -y
-npm install @molecule/widget-sdk react react-dom
+npm install @Molecool/widget-sdk react react-dom
 
-# 3. 創建 widget.config.json
-# 4. 創建 src/index.tsx
-# 5. 開發和測試
+# 3. Create widget.config.json
+# 4. Create src/index.tsx
+# 5. Develop and test
 npm run dev
 
-# 6. 打包
+# 6. Build
 npm run build
 ```
 
 ## Future Enhancements
 
-### Phase 5+ 功能（黑客松後）
+### Phase 5+ Features (Post-Hackathon)
 
-1. **Widget 商店內購買**: 支援付費 Widget
-2. **Widget 主題系統**: 允許用戶自訂 Widget 外觀
-3. **Widget 通訊**: Widget 之間可以互相通訊
-4. **雲端同步**: 同步 Widget 配置和數據到雲端
-5. **Widget 更新機制**: 自動檢查和更新 Widget
-6. **更多系統 API**: 
-   - 檔案系統訪問（受限）
-   - 剪貼簿訪問
-   - 通知 API
-7. **Widget 分析**: 收集使用數據（需用戶同意）
-8. **多語言支援**: i18n 支援
-9. **無障礙功能**: ARIA 標籤和鍵盤導航
-10. **Widget 開發者工具**: 內建的調試工具
+1. **Widget Store Purchases**: Support paid widgets
+2. **Widget Theme System**: Allow users to customize widget appearance
+3. **Widget Communication**: Enable inter-widget communication
+4. **Cloud Sync**: Sync widget configurations and data to cloud
+5. **Widget Update Mechanism**: Automatic widget update checking
+6. **Additional System APIs**: 
+   - File system access (restricted)
+   - Clipboard access
+   - Notification API
+7. **Widget Analytics**: Collect usage data (with user consent)
+8. **Multi-language Support**: i18n support
+9. **Accessibility Features**: ARIA labels and keyboard navigation
+10. **Widget Developer Tools**: Built-in debugging tools
 
 ## Conclusion
 
-這個設計文檔提供了 Molecule 桌面 Widget 平台的完整技術架構。核心設計原則是：
+This design document provides the complete technical architecture for the Molecool desktop widget platform. The core design principles are:
 
-1. **安全**: 使用 Electron 的最佳實踐，確保 Widget 在沙盒中安全運行
-2. **簡單**: 提供簡潔的 React API，降低開發門檻
-3. **高效**: 優化性能，支援多 Widget 並行運行
-4. **美觀**: 現代化的毛玻璃 UI 設計
+1. **Security**: Use Electron best practices to ensure widgets run safely in sandboxes
+2. **Simplicity**: Provide clean React APIs to lower the development barrier
+3. **Efficiency**: Optimize performance to support multiple concurrent widgets
+4. **Beauty**: Modern glassmorphism UI design
 
-通過這個設計，我們可以在一個月內完成 MVP，並為未來的擴展留下空間。
+With this design, we can complete an MVP within one month while leaving room for future expansion.
+
+**Key Design Decisions Summary:**
+
+- **Process Isolation**: Each widget in separate BrowserWindow prevents cascading failures (Requirement 15.5)
+- **Permission System**: Two-tier security with permission checks and rate limiting (Requirements 3.1-3.4)
+- **IPC Architecture**: Standardized request/response format enables consistent error handling (Requirements 14.1-14.5)
+- **Storage Strategy**: electron-store with 500ms debouncing balances persistence and performance (Requirements 1.4, 4.4)
+- **Development Experience**: Mock API in SDK enables browser-based development without Container (Requirement 11.1)
+- **Security Layers**: Context isolation + CSP + preload bridge creates defense in depth (Requirements 2.1-2.5)

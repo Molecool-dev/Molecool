@@ -1,5 +1,5 @@
 /**
- * Build Script for Molecule Widget Container
+ * Build Script for Molecool Widget Container
  * 
  * This script handles the complete build process:
  * 1. Clean previous builds
@@ -15,7 +15,7 @@ const { execSync } = require('child_process');
 const ROOT_DIR = path.join(__dirname, '..');
 const DIST_DIR = path.join(ROOT_DIR, 'dist');
 
-console.log('🚀 Starting Molecule Widget Container build...\n');
+console.log('🚀 Starting Molecool Widget Container build...\n');
 
 // Step 1: Clean previous builds
 console.log('1️⃣  Cleaning previous builds...');

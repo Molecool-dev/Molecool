@@ -16,7 +16,7 @@ class Logger {
   private level: LogLevel = LogLevel.INFO;
   private prefix: string;
 
-  constructor(prefix: string = 'Molecule') {
+  constructor(prefix: string = 'Molecool') {
     this.prefix = prefix;
     
     // Set log level from environment variable

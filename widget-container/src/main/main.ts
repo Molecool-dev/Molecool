@@ -7,7 +7,7 @@ import { WidgetManager } from './widget-manager';
 import { SecurityManager } from './security';
 
 /**
- * Main entry point for the Molecule Widget Container
+ * Main entry point for the Molecool Widget Container
  * This is the Electron main process that manages the application lifecycle
  */
 
@@ -264,7 +264,7 @@ function createTray(): void {
   tray = new Tray(trayIcon);
   
   // Set tooltip
-  tray.setToolTip('Molecule Widget Platform');
+  tray.setToolTip('Molecool Widget Platform');
   
   // Create context menu
   const contextMenu = Menu.buildFromTemplate([

@@ -44,7 +44,7 @@ Run the installation script:
 
 Or manually copy the `dist` folder and `widget.config.json` to:
 ```
-%APPDATA%\molecule-widget-container\widgets\weather-widget\
+%APPDATA%\Molecool-widget-container\widgets\weather-widget\
 ```
 
 ## Permissions
@@ -94,7 +94,7 @@ The widget implements comprehensive error handling:
 The widget is wrapped in an `ErrorBoundary` component that catches React rendering errors and displays a user-friendly error message instead of crashing the widget.
 
 ```tsx
-import { ErrorBoundary } from '@molecule/widget-sdk';
+import { ErrorBoundary } from '@Molecool/widget-sdk';
 
 function App() {
   return (

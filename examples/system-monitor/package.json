@@ -1,7 +1,7 @@
 {
-  "name": "@molecule/system-monitor-widget",
+  "name": "@Molecool/system-monitor-widget",
   "version": "1.0.0",
-  "description": "A system monitor widget for Molecule platform",
+  "description": "A system monitor widget for Molecool platform",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -11,7 +11,7 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "@molecule/widget-sdk": "file:../../widget-sdk",
+    "@Molecool/widget-sdk": "file:../../widget-sdk",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },

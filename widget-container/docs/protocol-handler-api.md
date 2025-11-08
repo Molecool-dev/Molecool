@@ -180,7 +180,7 @@ console.log('Widget ID:', widgetId);
 
 Check logs in:
 - Development: Console output
-- Production: `%APPDATA%/molecule-widget-container/logs/`
+- Production: `%APPDATA%/Molecool-widget-container/logs/`
 
 ## References
 

@@ -9,7 +9,7 @@
 
 ## Overview
 
-Task 37 focused on creating comprehensive manual testing documentation and tools for the Molecule Desktop Widget Platform. Since manual testing requires human interaction and cannot be fully automated, this task delivered a complete testing framework that enables thorough manual verification of all platform features.
+Task 37 focused on creating comprehensive manual testing documentation and tools for the Molecool Desktop Widget Platform. Since manual testing requires human interaction and cannot be fully automated, this task delivered a complete testing framework that enables thorough manual verification of all platform features.
 
 ---
 

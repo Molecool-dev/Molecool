@@ -5,8 +5,8 @@
   "version": "1.0.0",
   "description": "A simple clock widget that displays current time and date",
   "author": {
-    "name": "Molecule Team",
-    "email": "team@molecule.dev"
+    "name": "Molecool Team",
+    "email": "team@Molecool.dev"
   },
   "permissions": {
     "systemInfo": {

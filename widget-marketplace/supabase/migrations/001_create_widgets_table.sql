@@ -40,7 +40,7 @@ CREATE TRIGGER update_widgets_updated_at
   EXECUTE FUNCTION update_updated_at_column();
 
 -- Add comments for documentation
-COMMENT ON TABLE widgets IS 'Stores all available widgets in the Molecule marketplace';
+COMMENT ON TABLE widgets IS 'Stores all available widgets in the Molecool marketplace';
 COMMENT ON COLUMN widgets.widget_id IS 'Unique identifier for the widget (e.g., "clock-widget")';
 COMMENT ON COLUMN widgets.permissions IS 'JSONB object defining required permissions (systemInfo, network)';
 COMMENT ON COLUMN widgets.sizes IS 'JSONB object defining widget dimensions (default, min, max)';
