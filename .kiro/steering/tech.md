@@ -2,102 +2,47 @@
 inclusion: always
 ---
 
----
-inclusion: always
----
-
 # Technology Stack
 
-## Package Architecture
+## Package Module Systems (CRITICAL)
 
-This monorepo contains three independent packages with distinct module systems and runtimes:
-
-**widget-container/** - Electron desktop application
-- Module system: CommonJS (`require`, `module.exports`)
-- Runtime: Node.js + Electron APIs
+**widget-container/** (Electron app)
+- MUST use CommonJS: `require()` and `module.exports`
+- ES modules (`import`/`export`) will fail at runtime
+- Exception: Type-only imports allowed (`import type { ... } from 'node:...'`)
 - TypeScript config: `module: "commonjs"`, `target: "ES2020"`
-- Build output: `dist/` (compiled JS), `dist-build/` (packaged app)
+- Structure: `src/main/` (Node.js/IPC), `src/preload/` (bridge), `src/renderer/` (UI)
 
-**widget-sdk/** - React component library for building widgets
-- Module system: ESNext (`import`, `export`)
-- Runtime: Browser only (NO Electron dependencies)
-- TypeScript config: `module: "ESNext"`, `noEmit: true` (Vite compiles)
-- Build output: `dist/` (ES modules + type declarations)
+**widget-sdk/** (React library)
+- MUST use ES modules: `import` and `export`
+- NEVER use `require()` or `module.exports`
+- NEVER import Electron APIs (browser-only runtime)
+- TypeScript config: `module: "ESNext"`, `noEmit: true`
+- React 18+ is peer dependency - NEVER bundle React/ReactDOM
+- Single entry point: `src/index.ts` exports all public APIs
+- Extend `Window` interface in `types/window.d.ts`
 
-**widget-marketplace/** - Next.js web application
-- Module system: ESNext
+**widget-marketplace/** (Next.js 15)
+- MUST use ES modules: `import` and `export`
+- App Router architecture
 - Runtime: Node.js (server) + Browser (client)
-- Framework: Next.js 15 with App Router
 
-## Widget Container (Electron App)
+## Data Persistence
 
-**Directory Structure:**
-- `src/main/` - Main process (Node.js APIs, app lifecycle, IPC handlers)
-- `src/preload/` - Preload scripts (bridge between main and renderer)
-- `src/renderer/` - Renderer process (sandboxed UI, no Node.js access)
-
-**Module System Rules:**
-- ALWAYS use CommonJS: `const x = require('module')` and `module.exports = x`
-- NEVER use ES modules (`import`/`export`) - they will fail at runtime
-- Import Node.js types: `import type { ... } from 'node:...'` (type-only imports are safe)
-
-**Persistence:**
-- Use `electron-store` for ALL persistent data (widget positions, configs, preferences)
+- Use `electron-store` for persistent data (positions, configs, preferences)
 - NEVER use `localStorage` in main process
-- Debounce writes by minimum 500ms to reduce disk I/O
+- Debounce all writes by minimum 500ms
+- Renderer `localStorage` only for ephemeral UI state
 
-**IPC Communication:**
-- Main process: Register handlers with `ipcMain.handle()` or `ipcMain.on()`
-- Preload: Expose APIs via `contextBridge.exposeInMainWorld('api', { ... })`
-- Renderer: Call exposed APIs via `window.api.methodName()`
+## IPC Communication
 
-## Widget SDK (React Library)
-
-**Directory Structure:**
-- `src/core/` - Core APIs and utilities
-- `src/hooks/` - Custom React hooks (prefix with `use`)
-- `src/components/` - React components
-- `src/index.ts` - Single public entry point (exports all public APIs)
-
-**Module System Rules:**
-- ALWAYS use ES modules: `import` and `export`
-- NEVER use CommonJS (`require`/`module.exports`)
-
-**Critical Constraints:**
-- NEVER import Electron APIs (must work in standalone browser)
-- React 18+ and ReactDOM are peer dependencies (NEVER bundle them in library builds)
-- Extend `Window` interface in `types/window.d.ts` for global APIs
-- All public APIs must be exported from `src/index.ts`
-
-**Development vs Production:**
-- Development: Runs in browser with mock APIs
-- Production: Runs in Electron renderer with real APIs via `window.api`
-
-## TypeScript Configuration
-
-**Shared Settings:**
-- Strict mode enabled
-- Target: ES2020
-- Lib: ES2020
-
-**Package-Specific:**
-- widget-container: `module: "commonjs"`, includes `@types/node`
-- widget-sdk: `module: "ESNext"`, `noEmit: true`, includes DOM types and React JSX
-- widget-marketplace: Next.js defaults
+- Main process: `ipcMain.handle()` or `ipcMain.on()`
+- Preload script: `contextBridge.exposeInMainWorld('api', { ... })`
+- Renderer process: `window.api.methodName()`
 
 ## Testing
 
-**Framework:** Vitest + @testing-library/react
-
-**Test Files:**
-- Location: `__tests__/*.test.ts` or `__tests__/*.test.tsx`
-- Co-locate tests with source code when possible
-
-**Running Tests:**
-- Single run: `npm test -- --run`
-- NEVER use watch mode (`--watch`) in automation or CI
-- Use `vitest.config.ts` for test configuration
-
-**Mocking:**
-- Mock Electron APIs in widget-container tests
-- Mock `window.api` in widget-sdk tests for browser compatibility
+- Framework: Vitest + @testing-library/react
+- Location: `__tests__/*.test.ts(x)` co-located with source
+- Run single execution: `npm test -- --run` (NEVER `--watch`)
+- Mock `window.api` in widget-sdk, mock Electron APIs in widget-container

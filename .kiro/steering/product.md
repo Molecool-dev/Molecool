@@ -4,44 +4,43 @@ inclusion: always
 
 # Molecule Desktop Widget Platform
 
-Desktop widget platform with two independent packages: Electron container app (`widget-container/`) and React SDK (`widget-sdk/`) for building widgets.
+Three-package monorepo:
+- `widget-container/` - Electron app hosting widgets
+- `widget-sdk/` - React library for building widgets
+- `widget-marketplace/` - Next.js web app for widget discovery
 
-## Security Architecture (Non-Negotiable)
+## Security Architecture (NON-NEGOTIABLE)
 
-**Electron Security Model:**
-- Context isolation: ENABLED (always)
-- Node integration: DISABLED (always)
-- Renderer sandbox: ENABLED (always)
-- All Node.js/Electron APIs must be exposed via `contextBridge.exposeInMainWorld()` in preload scripts
-- Communication: Main process ↔ Preload ↔ Renderer via IPC (`ipcMain`/`ipcRenderer`)
+Electron security:
+- Context isolation: ALWAYS enabled
+- Node integration: ALWAYS disabled
+- Renderer sandbox: ALWAYS enabled
+- ALL Node.js/Electron APIs exposed via `contextBridge.exposeInMainWorld()` in preload
+- Communication: Renderer → IPC → Preload → Main
 
-**SDK Isolation:**
-- Widget SDK must NEVER import Electron APIs directly
-- Bridge pattern: SDK calls window APIs → preload exposes APIs → main process handles
-- SDK must work in both browser (development) and Electron (production) environments
+SDK isolation:
+- Widget SDK MUST NEVER import Electron APIs (browser-only runtime)
+- Bridge pattern: SDK → `window.api` → preload → main
+- SDK runs in browser (dev) and Electron renderer (production)
 
-## Data Persistence
+## Widget Architecture
 
-- Use `electron-store` for ALL persistent storage (widget positions, configurations, user preferences)
-- Debounce all write operations by minimum 500ms to prevent excessive disk I/O
-- NEVER use `localStorage` in main process (use `electron-store` instead)
-- Renderer process can use `localStorage` for non-persistent UI state only
+Each widget is:
+- Independent Electron BrowserWindow
+- Isolated renderer process
+- Persists state via `electron-store` across restarts
+- Supports drag, resize, free desktop positioning
 
 ## Visual Design
 
-**Platform-Native Effects:**
-- Windows 11: Mica/Acrylic blur effects
+Platform-native effects:
+- Windows 11: Mica/Acrylic blur
 - macOS: Vibrancy effects
 - Frameless windows with custom title bars
+- Glassmorphism: Semi-transparent backgrounds with backdrop blur, subtle borders
 
-**Glassmorphism Style:**
-- Semi-transparent backgrounds with backdrop blur
-- Subtle borders for depth
-- Smooth animations and transitions
+## Performance
 
-## Widget Lifecycle
-
-- Widgets are independent Electron BrowserWindows
-- Each widget runs in isolated renderer process
-- Widget state persists across app restarts via `electron-store`
-- Widgets can be dragged, resized, and positioned freely on desktop
+- Debounce frequent operations (saves, updates) by 500ms minimum
+- Minimize IPC calls between processes
+- Batch `electron-store` updates when possible
