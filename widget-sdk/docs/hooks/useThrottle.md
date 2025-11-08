@@ -5,7 +5,7 @@ A React hook that throttles a value, only updating it at most once per specified
 ## Import
 
 ```tsx
-import { useThrottle } from '@molecule/widget-sdk';
+import { useThrottle } from '@Molecool/widget-sdk';
 ```
 
 ## Signature
@@ -38,7 +38,7 @@ The `useThrottle` hook ensures that a value updates at most once per specified d
 Fetch data frequently for accuracy, but update display less often for performance:
 
 ```tsx
-import { useThrottle, useSystemInfo } from '@molecule/widget-sdk';
+import { useThrottle, useSystemInfo } from '@Molecool/widget-sdk';
 
 function SystemMonitor() {
   // Fetch CPU usage every 100ms for accurate data
@@ -66,7 +66,7 @@ Throttle search queries to reduce API calls:
 
 ```tsx
 import { useState, useEffect } from 'react';
-import { useThrottle } from '@molecule/widget-sdk';
+import { useThrottle } from '@Molecool/widget-sdk';
 
 function SearchWidget() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -96,7 +96,7 @@ function SearchWidget() {
 Throttle rapidly changing values for better readability:
 
 ```tsx
-import { useThrottle } from '@molecule/widget-sdk';
+import { useThrottle } from '@Molecool/widget-sdk';
 
 function StockTicker({ stockPrice }: { stockPrice: number }) {
   // Stock price updates every 50ms, but display updates every 2s
@@ -116,7 +116,7 @@ Throttle scroll events to improve performance:
 
 ```tsx
 import { useState, useEffect } from 'react';
-import { useThrottle } from '@molecule/widget-sdk';
+import { useThrottle } from '@Molecool/widget-sdk';
 
 function ScrollWidget() {
   const [scrollY, setScrollY] = useState(0);
@@ -187,7 +187,7 @@ useThrottle(searchTerm, 5000);    // 5 seconds is too slow for search
 ### 2. Combine with Other Hooks
 
 ```tsx
-import { useThrottle, useSystemInfo, useStorage } from '@molecule/widget-sdk';
+import { useThrottle, useSystemInfo, useStorage } from '@Molecool/widget-sdk';
 
 function AdvancedMonitor() {
   // Fetch frequently
@@ -425,3 +425,4 @@ const processed = expensiveOperation(throttled);
 - [Performance Optimization Guide](../../widget-container/docs/performance-optimization.md)
 - [Widget SDK API Reference](../README.md)
 - [Error Handling Guide](../error-handling.md)
+

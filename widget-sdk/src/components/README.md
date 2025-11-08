@@ -1,6 +1,6 @@
 # Widget SDK UI Components
 
-This directory contains the first batch of 8 UI components for the Molecule Widget SDK (Task 9).
+This directory contains the first batch of 8 UI components for the Molecool Widget SDK (Task 9).
 
 ## Components Overview
 
@@ -8,7 +8,7 @@ This directory contains the first batch of 8 UI components for the Molecule Widg
 The main container component with glassmorphism effect.
 
 ```tsx
-import { Widget } from '@molecule/widget-sdk';
+import { Widget } from '@Molecool/widget-sdk';
 
 <Widget.Container>
   {/* Your widget content */}
@@ -172,7 +172,7 @@ Here's a complete example combining multiple components:
 
 ```tsx
 import React from 'react';
-import { WidgetProvider, Widget } from '@molecule/widget-sdk';
+import { WidgetProvider, Widget } from '@Molecool/widget-sdk';
 
 function ClockWidget() {
   const [time, setTime] = React.useState(new Date());

@@ -1,7 +1,7 @@
 /**
  * Widget SDK Hooks
  * 
- * React hooks for building widgets with the Molecule platform.
+ * React hooks for building widgets with the Molecool platform.
  */
 
 export { useWidgetAPI } from './useWidgetAPI';

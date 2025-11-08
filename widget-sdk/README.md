@@ -1,11 +1,11 @@
-# Molecule Widget SDK
+# Molecool Widget SDK
 
-A React component library and API for creating desktop widgets that run in the Molecule Widget Container.
+A React component library and API for creating desktop widgets that run in the Molecool Widget Container.
 
 ## Installation
 
 ```bash
-npm install @molecule/widget-sdk react react-dom
+npm install @Molecool/widget-sdk react react-dom
 ```
 
 ## Quick Start
@@ -14,7 +14,7 @@ npm install @molecule/widget-sdk react react-dom
 
 ```tsx
 import React from 'react';
-import { WidgetProvider, Widget, useInterval } from '@molecule/widget-sdk';
+import { WidgetProvider, Widget, useInterval } from '@Molecool/widget-sdk';
 
 function ClockWidget() {
   const [time, setTime] = React.useState(new Date());
@@ -45,7 +45,7 @@ export default function App() {
 
 ```tsx
 import React from 'react';
-import { WidgetProvider, Widget, Stat, ProgressBar, useSystemInfo } from '@molecule/widget-sdk';
+import { WidgetProvider, Widget, Stat, ProgressBar, useSystemInfo } from '@Molecool/widget-sdk';
 
 function SystemMonitor() {
   const memoryInfo = useSystemInfo('memory', 2000);
@@ -80,8 +80,10 @@ export default function App() {
 
 - **React-based**: Build widgets using familiar React patterns
 - **TypeScript Support**: Full type definitions included
-- **Pre-built Components**: 15+ UI components with glassmorphism design
+- **Pre-built Components**: 15 UI components with glassmorphism design
+- **Custom Hooks**: 7 React hooks for common widget operations
 - **Secure APIs**: Safe access to system information and storage
+- **Error Handling**: Comprehensive error types and boundaries
 - **Development Mode**: Test widgets in the browser before deployment
 
 ## Development
@@ -107,7 +109,7 @@ The Widget SDK provides comprehensive error handling with standardized error typ
 ### Quick Example
 
 ```tsx
-import { useWidgetAPI, isWidgetError, WidgetErrorType } from '@molecule/widget-sdk';
+import { useWidgetAPI, isWidgetError, WidgetErrorType } from '@Molecool/widget-sdk';
 
 function MyWidget() {
   const { storage } = useWidgetAPI();
@@ -138,6 +140,29 @@ function MyWidget() {
 
 ## API Reference
 
+### Core Exports
+
+The SDK exports the following modules:
+
+**Core API** (`WidgetProvider`, `WidgetContext`, `createMockAPI`)
+- Provider component for widget context
+- React context for accessing widget APIs
+- Mock API for development/testing
+
+**Hooks** (`useWidgetAPI`, `useInterval`, `useStorage`, `useSettings`, `useAllSettings`, `useSystemInfo`, `useThrottle`)
+- 7 custom React hooks for widget functionality
+
+**UI Components** (15 total)
+- Layout: `Container`, `Grid`, `Divider`, `Header`
+- Typography: `Title`, `LargeText`, `SmallText`, `Link`
+- Interactive: `Button`, `Input`, `Select`
+- Display: `Stat`, `ProgressBar`, `Badge`, `List`, `ListItem`
+
+**Error Handling** (`ErrorBoundary`, `WidgetError`, `isWidgetError`, `toWidgetError`)
+- Error boundary component
+- Custom error class with types
+- Type guards and utilities
+
 ### Components
 
 #### Widget.Container
@@ -145,7 +170,7 @@ function MyWidget() {
 The main container component for all widgets with glassmorphism effect.
 
 ```tsx
-import { Widget } from '@molecule/widget-sdk';
+import { Widget } from '@Molecool/widget-sdk';
 
 <Widget.Container className="custom-class">
   {/* Your widget content */}
@@ -168,7 +193,7 @@ import { Widget } from '@molecule/widget-sdk';
 Display a labeled statistic with optional icon and color.
 
 ```tsx
-import { Stat } from '@molecule/widget-sdk';
+import { Stat } from '@Molecool/widget-sdk';
 
 <Stat 
   label="CPU Usage" 
@@ -190,7 +215,7 @@ import { Stat } from '@molecule/widget-sdk';
 Display a progress bar with percentage value.
 
 ```tsx
-import { ProgressBar } from '@molecule/widget-sdk';
+import { ProgressBar } from '@Molecool/widget-sdk';
 
 <ProgressBar 
   value={75} 
@@ -216,7 +241,7 @@ import { ProgressBar } from '@molecule/widget-sdk';
 Display lists of items with smooth animations and hover effects.
 
 ```tsx
-import { Widget } from '@molecule/widget-sdk';
+import { Widget } from '@Molecool/widget-sdk';
 
 <Widget.List>
   <Widget.ListItem>Item 1</Widget.ListItem>
@@ -254,7 +279,7 @@ import { Widget } from '@molecule/widget-sdk';
 Execute a callback function at regular intervals.
 
 ```tsx
-import { useInterval } from '@molecule/widget-sdk';
+import { useInterval } from '@Molecool/widget-sdk';
 
 useInterval(() => {
   // Your code here
@@ -266,7 +291,7 @@ useInterval(() => {
 Access persistent storage for your widget.
 
 ```tsx
-import { useStorage } from '@molecule/widget-sdk';
+import { useStorage } from '@Molecool/widget-sdk';
 
 const [value, setValue, removeValue] = useStorage<string>('myKey', 'defaultValue');
 ```
@@ -276,7 +301,7 @@ const [value, setValue, removeValue] = useStorage<string>('myKey', 'defaultValue
 Access widget settings.
 
 ```tsx
-import { useSettings } from '@molecule/widget-sdk';
+import { useSettings } from '@Molecool/widget-sdk';
 
 const city = useSettings<string>('city', 'New York');
 ```
@@ -286,7 +311,7 @@ const city = useSettings<string>('city', 'New York');
 Access system information (requires permissions).
 
 ```tsx
-import { useSystemInfo } from '@molecule/widget-sdk';
+import { useSystemInfo } from '@Molecool/widget-sdk';
 
 const cpuUsage = useSystemInfo('cpu', 2000); // Returns number (0-100)
 const memoryInfo = useSystemInfo('memory', 2000); // Returns memory object
@@ -305,7 +330,7 @@ const memoryInfo = useSystemInfo('memory', 2000); // Returns memory object
 Throttle a value to limit update frequency (performance optimization).
 
 ```tsx
-import { useThrottle, useSystemInfo } from '@molecule/widget-sdk';
+import { useThrottle, useSystemInfo } from '@Molecool/widget-sdk';
 
 // Fetch every 100ms but display every 1s
 const cpuUsage = useSystemInfo('cpu', 100);
@@ -326,7 +351,7 @@ See the [useThrottle documentation](./docs/hooks/useThrottle.md) for detailed us
 Wrap your widget app with this provider to enable API access.
 
 ```tsx
-import { WidgetProvider } from '@molecule/widget-sdk';
+import { WidgetProvider } from '@Molecool/widget-sdk';
 
 <WidgetProvider>
   <YourWidget />
@@ -340,7 +365,7 @@ import { WidgetProvider } from '@molecule/widget-sdk';
 Custom error class with additional context.
 
 ```tsx
-import { WidgetError, WidgetErrorType } from '@molecule/widget-sdk';
+import { WidgetError, WidgetErrorType } from '@Molecool/widget-sdk';
 
 const error = new WidgetError(
   WidgetErrorType.STORAGE_ERROR,
@@ -357,7 +382,7 @@ console.log(error.toJSON()); // Full error details
 Type guard to check if an error is a WidgetError.
 
 ```tsx
-import { isWidgetError } from '@molecule/widget-sdk';
+import { isWidgetError } from '@Molecool/widget-sdk';
 
 try {
   await someOperation();
@@ -373,7 +398,7 @@ try {
 Convert any error to a WidgetError.
 
 ```tsx
-import { toWidgetError } from '@molecule/widget-sdk';
+import { toWidgetError } from '@Molecool/widget-sdk';
 
 try {
   await someOperation();
@@ -392,7 +417,7 @@ The Widget SDK includes several features to help you build performant widgets:
 Use `useThrottle` to limit how often values update:
 
 ```tsx
-import { useThrottle, useSystemInfo } from '@molecule/widget-sdk';
+import { useThrottle, useSystemInfo } from '@Molecool/widget-sdk';
 
 function SystemMonitor() {
   // Fetch data every 100ms for accuracy
@@ -459,11 +484,32 @@ useEffect(() => {
 
 See the [Performance Optimization Guide](../widget-container/docs/performance-optimization.md) for more details.
 
+## Complete Component List
+
+The SDK provides 15 UI components:
+
+1. **Container** - Main widget container with glassmorphism
+2. **Title** - Large heading text
+3. **LargeText** - Large body text
+4. **SmallText** - Small body text
+5. **Button** - Interactive button
+6. **Grid** - Grid layout container
+7. **Divider** - Horizontal divider line
+8. **Header** - Section header
+9. **Stat** - Labeled statistic display
+10. **ProgressBar** - Progress indicator
+11. **Input** - Text input field
+12. **Select** - Dropdown select
+13. **List** - List container
+14. **ListItem** - Individual list item
+15. **Badge** - Status badge
+16. **Link** - Hyperlink (bonus component)
+
 ## Documentation
 
+- [Complete API Reference](./docs/api-reference.md) - Full API documentation for all exports
 - [Error Handling Guide](./docs/error-handling.md) - Comprehensive error handling documentation
 - [useThrottle Hook](./docs/hooks/useThrottle.md) - Detailed throttling documentation
-- Full API documentation will be available after implementation is complete.
 
 ## License
 

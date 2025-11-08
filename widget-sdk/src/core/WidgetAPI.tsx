@@ -358,7 +358,7 @@ export interface WidgetProviderProps {
  * 
  * @example
  * ```tsx
- * import { WidgetProvider } from '@molecule/widget-sdk';
+ * import { WidgetProvider } from '@Molecool/widget-sdk';
  * 
  * function App() {
  *   return (

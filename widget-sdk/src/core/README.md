@@ -1,6 +1,6 @@
 # Widget API Core
 
-This directory contains the core Widget API implementation for the Molecule Widget SDK.
+This directory contains the core Widget API implementation for the Molecool Widget SDK.
 
 ## Overview
 
@@ -18,7 +18,7 @@ The Widget API provides a secure bridge between widgets (React applications) and
 Wrap your widget application with `WidgetProvider`:
 
 ```tsx
-import { WidgetProvider } from '@molecule/widget-sdk';
+import { WidgetProvider } from '@Molecool/widget-sdk';
 
 function App() {
   return (
@@ -35,7 +35,7 @@ Use the `useWidgetAPI` hook (Task 8) or access the context directly:
 
 ```tsx
 import { useContext } from 'react';
-import { WidgetContext } from '@molecule/widget-sdk';
+import { WidgetContext } from '@Molecool/widget-sdk';
 
 function MyWidget() {
   const api = useContext(WidgetContext);

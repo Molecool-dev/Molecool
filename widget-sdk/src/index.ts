@@ -1,8 +1,8 @@
 /**
- * Molecule Widget SDK
+ * Molecool Widget SDK
  * 
  * A React component library and API for creating desktop widgets
- * that run in the Molecule Widget Container (Electron).
+ * that run in the Molecool Widget Container (Electron).
  */
 
 // Core API exports (Task 7)
@@ -32,7 +32,7 @@ export {
   useThrottle,
 } from './hooks';
 
-// UI Components exports (Task 9 - First batch of 8 components)
+// UI Components exports (Tasks 9 & 10)
 export {
   Widget,
   Container,
@@ -43,18 +43,6 @@ export {
   Grid,
   Divider,
   Header,
-  type ContainerProps,
-  type TitleProps,
-  type LargeTextProps,
-  type SmallTextProps,
-  type ButtonProps,
-  type GridProps,
-  type DividerProps,
-  type HeaderProps,
-} from './components';
-
-// UI Components exports (Task 10 - Second batch of 7 components)
-export {
   Stat,
   ProgressBar,
   Input,
@@ -63,15 +51,27 @@ export {
   ListItem,
   Badge,
   Link,
-  type StatProps,
-  type ProgressBarProps,
-  type InputProps,
-  type SelectProps,
-  type SelectOption,
-  type ListProps,
-  type ListItemProps,
-  type BadgeProps,
-  type LinkProps,
+} from './components';
+
+// UI Component type exports
+export type {
+  ContainerProps,
+  TitleProps,
+  LargeTextProps,
+  SmallTextProps,
+  ButtonProps,
+  GridProps,
+  DividerProps,
+  HeaderProps,
+  StatProps,
+  ProgressBarProps,
+  InputProps,
+  SelectProps,
+  SelectOption,
+  ListProps,
+  ListItemProps,
+  BadgeProps,
+  LinkProps,
 } from './components';
 
 // Error handling exports (Task 32)

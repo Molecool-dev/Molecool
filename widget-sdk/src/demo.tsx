@@ -22,7 +22,7 @@ function DemoApp() {
         gap: '20px'
       }}>
         <h1 style={{ color: 'white', marginBottom: '20px' }}>
-          Molecule Widget SDK - Component Demo
+          Molecool Widget SDK - Component Demo
         </h1>
 
         {/* Container Demo */}

@@ -1,7 +1,7 @@
 {
-  "name": "@molecule/widget-sdk",
+  "name": "@Molecool/widget-sdk",
   "version": "1.0.0",
-  "description": "React component library and API for creating Molecule desktop widgets",
+  "description": "React component library and API for creating Molecool desktop widgets",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -29,7 +29,7 @@
     "desktop",
     "electron",
     "react",
-    "molecule"
+    "Molecool"
   ],
   "author": "",
   "license": "MIT",

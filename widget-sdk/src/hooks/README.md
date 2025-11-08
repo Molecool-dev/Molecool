@@ -1,6 +1,6 @@
 # Widget SDK Hooks
 
-React hooks for building widgets with the Molecule platform.
+React hooks for building widgets with the Molecool platform.
 
 ## Available Hooks
 
@@ -9,7 +9,7 @@ React hooks for building widgets with the Molecule platform.
 Access the complete Widget API context.
 
 ```tsx
-import { useWidgetAPI } from '@molecule/widget-sdk';
+import { useWidgetAPI } from '@Molecool/widget-sdk';
 
 function MyWidget() {
   const api = useWidgetAPI();
@@ -33,7 +33,7 @@ function MyWidget() {
 Declarative interval hook with automatic cleanup.
 
 ```tsx
-import { useInterval } from '@molecule/widget-sdk';
+import { useInterval } from '@Molecool/widget-sdk';
 
 function Clock() {
   const [time, setTime] = useState(new Date());
@@ -64,7 +64,7 @@ function PausableTimer() {
 Reactive storage hook with automatic state synchronization.
 
 ```tsx
-import { useStorage } from '@molecule/widget-sdk';
+import { useStorage } from '@Molecool/widget-sdk';
 
 function Counter() {
   const [count, setCount, removeCount] = useStorage<number>('count', 0);
@@ -88,7 +88,7 @@ function Counter() {
 Access widget settings (read-only).
 
 ```tsx
-import { useSettings, useAllSettings } from '@molecule/widget-sdk';
+import { useSettings, useAllSettings } from '@Molecool/widget-sdk';
 
 function WeatherWidget() {
   const city = useSettings<string>('city', 'Taipei');
@@ -114,7 +114,7 @@ function SettingsDisplay() {
 Access system information with automatic refresh.
 
 ```tsx
-import { useSystemInfo } from '@molecule/widget-sdk';
+import { useSystemInfo } from '@Molecool/widget-sdk';
 
 function CPUMonitor() {
   const cpuUsage = useSystemInfo('cpu', 2000); // Refresh every 2s
@@ -155,7 +155,7 @@ function MemoryMonitor() {
 All hooks must be used within a `WidgetProvider`:
 
 ```tsx
-import { WidgetProvider } from '@molecule/widget-sdk';
+import { WidgetProvider } from '@Molecool/widget-sdk';
 
 function App() {
   return (

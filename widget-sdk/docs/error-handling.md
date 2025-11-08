@@ -22,7 +22,7 @@ class WidgetError extends Error {
 ### Creating WidgetError
 
 ```typescript
-import { WidgetError, WidgetErrorType } from '@molecule/widget-sdk';
+import { WidgetError, WidgetErrorType } from '@Molecool/widget-sdk';
 
 // Basic error
 const error = new WidgetError(
@@ -62,7 +62,7 @@ enum WidgetErrorType {
 ### Basic Error Handling
 
 ```typescript
-import { useWidgetAPI, isWidgetError } from '@molecule/widget-sdk';
+import { useWidgetAPI, isWidgetError } from '@Molecool/widget-sdk';
 
 function MyWidget() {
   const { storage } = useWidgetAPI();
@@ -88,7 +88,7 @@ function MyWidget() {
 ### Handling Specific Error Types
 
 ```typescript
-import { useWidgetAPI, WidgetErrorType, isWidgetError } from '@molecule/widget-sdk';
+import { useWidgetAPI, WidgetErrorType, isWidgetError } from '@Molecool/widget-sdk';
 
 function SystemMonitor() {
   const { system } = useWidgetAPI();
@@ -133,7 +133,7 @@ The `ErrorBoundary` component catches React rendering errors:
 ### Basic Usage
 
 ```tsx
-import { ErrorBoundary } from '@molecule/widget-sdk';
+import { ErrorBoundary } from '@Molecool/widget-sdk';
 
 function App() {
   return (
@@ -147,7 +147,7 @@ function App() {
 ### Custom Fallback UI
 
 ```tsx
-import { ErrorBoundary, WidgetError } from '@molecule/widget-sdk';
+import { ErrorBoundary, WidgetError } from '@Molecool/widget-sdk';
 
 function App() {
   return (
@@ -169,7 +169,7 @@ function App() {
 ### Error Logging
 
 ```tsx
-import { ErrorBoundary, WidgetError } from '@molecule/widget-sdk';
+import { ErrorBoundary, WidgetError } from '@Molecool/widget-sdk';
 
 function App() {
   const handleError = (error: WidgetError) => {
@@ -193,7 +193,7 @@ function App() {
 The `WidgetProvider` automatically includes an `ErrorBoundary`:
 
 ```tsx
-import { WidgetProvider } from '@molecule/widget-sdk';
+import { WidgetProvider } from '@Molecool/widget-sdk';
 
 function App() {
   return (
@@ -215,7 +215,7 @@ function App() {
 Check if an error is a `WidgetError`:
 
 ```typescript
-import { isWidgetError } from '@molecule/widget-sdk';
+import { isWidgetError } from '@Molecool/widget-sdk';
 
 try {
   await someOperation();
@@ -235,7 +235,7 @@ try {
 Convert any error to a `WidgetError`:
 
 ```typescript
-import { toWidgetError } from '@molecule/widget-sdk';
+import { toWidgetError } from '@Molecool/widget-sdk';
 
 try {
   await someOperation();
@@ -415,7 +415,7 @@ In production, only user-friendly messages are shown. Make sure to:
 
 ```typescript
 import { render, screen } from '@testing-library/react';
-import { ErrorBoundary, WidgetError, WidgetErrorType } from '@molecule/widget-sdk';
+import { ErrorBoundary, WidgetError, WidgetErrorType } from '@Molecool/widget-sdk';
 
 it('should catch and display errors', () => {
   const ThrowError = () => {
