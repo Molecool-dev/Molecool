@@ -12,16 +12,14 @@ if (!supabaseUrl || !supabaseAnonKey) {
   );
 }
 
-// Create a single supabase client for interacting with your database
-// In Next.js 13+ App Router, this is safe as each request gets its own module scope
+// Create a single supabase client for client-side usage
+// For server-side usage (Server Components, API Routes), use createServerClient() instead
+// @deprecated Use createServerClient() for server-side code
 export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
   auth: {
-    persistSession: false, // Disable session persistence for server-side usage
+    persistSession: false,
   },
 });
 
 // Re-export types for convenience
-export type { Database, WidgetPermissions, WidgetSizes } from './database.types';
-
-// Widget type alias for easier usage
-export type Widget = Database['public']['Tables']['widgets']['Row'];
+export type { Database, Widget, WidgetInsert, WidgetUpdate, WidgetPermissions, WidgetSizes } from './database.types';

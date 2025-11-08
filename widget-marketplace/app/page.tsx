@@ -1,7 +1,8 @@
 import { WidgetGallery } from '@/components/WidgetGallery';
-import { supabase } from '@/lib/supabase';
+import { createServerClient } from '@/lib/supabase-server';
 
 async function getWidgets() {
+  const supabase = createServerClient();
   const { data, error } = await supabase
     .from('widgets')
     .select('*')

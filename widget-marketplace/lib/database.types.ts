@@ -29,14 +29,22 @@ export interface Database {
           created_at?: string;
           updated_at?: string;
         };
-        Update: Partial<Database['public']['Tables']['widgets']['Insert']>;
+        Update: Partial<Omit<Database['public']['Tables']['widgets']['Row'], 'id' | 'created_at'>>;
+      };
+    };
+    Functions: {
+      increment_widget_downloads: {
+        Args: { widget_id_param: string };
+        Returns: undefined;
       };
     };
   };
 }
 
-// Export Widget type alias for convenience
+// Export type aliases for convenience
 export type Widget = Database['public']['Tables']['widgets']['Row'];
+export type WidgetInsert = Database['public']['Tables']['widgets']['Insert'];
+export type WidgetUpdate = Database['public']['Tables']['widgets']['Update'];
 
 export interface WidgetPermissions {
   systemInfo?: {

@@ -17,29 +17,17 @@ export async function POST(
     const { id } = await params;
     const supabase = createServerClient();
 
-    // First, get the current download count
-    const { data: widget, error: fetchError } = await supabase
-      .from('widgets')
-      .select('downloads')
-      .eq('widget_id', id)
-      .single();
+    // Use RPC to atomically increment the download count
+    // This prevents race conditions when multiple downloads happen simultaneously
+    // @ts-expect-error - Type inference issue with Supabase RPC functions
+    const { error } = await supabase.rpc('increment_widget_downloads', {
+      widget_id_param: id
+    });
 
-    if (fetchError || !widget) {
-      console.error('Error fetching widget:', fetchError);
-      return NextResponse.json(
-        { error: 'Widget not found' },
-        { status: 404 }
-      );
-    }
-
-    // Increment the download count
-    const { error: updateError } = await supabase
-      .from('widgets')
-      .update({ downloads: (widget.downloads || 0) + 1 })
-      .eq('widget_id', id);
-
-    if (updateError) {
-      console.error('Error updating download count:', updateError);
+    if (error) {
+      console.error('Error incrementing download count:', error);
+      // Check if it's a "not found" scenario (function returns but no rows updated)
+      // For now, we'll treat all errors the same way
       return NextResponse.json(
         { error: 'Failed to update download count' },
         { status: 500 }

@@ -5,7 +5,7 @@ import type { Database } from './database.types';
  * Creates a Supabase client for server-side usage (Server Components, API Routes)
  * This ensures each request gets a fresh client instance
  */
-export function createServerClient() {
+export function createServerClient(): ReturnType<typeof createClient<Database>> {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 

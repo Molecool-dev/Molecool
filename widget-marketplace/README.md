@@ -201,20 +201,35 @@ The `lib/supabase.ts` file exports:
 - `supabase` - Configured Supabase client instance
 - `Widget` - TypeScript interface for the widgets table (from `lib/database.types.ts`)
 
-### Widget Interface
+### Widget Types
+
+The `lib/database.types.ts` file provides TypeScript types for database operations:
+
+```typescript
+// Full widget row from database
+type Widget = Database['public']['Tables']['widgets']['Row'];
+
+// Type for inserting new widgets (id, created_at, updated_at are optional)
+type WidgetInsert = Database['public']['Tables']['widgets']['Insert'];
+
+// Type for updating widgets (excludes id and created_at - immutable fields)
+type WidgetUpdate = Database['public']['Tables']['widgets']['Update'];
+```
+
+**Widget Interface:**
 
 ```typescript
 interface Widget {
-  id: string;
-  widget_id: string;
-  name: string;
-  display_name: string;
-  description: string;
-  author_name: string;
-  author_email: string;
-  version: string;
-  downloads: number;
-  permissions: {
+  id: string;                    // UUID primary key
+  widget_id: string;             // Unique widget identifier
+  name: string;                  // Internal name
+  display_name: string;          // User-facing name
+  description: string;           // Widget description
+  author_name: string;           // Author name
+  author_email: string;          // Author email
+  version: string;               // Semantic version
+  downloads: number;             // Download count
+  permissions: {                 // Required permissions
     systemInfo?: {
       cpu?: boolean;
       memory?: boolean;
@@ -224,7 +239,7 @@ interface Widget {
       allowedDomains?: string[];
     };
   };
-  sizes: {
+  sizes: {                       // Widget dimensions
     default: {
       width: number;
       height: number;
@@ -238,12 +253,17 @@ interface Widget {
       height: number;
     };
   };
-  icon_url?: string;
-  download_url: string;
-  created_at: string;
-  updated_at: string;
+  icon_url?: string;             // Widget icon URL
+  download_url: string;          // Download package URL
+  created_at: string;            // Creation timestamp (immutable)
+  updated_at: string;            // Last update timestamp
 }
 ```
+
+**Type Safety Notes:**
+- `WidgetInsert` makes `id`, `created_at`, `updated_at`, and `icon_url` optional for new records
+- `WidgetUpdate` excludes `id` and `created_at` to prevent modification of immutable fields
+- All types are derived from the database schema for consistency
 
 ### Usage Example
 
