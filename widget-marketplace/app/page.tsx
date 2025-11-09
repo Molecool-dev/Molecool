@@ -1,8 +1,9 @@
 import { WidgetGallery } from '@/components/WidgetGallery';
 import { Hero } from '@/components/Hero';
 import { createServerClient } from '@/lib/supabase-server';
+import type { Widget } from '@/lib/database.types';
 
-async function getWidgets() {
+async function getWidgets(): Promise<Widget[]> {
   const supabase = createServerClient();
   const { data, error } = await supabase
     .from('widgets')
