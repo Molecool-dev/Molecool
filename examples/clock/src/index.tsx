@@ -7,7 +7,7 @@ import {
   LargeText,
   SmallText,
   ErrorBoundary
-} from '@Molecool/widget-sdk';
+} from '@molecool/widget-sdk';
 import styles from './App.module.css';
 
 const ClockWidget: React.FC = () => {

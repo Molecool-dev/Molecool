@@ -1,5 +1,5 @@
 {
-  "name": "@Molecool/widget-sdk",
+  "name": "@molecool/widget-sdk",
   "version": "1.0.0",
   "description": "React component library and API for creating Molecool desktop widgets",
   "type": "module",

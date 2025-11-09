@@ -1,5 +1,5 @@
 {
-  "name": "Molecool-widget-container",
+  "name": "molecool-widget-container",
   "version": "1.0.0",
   "description": "Molecool Desktop Widget Platform - Widget Container",
   "main": "dist/main/main.js",

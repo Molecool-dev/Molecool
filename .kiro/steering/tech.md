@@ -4,45 +4,39 @@ inclusion: always
 
 # Technology Stack
 
-## Package Module Systems (CRITICAL)
+## Module Systems (CRITICAL)
 
-**widget-container/** (Electron app)
-- MUST use CommonJS: `require()` and `module.exports`
-- ES modules (`import`/`export`) will fail at runtime
-- Exception: Type-only imports allowed (`import type { ... } from 'node:...'`)
-- TypeScript config: `module: "commonjs"`, `target: "ES2020"`
-- Structure: `src/main/` (Node.js/IPC), `src/preload/` (bridge), `src/renderer/` (UI)
+**widget-container/** (Electron)
+- CommonJS only: `require()` and `module.exports`
+- Type-only imports allowed: `import type { ... } from 'node:...'`
+- Config: `module: "commonjs"`, `target: "ES2020"`
 
 **widget-sdk/** (React library)
-- MUST use ES modules: `import` and `export`
-- NEVER use `require()` or `module.exports`
-- NEVER import Electron APIs (browser-only runtime)
-- TypeScript config: `module: "ESNext"`, `noEmit: true`
+- ES modules only: `import` and `export`
+- NEVER import Electron APIs (browser-only)
 - React 18+ is peer dependency - NEVER bundle React/ReactDOM
-- Single entry point: `src/index.ts` exports all public APIs
-- Extend `Window` interface in `types/window.d.ts`
+- Config: `module: "ESNext"`, `noEmit: true`
 
 **widget-marketplace/** (Next.js 15)
-- MUST use ES modules: `import` and `export`
+- ES modules only: `import` and `export`
 - App Router architecture
-- Runtime: Node.js (server) + Browser (client)
 
 ## Data Persistence
 
-- Use `electron-store` for persistent data (positions, configs, preferences)
-- NEVER use `localStorage` in main process
-- Debounce all writes by minimum 500ms
+- `electron-store` for persistent data (positions, configs, preferences)
+- NEVER `localStorage` in main process
+- Debounce writes by 500ms minimum
 - Renderer `localStorage` only for ephemeral UI state
 
-## IPC Communication
+## IPC Pattern
 
-- Main process: `ipcMain.handle()` or `ipcMain.on()`
-- Preload script: `contextBridge.exposeInMainWorld('api', { ... })`
-- Renderer process: `window.api.methodName()`
+- Main: `ipcMain.handle()` or `ipcMain.on()`
+- Preload: `contextBridge.exposeInMainWorld('api', { ... })`
+- Renderer: `window.api.methodName()`
 
 ## Testing
 
-- Framework: Vitest + @testing-library/react
+- Vitest + @testing-library/react
 - Location: `__tests__/*.test.ts(x)` co-located with source
-- Run single execution: `npm test -- --run` (NEVER `--watch`)
-- Mock `window.api` in widget-sdk, mock Electron APIs in widget-container
+- Run: `npm test -- --run` (NEVER `--watch`)
+- Mock `window.api` in widget-sdk, mock Electron in widget-container

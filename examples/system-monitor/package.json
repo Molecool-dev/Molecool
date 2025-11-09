@@ -1,5 +1,5 @@
 {
-  "name": "@Molecool/system-monitor-widget",
+  "name": "@molecool/system-monitor-widget",
   "version": "1.0.0",
   "description": "A system monitor widget for Molecool platform",
   "type": "module",
@@ -11,7 +11,7 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "@Molecool/widget-sdk": "file:../../widget-sdk",
+    "@molecool/widget-sdk": "file:../../widget-sdk",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },

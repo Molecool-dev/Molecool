@@ -181,7 +181,7 @@ Molecool/
 mkdir my-widget
 cd my-widget
 npm init -y
-npm install @Molecool/widget-sdk react react-dom
+npm install @molecool/widget-sdk react react-dom
 npm install -D vite @vitejs/plugin-react typescript
 ```
 
@@ -222,7 +222,7 @@ npm install -D vite @vitejs/plugin-react typescript
 ```tsx
 import React, { useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { WidgetProvider, Widget, useInterval } from '@Molecool/widget-sdk';
+import { WidgetProvider, Widget, useInterval } from '@molecool/widget-sdk';
 
 const MyWidget: React.FC = () => {
   const [count, setCount] = useState(0);

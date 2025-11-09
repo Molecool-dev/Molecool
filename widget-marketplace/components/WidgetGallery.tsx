@@ -3,6 +3,7 @@
 import { useState, useMemo } from 'react';
 import { WidgetCard } from './WidgetCard';
 import { SearchBar } from './SearchBar';
+import { GlassCard } from './glass/GlassCard';
 import type { Widget } from '@/lib/database.types';
 
 interface WidgetGalleryProps {
@@ -41,7 +42,11 @@ export function WidgetGallery({ widgets }: WidgetGalleryProps) {
 
       {/* Results Count */}
       {searchQuery && (
-        <div className="text-center text-sm text-gray-600 dark:text-gray-400">
+        <div 
+          className="text-center text-sm text-white/80 glass-text"
+          role="status"
+          aria-live="polite"
+        >
           {filteredWidgets.length === 0 ? (
             <p>No widgets found matching &quot;{searchQuery}&quot;</p>
           ) : (
@@ -54,33 +59,42 @@ export function WidgetGallery({ widgets }: WidgetGalleryProps) {
 
       {/* Widget Grid */}
       {filteredWidgets.length > 0 ? (
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div 
+          className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3"
+          role="list"
+          aria-label="Widget gallery"
+        >
           {filteredWidgets.map((widget) => (
-            <WidgetCard key={widget.id} widget={widget} />
+            <div key={widget.id} role="listitem">
+              <WidgetCard widget={widget} />
+            </div>
           ))}
         </div>
       ) : (
         !searchQuery && (
           <div className="flex flex-col items-center justify-center py-16 text-center">
-            <svg
-              className="h-16 w-16 text-gray-400"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
-              />
-            </svg>
-            <h3 className="mt-4 text-lg font-semibold text-gray-900 dark:text-gray-100">
-              No widgets available
-            </h3>
-            <p className="mt-2 text-gray-600 dark:text-gray-400">
-              Check back later for new widgets
-            </p>
+            <GlassCard className="p-12 max-w-md">
+              <svg
+                className="h-16 w-16 mx-auto text-cyan-300/60"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
+                />
+              </svg>
+              <h3 className="mt-6 text-lg font-semibold text-white glass-text">
+                No widgets available
+              </h3>
+              <p className="mt-2 text-white/80 glass-text">
+                Check back later for new widgets
+              </p>
+            </GlassCard>
           </div>
         )
       )}

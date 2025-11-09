@@ -11,10 +11,11 @@ export function SearchBar({ value, onChange, placeholder = 'Search widgets...' }
     <div className="relative w-full max-w-2xl">
       <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
         <svg
-          className="h-5 w-5 text-gray-400"
+          className="h-5 w-5 text-cyan-300/80"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
+          aria-hidden="true"
         >
           <path
             strokeLinecap="round"
@@ -25,11 +26,12 @@ export function SearchBar({ value, onChange, placeholder = 'Search widgets...' }
         </svg>
       </div>
       <input
-        type="text"
+        type="search"
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className="w-full rounded-lg border border-gray-300 bg-white py-3 pl-11 pr-4 text-gray-900 placeholder-gray-500 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 dark:placeholder-gray-400"
+        aria-label="Search widgets"
+        className="w-full rounded-xl glass-surface py-3 pl-11 pr-4 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-cyan-400/50 transition-all duration-300 drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]"
       />
     </div>
   );

@@ -4,43 +4,36 @@ inclusion: always
 
 # Molecool Desktop Widget Platform
 
-Three-package monorepo:
-- `widget-container/` - Electron app hosting widgets
-- `widget-sdk/` - React library for building widgets
-- `widget-marketplace/` - Next.js web app for widget discovery
+Desktop widget platform with three packages:
+- `widget-container/` - Electron app that hosts and manages widgets
+- `widget-sdk/` - React library for building custom widgets
+- `widget-marketplace/` - Next.js web app for discovering and sharing widgets
 
-## Security Architecture (NON-NEGOTIABLE)
+## Core Product Principles
 
-Electron security:
-- Context isolation: ALWAYS enabled
-- Node integration: ALWAYS disabled
-- Renderer sandbox: ALWAYS enabled
-- ALL Node.js/Electron APIs exposed via `contextBridge.exposeInMainWorld()` in preload
-- Communication: Renderer → IPC → Preload → Main
+**Security First**: Electron security model is NON-NEGOTIABLE. Renderer processes are fully sandboxed with zero direct Node.js access. All system APIs flow through IPC → preload bridge → main process.
 
-SDK isolation:
-- Widget SDK MUST NEVER import Electron APIs (browser-only runtime)
-- Bridge pattern: SDK → `window.api` → preload → main
-- SDK runs in browser (dev) and Electron renderer (production)
+**Widget Isolation**: Each widget runs in its own BrowserWindow with isolated renderer process. Widgets persist state across app restarts and support free desktop positioning, dragging, and resizing.
 
-## Widget Architecture
+**Cross-Platform**: SDK must work in both browser (development) and Electron (production). NEVER import Electron APIs in widget-sdk - use `window.api` bridge pattern instead.
 
-Each widget is:
-- Independent Electron BrowserWindow
-- Isolated renderer process
-- Persists state via `electron-store` across restarts
-- Supports drag, resize, free desktop positioning
+## Visual Design Language
 
-## Visual Design
-
-Platform-native effects:
-- Windows 11: Mica/Acrylic blur
+**Platform-Native Effects**:
+- Windows 11: Mica/Acrylic blur backgrounds
 - macOS: Vibrancy effects
 - Frameless windows with custom title bars
-- Glassmorphism: Semi-transparent backgrounds with backdrop blur, subtle borders
+- Glassmorphism aesthetic: semi-transparent backgrounds, backdrop blur, subtle borders
 
-## Performance
+**Widget Behavior**:
+- Always-on-top, draggable, resizable
+- Persist position and size across sessions
+- Smooth animations and transitions
+- Minimal chrome, maximum content
 
-- Debounce frequent operations (saves, updates) by 500ms minimum
-- Minimize IPC calls between processes
-- Batch `electron-store` updates when possible
+## Performance Guidelines
+
+- Debounce frequent operations (position saves, config updates) by 500ms minimum
+- Minimize IPC round-trips between renderer and main processes
+- Batch `electron-store` writes when possible
+- Widgets should feel lightweight and responsive

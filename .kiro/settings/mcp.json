@@ -23,11 +23,36 @@
       ]
     },
     "deepwiki": {
-      "url": "https://mcp.deepwiki.com/sse"
+      "url": "https://mcp.deepwiki.com/sse",
+      "disabled": false
     },
     "chrome-devtools": {
       "command": "npx",
-      "args": ["-y", "chrome-devtools-mcp@latest"]
+      "args": [
+        "-y",
+        "chrome-devtools-mcp@latest"
+      ],
+      "disabled": false,
+      "autoApprove": [
+        "list_pages",
+        "take_snapshot",
+        "resize_page",
+        "evaluate_script",
+        "new_page",
+        "take_screenshot",
+        "select_page",
+        "click",
+        "wait_for",
+        "close_page"
+      ]
+    },
+    "shadcn": {
+      "command": "npx",
+      "args": [
+        "shadcn@latest",
+        "mcp"
+      ],
+      "disabled": false
     }
   }
 }

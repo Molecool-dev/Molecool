@@ -1,5 +1,5 @@
 {
-  "name": "@Molecool/clock-widget",
+  "name": "@molecool/clock-widget",
   "version": "1.0.0",
   "description": "A simple clock widget for Molecool platform",
   "type": "module",
@@ -11,7 +11,7 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "@Molecool/widget-sdk": "file:../../widget-sdk",
+    "@molecool/widget-sdk": "file:../../widget-sdk",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },

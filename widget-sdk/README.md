@@ -5,7 +5,7 @@ A React component library and API for creating desktop widgets that run in the M
 ## Installation
 
 ```bash
-npm install @Molecool/widget-sdk react react-dom
+npm install @molecool/widget-sdk react react-dom
 ```
 
 ## Quick Start
@@ -14,7 +14,7 @@ npm install @Molecool/widget-sdk react react-dom
 
 ```tsx
 import React from 'react';
-import { WidgetProvider, Widget, useInterval } from '@Molecool/widget-sdk';
+import { WidgetProvider, Widget, useInterval } from '@molecool/widget-sdk';
 
 function ClockWidget() {
   const [time, setTime] = React.useState(new Date());
@@ -45,7 +45,7 @@ export default function App() {
 
 ```tsx
 import React from 'react';
-import { WidgetProvider, Widget, Stat, ProgressBar, useSystemInfo } from '@Molecool/widget-sdk';
+import { WidgetProvider, Widget, Stat, ProgressBar, useSystemInfo } from '@molecool/widget-sdk';
 
 function SystemMonitor() {
   const memoryInfo = useSystemInfo('memory', 2000);
@@ -109,7 +109,7 @@ The Widget SDK provides comprehensive error handling with standardized error typ
 ### Quick Example
 
 ```tsx
-import { useWidgetAPI, isWidgetError, WidgetErrorType } from '@Molecool/widget-sdk';
+import { useWidgetAPI, isWidgetError, WidgetErrorType } from '@molecool/widget-sdk';
 
 function MyWidget() {
   const { storage } = useWidgetAPI();
@@ -170,7 +170,7 @@ The SDK exports the following modules:
 The main container component for all widgets with glassmorphism effect.
 
 ```tsx
-import { Widget } from '@Molecool/widget-sdk';
+import { Widget } from '@molecool/widget-sdk';
 
 <Widget.Container className="custom-class">
   {/* Your widget content */}
@@ -193,7 +193,7 @@ import { Widget } from '@Molecool/widget-sdk';
 Display a labeled statistic with optional icon and color.
 
 ```tsx
-import { Stat } from '@Molecool/widget-sdk';
+import { Stat } from '@molecool/widget-sdk';
 
 <Stat 
   label="CPU Usage" 
@@ -215,7 +215,7 @@ import { Stat } from '@Molecool/widget-sdk';
 Display a progress bar with percentage value.
 
 ```tsx
-import { ProgressBar } from '@Molecool/widget-sdk';
+import { ProgressBar } from '@molecool/widget-sdk';
 
 <ProgressBar 
   value={75} 
@@ -241,7 +241,7 @@ import { ProgressBar } from '@Molecool/widget-sdk';
 Display lists of items with smooth animations and hover effects.
 
 ```tsx
-import { Widget } from '@Molecool/widget-sdk';
+import { Widget } from '@molecool/widget-sdk';
 
 <Widget.List>
   <Widget.ListItem>Item 1</Widget.ListItem>
@@ -279,7 +279,7 @@ import { Widget } from '@Molecool/widget-sdk';
 Execute a callback function at regular intervals.
 
 ```tsx
-import { useInterval } from '@Molecool/widget-sdk';
+import { useInterval } from '@molecool/widget-sdk';
 
 useInterval(() => {
   // Your code here
@@ -291,7 +291,7 @@ useInterval(() => {
 Access persistent storage for your widget.
 
 ```tsx
-import { useStorage } from '@Molecool/widget-sdk';
+import { useStorage } from '@molecool/widget-sdk';
 
 const [value, setValue, removeValue] = useStorage<string>('myKey', 'defaultValue');
 ```
@@ -301,7 +301,7 @@ const [value, setValue, removeValue] = useStorage<string>('myKey', 'defaultValue
 Access widget settings.
 
 ```tsx
-import { useSettings } from '@Molecool/widget-sdk';
+import { useSettings } from '@molecool/widget-sdk';
 
 const city = useSettings<string>('city', 'New York');
 ```
@@ -311,7 +311,7 @@ const city = useSettings<string>('city', 'New York');
 Access system information (requires permissions).
 
 ```tsx
-import { useSystemInfo } from '@Molecool/widget-sdk';
+import { useSystemInfo } from '@molecool/widget-sdk';
 
 const cpuUsage = useSystemInfo('cpu', 2000); // Returns number (0-100)
 const memoryInfo = useSystemInfo('memory', 2000); // Returns memory object
@@ -330,7 +330,7 @@ const memoryInfo = useSystemInfo('memory', 2000); // Returns memory object
 Throttle a value to limit update frequency (performance optimization).
 
 ```tsx
-import { useThrottle, useSystemInfo } from '@Molecool/widget-sdk';
+import { useThrottle, useSystemInfo } from '@molecool/widget-sdk';
 
 // Fetch every 100ms but display every 1s
 const cpuUsage = useSystemInfo('cpu', 100);
@@ -351,7 +351,7 @@ See the [useThrottle documentation](./docs/hooks/useThrottle.md) for detailed us
 Wrap your widget app with this provider to enable API access.
 
 ```tsx
-import { WidgetProvider } from '@Molecool/widget-sdk';
+import { WidgetProvider } from '@molecool/widget-sdk';
 
 <WidgetProvider>
   <YourWidget />
@@ -365,7 +365,7 @@ import { WidgetProvider } from '@Molecool/widget-sdk';
 Custom error class with additional context.
 
 ```tsx
-import { WidgetError, WidgetErrorType } from '@Molecool/widget-sdk';
+import { WidgetError, WidgetErrorType } from '@molecool/widget-sdk';
 
 const error = new WidgetError(
   WidgetErrorType.STORAGE_ERROR,
@@ -382,7 +382,7 @@ console.log(error.toJSON()); // Full error details
 Type guard to check if an error is a WidgetError.
 
 ```tsx
-import { isWidgetError } from '@Molecool/widget-sdk';
+import { isWidgetError } from '@molecool/widget-sdk';
 
 try {
   await someOperation();
@@ -398,7 +398,7 @@ try {
 Convert any error to a WidgetError.
 
 ```tsx
-import { toWidgetError } from '@Molecool/widget-sdk';
+import { toWidgetError } from '@molecool/widget-sdk';
 
 try {
   await someOperation();
@@ -417,7 +417,7 @@ The Widget SDK includes several features to help you build performant widgets:
 Use `useThrottle` to limit how often values update:
 
 ```tsx
-import { useThrottle, useSystemInfo } from '@Molecool/widget-sdk';
+import { useThrottle, useSystemInfo } from '@molecool/widget-sdk';
 
 function SystemMonitor() {
   // Fetch data every 100ms for accuracy

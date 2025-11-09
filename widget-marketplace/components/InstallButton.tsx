@@ -1,5 +1,7 @@
 'use client';
 
+import { GlassButton } from '@/components/glass/GlassButton';
+
 interface InstallButtonProps {
   widgetId: string;
 }
@@ -11,12 +13,14 @@ export function InstallButton({ widgetId }: InstallButtonProps) {
   };
 
   return (
-    <button
+    <GlassButton
       onClick={handleInstall}
-      className="w-full rounded-lg bg-gradient-to-r from-blue-500 to-purple-600 px-6 py-3 font-semibold text-white transition-all hover:from-blue-600 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900"
+      variant="primary"
+      size="lg"
+      className="w-full"
       aria-label={`Install widget ${widgetId}`}
     >
-      Install Widget
-    </button>
+      🚀 Install Widget
+    </GlassButton>
   );
 }

@@ -116,15 +116,15 @@ export function PermissionsList({ permissions }: PermissionsListProps) {
   // If no permissions are required
   if (permissionItems.length === 0) {
     return (
-      <div className="flex items-start gap-3 rounded-lg bg-green-50 p-4 dark:bg-green-900/20">
-        <div className="flex-shrink-0 text-green-600 dark:text-green-400">
+      <div className="flex items-start gap-3 rounded-lg bg-green-500/10 border border-green-500/30 p-4 backdrop-blur-sm">
+        <div className="flex-shrink-0 text-green-400" aria-hidden="true">
           <ShieldIcon />
         </div>
         <div>
-          <p className="text-sm font-medium text-green-800 dark:text-green-300">
+          <p className="text-sm font-medium text-white [text-shadow:0_1px_4px_rgba(0,0,0,0.3)]">
             No special permissions required
           </p>
-          <p className="mt-1 text-sm text-green-700 dark:text-green-400">
+          <p className="mt-1 text-sm text-white/80 [text-shadow:0_1px_4px_rgba(0,0,0,0.3)]">
             This widget runs in a secure sandbox with no access to system resources.
           </p>
         </div>
@@ -134,19 +134,19 @@ export function PermissionsList({ permissions }: PermissionsListProps) {
 
   return (
     <ul className="space-y-3" role="list">
-      {permissionItems.map((item, index) => (
+      {permissionItems.map((item) => (
         <li
-          key={index}
-          className="flex items-start gap-3 rounded-lg border border-gray-200 bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-800/50"
+          key={item.title}
+          className="flex items-start gap-3 rounded-lg border border-white/20 bg-white/5 p-4 backdrop-blur-sm"
         >
-          <div className="flex-shrink-0 text-blue-600 dark:text-blue-400">
+          <div className="flex-shrink-0 text-cyan-400" aria-hidden="true">
             {item.icon}
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+            <p className="text-sm font-medium text-white [text-shadow:0_1px_4px_rgba(0,0,0,0.3)]">
               {item.title}
             </p>
-            <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
+            <p className="mt-1 text-sm text-white/80 [text-shadow:0_1px_4px_rgba(0,0,0,0.3)]">
               {item.description}
             </p>
           </div>

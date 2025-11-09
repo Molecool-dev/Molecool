@@ -4,6 +4,11 @@ import type { Metadata } from 'next';
 import { createServerClient } from '@/lib/supabase-server';
 import { PermissionsList } from '@/components/PermissionsList';
 import { InstallButton } from '@/components/InstallButton';
+import { GlassPanel } from '@/components/glass/GlassPanel';
+import { GlassOrb } from '@/components/glass/GlassOrb';
+import { GlassMetric } from '@/components/glass/GlassMetric';
+import { GlassCard } from '@/components/glass/GlassCard';
+import { CardHeader, CardContent } from '@/components/ui/card';
 import type { Widget } from '@/lib/database.types';
 
 interface PageProps {
@@ -57,6 +62,48 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   };
 }
 
+// Helper component for widget icon rendering
+function WidgetIcon({ 
+  widget, 
+  displayName, 
+  size 
+}: { 
+  widget: Widget; 
+  displayName: string; 
+  size: 'sm' | 'md' | 'lg' | 'xl';
+}) {
+  const sizeMap = {
+    sm: { container: 'w-16 h-16', text: 'text-3xl' },
+    md: { container: 'w-24 h-24', text: 'text-5xl' },
+    lg: { container: 'w-32 h-32', text: 'text-5xl' },
+    xl: { container: 'w-48 h-48', text: 'text-8xl' },
+  };
+
+  const { container, text } = sizeMap[size];
+
+  return (
+    <GlassOrb size={size}>
+      {widget.icon_url ? (
+        <div className={`relative ${container}`}>
+          <Image
+            src={widget.icon_url}
+            alt={`${displayName} icon`}
+            fill
+            sizes={size === 'xl' ? '192px' : size === 'lg' ? '128px' : size === 'md' ? '96px' : '64px'}
+            className="object-cover rounded-full"
+          />
+        </div>
+      ) : (
+        <div className={`flex items-center justify-center ${container} bg-gradient-to-br from-blue-500 to-purple-600 rounded-full`}>
+          <span className={`${text} font-bold text-white`} aria-hidden="true">
+            {displayName.charAt(0).toUpperCase()}
+          </span>
+        </div>
+      )}
+    </GlassOrb>
+  );
+}
+
 export default async function WidgetDetailPage({ params }: PageProps) {
   const { id } = await params;
   const widget = await getWidget(id);
@@ -68,19 +115,28 @@ export default async function WidgetDetailPage({ params }: PageProps) {
   const displayName = widget.display_name || widget.name || 'Unnamed Widget';
   const description = widget.description || 'No description available';
   const authorName = widget.author_name || 'Unknown';
-  const authorEmail = widget.author_email || '';
   const downloads = widget.downloads || 0;
   const version = widget.version || '1.0.0';
+  
+  // Consistent date formatting
+  const lastUpdated = new Date(widget.updated_at).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  });
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
+    <div className="min-h-screen relative">
+      {/* Gradient Background */}
+      <div className="fixed inset-0 bg-gradient-to-b from-[#1e3c72] to-[#7e8ba3]" aria-hidden="true" />
+
       {/* Header */}
-      <header className="border-b border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
+      <header className="relative z-10 border-b border-white/10">
         <div className="container mx-auto px-4 py-6">
           <nav className="mb-4">
             <a
               href="/"
-              className="inline-flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100"
+              className="inline-flex items-center gap-2 text-sm text-white/80 hover:text-white transition-colors [text-shadow:0_1px_4px_rgba(0,0,0,0.3)]"
             >
               <svg
                 className="h-4 w-4"
@@ -100,30 +156,14 @@ export default async function WidgetDetailPage({ params }: PageProps) {
           </nav>
           <div className="flex items-start gap-6">
             {/* Widget Icon */}
-            {widget.icon_url ? (
-              <div className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-xl">
-                <Image
-                  src={widget.icon_url}
-                  alt=""
-                  fill
-                  sizes="80px"
-                  className="object-cover"
-                />
-              </div>
-            ) : (
-              <div className="flex h-20 w-20 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-purple-600">
-                <span className="text-3xl font-bold text-white">
-                  {displayName.charAt(0).toUpperCase()}
-                </span>
-              </div>
-            )}
+            <WidgetIcon widget={widget} displayName={displayName} size="lg" />
 
             {/* Widget Title */}
             <div className="flex-1">
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+              <h1 className="text-4xl font-bold text-white [text-shadow:0_2px_8px_rgba(0,0,0,0.3)]">
                 {displayName}
               </h1>
-              <p className="mt-2 text-lg text-gray-600 dark:text-gray-400">
+              <p className="mt-2 text-lg text-white/90 [text-shadow:0_1px_4px_rgba(0,0,0,0.3)]">
                 {description}
               </p>
             </div>
@@ -132,118 +172,86 @@ export default async function WidgetDetailPage({ params }: PageProps) {
       </header>
 
       {/* Main Content */}
-      <main className="container mx-auto px-4 py-8">
+      <main className="relative z-10 container mx-auto px-4 py-8">
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
-          {/* Left Column - Details */}
+          {/* Main Content - Left Column */}
           <div className="lg:col-span-2 space-y-6">
             {/* About Section */}
-            <section className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900">
-              <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
-                About
-              </h2>
-              <p className="mt-4 text-gray-700 dark:text-gray-300">
-                {description}
-              </p>
-            </section>
+            <GlassCard>
+              <CardHeader>
+                <h2 className="text-2xl font-semibold text-white [text-shadow:0_2px_8px_rgba(0,0,0,0.3)]">
+                  About
+                </h2>
+              </CardHeader>
+              <CardContent>
+                <p className="text-white/90 [text-shadow:0_1px_4px_rgba(0,0,0,0.3)]">
+                  {description}
+                </p>
+              </CardContent>
+            </GlassCard>
 
             {/* Permissions Section */}
-            <section className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900">
-              <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
-                Permissions
-              </h2>
-              <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-                This widget requires the following permissions to function:
-              </p>
-              <div className="mt-4">
+            <GlassCard variant="warning">
+              <CardHeader>
+                <div className="flex items-center gap-3">
+                  <span className="text-2xl" aria-hidden="true">⚠️</span>
+                  <h2 className="text-2xl font-semibold text-white [text-shadow:0_2px_8px_rgba(0,0,0,0.3)]">
+                    Permissions
+                  </h2>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-white/80 mb-4 [text-shadow:0_1px_4px_rgba(0,0,0,0.3)]">
+                  This widget requires the following permissions to function:
+                </p>
                 <PermissionsList permissions={widget.permissions} />
-              </div>
-            </section>
+              </CardContent>
+            </GlassCard>
           </div>
 
-          {/* Right Column - Sidebar */}
+          {/* Sidebar - Right Column */}
           <div className="space-y-6">
-            {/* Install Button */}
-            <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900">
+            <GlassPanel className="sticky top-6 space-y-6">
+              {/* Widget Icon */}
+              <div className="flex justify-center">
+                <WidgetIcon widget={widget} displayName={displayName} size="xl" />
+              </div>
+
+              {/* Install Button */}
               <InstallButton widgetId={widget.widget_id} />
-              <p className="mt-3 text-center text-xs text-gray-500 dark:text-gray-500">
+              <p className="text-center text-xs text-white/70 [text-shadow:0_1px_4px_rgba(0,0,0,0.3)]">
                 Requires Molecool Widget Container
               </p>
-            </div>
 
-            {/* Details Card */}
-            <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                Details
-              </h3>
-              <dl className="mt-4 space-y-3">
-                <div>
-                  <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">
-                    Version
-                  </dt>
-                  <dd className="mt-1 text-sm text-gray-900 dark:text-gray-100">
-                    {version}
-                  </dd>
-                </div>
-                <div>
-                  <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">
-                    Author
-                  </dt>
-                  <dd className="mt-1 text-sm text-gray-900 dark:text-gray-100">
-                    {authorName}
-                    {authorEmail && (
-                      <a
-                        href={`mailto:${authorEmail}`}
-                        className="ml-2 text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
-                      >
-                        <svg
-                          className="inline h-4 w-4"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                          />
-                        </svg>
-                      </a>
-                    )}
-                  </dd>
-                </div>
-                <div>
-                  <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">
-                    Downloads
-                  </dt>
-                  <dd className="mt-1 text-sm text-gray-900 dark:text-gray-100">
-                    {downloads.toLocaleString()}
-                  </dd>
-                </div>
+              {/* Stats Grid */}
+              <div className="grid grid-cols-2 gap-4">
+                <GlassMetric 
+                  value={version} 
+                  label="Version" 
+                />
+                <GlassMetric 
+                  value={downloads.toLocaleString()} 
+                  label="Downloads" 
+                />
+                <GlassMetric 
+                  value={authorName} 
+                  label="Author" 
+                  className="col-span-2"
+                />
                 {widget.sizes?.default && (
-                  <div>
-                    <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">
-                      Default Size
-                    </dt>
-                    <dd className="mt-1 text-sm text-gray-900 dark:text-gray-100">
-                      {widget.sizes.default.width} × {widget.sizes.default.height} px
-                    </dd>
-                  </div>
+                  <GlassMetric 
+                    value={`${widget.sizes.default.width}×${widget.sizes.default.height}`} 
+                    label="Size (px)" 
+                    className="col-span-2"
+                  />
                 )}
-                <div>
-                  <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">
-                    Last Updated
-                  </dt>
-                  <dd className="mt-1 text-sm text-gray-900 dark:text-gray-100">
-                    {new Date(widget.updated_at).toLocaleDateString('en-US', {
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric',
-                    })}
-                  </dd>
-                </div>
-              </dl>
-            </div>
+                <GlassMetric 
+                  value={lastUpdated} 
+                  label="Last Updated" 
+                  className="col-span-2"
+                />
+              </div>
+            </GlassPanel>
           </div>
         </div>
       </main>
