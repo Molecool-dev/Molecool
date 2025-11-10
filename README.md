@@ -17,18 +17,18 @@ Bring back the joy of desktop widgets with modern web technologies and enterpris
 
 ---
 
-## 📖 Overview
+## Overview
 
 Molecool is a desktop widget platform that revives the Windows 7/Vista gadget experience using modern web technologies. It provides:
 
-- 🎨 **Beautiful Glassmorphism UI** - Modern frosted glass effects with smooth animations
-- 🔒 **Secure Sandbox Environment** - All widgets run in isolated, sandboxed processes
-- ⚛️ **React-Based Development** - Build widgets with familiar React components and hooks
-- 🚀 **Easy Distribution** - Marketplace for discovering and installing widgets
-- 🎯 **Developer Friendly** - Simple API with TypeScript support
-- ✨ **Polished UX** - Smooth animations, enhanced readability, and delightful interactions
+- **Beautiful Glassmorphism UI** - Modern frosted glass effects with smooth animations
+- **Secure Sandbox Environment** - All widgets run in isolated, sandboxed processes
+- **React-Based Development** - Build widgets with familiar React components and hooks
+- **Easy Distribution** - Marketplace for discovering and installing widgets
+- **Developer Friendly** - Simple API with TypeScript support
+- **Polished UX** - Smooth animations, enhanced readability, and delightful interactions
 
-## ✨ Features
+## Features
 
 ### For Users
 
@@ -50,25 +50,25 @@ Molecool is a desktop widget platform that revives the Windows 7/Vista gadget ex
 - **Simple API** - Clean, intuitive API for storage, settings, and system info
 - **Mock Environment** - Develop and test in browser without Electron
 
-## 🏗️ Architecture
+## Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│                  Molecool Platform                       │
+│                  Molecool Platform                      │
 ├─────────────────────────────────────────────────────────┤
-│                                                          │
-│  ┌──────────────────┐  ┌──────────────────────────┐   │
-│  │ Widget Container │  │    Widget Marketplace     │   │
-│  │   (Electron)     │  │      (Next.js)           │   │
-│  └──────────────────┘  └──────────────────────────┘   │
-│           │                                              │
-│           │ uses                                         │
-│           ▼                                              │
+│                                                         │
+│  ┌──────────────────┐  ┌──────────────────────────┐     │
+│  │ Widget Container │  │    Widget Marketplace    │     │
+│  │   (Electron)     │  │      (Next.js)           │     │
+│  └──────────────────┘  └──────────────────────────┘     │
+│           │                                             │
+│           │ uses                                        │
+│           ▼                                             │
 │  ┌──────────────────┐                                   │
 │  │   Widget SDK     │                                   │
 │  │    (React)       │                                   │
 │  └──────────────────┘                                   │
-│                                                          │
+│                                                         │
 └─────────────────────────────────────────────────────────┘
 ```
 
@@ -79,7 +79,7 @@ Molecool is a desktop widget platform that revives the Windows 7/Vista gadget ex
 3. **Example Widgets** (`examples/`) - Sample widgets (Clock, System Monitor, Weather)
 4. **Marketplace** (`widget-marketplace/`) - Next.js web app for widget discovery
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 
@@ -138,7 +138,7 @@ npm run dev
 
 Visit `http://localhost:3000` to browse widgets.
 
-## 📦 Project Structure
+## Project Structure
 
 ```
 Molecool/
@@ -173,7 +173,7 @@ Molecool/
     └── api-reference.md
 ```
 
-## 🎯 Creating Your First Widget
+## Creating Your First Widget
 
 ### 1. Initialize Widget Project
 
@@ -298,11 +298,11 @@ npm test -- security.test.ts        # Security (20 tests)
 **Test Coverage:** 155+ automated tests across all components
 
 **Recent Test Additions:**
-- ✅ Comprehensive permissions system testing (30+ tests covering dialogs, granting/denial, rate limiting)
-- ✅ Enhanced List component with smooth animations and hover effects
-- ✅ Improved error handling test reliability
+- Comprehensive permissions system testing (30+ tests covering dialogs, granting/denial, rate limiting)
+- Enhanced List component with smooth animations and hover effects
+- Improved error handling test reliability
 
-## 🔒 Security
+## Security
 
 Molecool implements multiple security layers:
 
@@ -316,7 +316,7 @@ Molecool implements multiple security layers:
 
 See [Architecture Documentation](docs/architecture.md) for security details.
 
-## 📊 Performance
+## Performance
 
 - **Memory Usage** - < 500MB with 5+ widgets running
 - **Memory Management** - Automatic timer cleanup prevents memory leaks
@@ -325,7 +325,7 @@ See [Architecture Documentation](docs/architecture.md) for security details.
 - **Widget Load Time** - < 500ms per widget with smooth fade-in
 - **Animation Performance** - Hardware-accelerated transitions with V8 code caching
 
-## 🤝 Contributing
+## Contributing
 
 We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
@@ -337,25 +337,25 @@ We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guid
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
-## 📝 License
+## License
 
 This project is licensed under the MIT License - see [LICENSE](LICENSE) file for details.
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - Inspired by Windows 7 Desktop Gadgets
 - Built with [Electron](https://www.electronjs.org/)
 - UI powered by [React](https://reactjs.org/)
 - Marketplace built with [Next.js](https://nextjs.org/)
 
-## 📞 Support
+## Support
 
 - 📖 [Documentation](docs/)
 - 🐛 [Issue Tracker](https://github.com/your-org/Molecool/issues)
 - 💬 [Discussions](https://github.com/your-org/Molecool/discussions)
 - 📧 Email: support@Molecool-widgets.com
 
-## 🗺️ Roadmap
+## Roadmap
 
 - [x] Core widget platform
 - [x] Widget SDK with React components
